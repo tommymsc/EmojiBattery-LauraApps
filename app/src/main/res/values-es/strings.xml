@@ -74,4 +74,7 @@
 <string name="wallpaper_applied">Fondo de bloqueo actualizado.</string>
 <string name="wallpaper_failed">No se pudo cambiar el fondo en tu teléfono. No se modificó intencionalmente el fondo anterior.</string>
 <string name="wallpaper_caption">Tu mascota de batería</string>
+<string name="privacy_read">Leer política de privacidad</string>
+<string name="privacy_full_title">Emoji Battery — Política de privacidad</string>
+<string name="privacy_full_body">Desarrollador: LauraApps.\n\nEmoji Battery consulta el nivel y estado de carga de la batería mediante las API oficiales de Android. Los datos se procesan exclusivamente en el dispositivo para mostrar widgets, vistas previas y el salvapantallas opcional.\n\nEl diseño elegido se guarda localmente en las preferencias de la app. Si decides aplicar un fondo de pantalla de bloqueo, se genera una imagen fija en el dispositivo y se solicita tu confirmación antes de reemplazar el fondo actual.\n\nEsta versión no requiere cuentas, no accede a Internet, no utiliza SDK de anuncios ni analítica y no transmite datos personales a servidores. No se venden ni comparten datos del usuario. Las preferencias locales se pueden eliminar borrando los datos de la app o desinstalándola.\n\nAndroid controla cuándo está disponible el salvapantallas y cuándo se actualizan los widgets. Emoji Battery no elude la pantalla de bloqueo del dispositivo.\n\nContacto de privacidad: lauraarias206@gmail.com\nActualización: 18 de noviembre de 2026.</string>
 </resources>
