@@ -16,4 +16,17 @@ public class BatteryMathTest {
   assertEquals(3,BatteryMath.mood(90,false));
   assertEquals(4,BatteryMath.mood(12,true));
  }
+ @Test public void automaticMascotThresholds(){
+  assertEquals(7,BatteryMath.automaticTheme(0,false,3));
+  assertEquals(7,BatteryMath.automaticTheme(20,false,3));
+  assertEquals(9,BatteryMath.automaticTheme(21,false,3));
+  assertEquals(9,BatteryMath.automaticTheme(45,false,3));
+  assertEquals(6,BatteryMath.automaticTheme(46,false,3));
+  assertEquals(6,BatteryMath.automaticTheme(79,false,3));
+  assertEquals(10,BatteryMath.automaticTheme(80,false,3));
+  assertEquals(10,BatteryMath.automaticTheme(100,false,3));
+  assertEquals(1,BatteryMath.automaticTheme(10,true,3));
+  assertEquals(3,BatteryMath.automaticTheme(-1,false,3));
+  assertEquals(23,BatteryMath.automaticTheme(-1,false,40));
+ }
 }
