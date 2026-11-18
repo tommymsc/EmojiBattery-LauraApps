@@ -1,0 +1,19 @@
+<resources>
+<string name="app_name">Emoji Battery: DIY Widgets</string>
+<string name="widget_title">Emoji battery widget</string>
+<string name="headline">Your battery, your style ✨</string>
+<string name="subtitle">Choose a cute theme and add a live battery widget to your home screen.</string>
+<string name="live_preview">LIVE BATTERY PREVIEW</string>
+<string name="choose_theme">Choose a style</string>
+<string name="theme_pink">Peach Pop</string><string name="theme_lavender">Lavender Dream</string><string name="theme_mint">Mint Glow</string><string name="theme_dark">Midnight</string>
+<string name="add_widget">Add widget to home screen</string>
+<string name="widget_help">If your launcher cannot pin widgets, long-press your home screen and choose Widgets.</string>
+<string name="pin_requested">Check your home screen to add the widget.</string>
+<string name="manual_pin">Long-press the home screen, tap Widgets and select Emoji Battery.</string>
+<string name="charging">Charging</string><string name="battery_level">Battery level</string><string name="unknown">Battery unavailable</string>
+<string name="style_saved">Style saved</string>
+<string name="privacy_title">Private by design</string>
+<string name="privacy_info">Battery information is processed on your phone. No account, internet, location, or file access required.</string>
+<string name="share">Share app</string>
+<string name="share_message">Check out Emoji Battery: DIY Widgets!</string>
+</resources>

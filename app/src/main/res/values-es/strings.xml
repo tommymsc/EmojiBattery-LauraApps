@@ -1,0 +1,19 @@
+<resources>
+<string name="app_name">Emoji Battery: DIY Widgets</string>
+<string name="widget_title">Widget de batería con emojis</string>
+<string name="headline">Tu batería, a tu estilo ✨</string>
+<string name="subtitle">Elige un estilo bonito y agrega un widget de batería real a tu pantalla de inicio.</string>
+<string name="live_preview">VISTA PREVIA DE BATERÍA</string>
+<string name="choose_theme">Elige un estilo</string>
+<string name="theme_pink">Melocotón</string><string name="theme_lavender">Sueño Lavanda</string><string name="theme_mint">Menta</string><string name="theme_dark">Medianoche</string>
+<string name="add_widget">Agregar widget a inicio</string>
+<string name="widget_help">Si no puedes agregarlo directamente, mantén pulsada la pantalla de inicio y selecciona Widgets.</string>
+<string name="pin_requested">Revisa tu pantalla de inicio para agregar el widget.</string>
+<string name="manual_pin">Mantén pulsada la pantalla de inicio, toca Widgets y selecciona Emoji Battery.</string>
+<string name="charging">Cargando</string><string name="battery_level">Nivel de batería</string><string name="unknown">Batería no disponible</string>
+<string name="style_saved">Estilo guardado</string>
+<string name="privacy_title">Privacidad desde el diseño</string>
+<string name="privacy_info">La batería se procesa en tu teléfono. Sin cuentas, internet, ubicación ni acceso a archivos.</string>
+<string name="share">Compartir app</string>
+<string name="share_message">¡Prueba Emoji Battery: DIY Widgets!</string>
+</resources>

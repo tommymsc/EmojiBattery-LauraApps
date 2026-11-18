@@ -1,0 +1,32 @@
+plugins { id 'com.android.application' }
+android {
+  namespace 'com.lauraapps.emojibattery'
+  compileSdk 36
+  defaultConfig {
+    applicationId 'com.lauraapps.emojibattery'
+    minSdk 26
+    targetSdk 36
+    versionCode 1
+    versionName '1.0.0'
+  }
+  compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+  lint { abortOnError true }
+  def keyStorePath = System.getenv('SIGN_STORE')
+  if (keyStorePath && System.getenv('SIGN_STOREPASS') && System.getenv('SIGN_ALIAS') && System.getenv('SIGN_KEYPASS')) {
+    signingConfigs {
+      upload {
+        storeFile file(keyStorePath)
+        storePassword System.getenv('SIGN_STOREPASS')
+        keyAlias System.getenv('SIGN_ALIAS')
+        keyPassword System.getenv('SIGN_KEYPASS')
+      }
+    }
+  }
+  buildTypes {
+    release {
+      if (signingConfigs.findByName('upload') != null) signingConfig signingConfigs.upload
+      minifyEnabled false
+    }
+  }
+}
+dependencies { testImplementation 'junit:junit:4.13.2' }
