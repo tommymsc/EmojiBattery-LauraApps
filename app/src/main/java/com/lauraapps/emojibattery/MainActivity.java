@@ -16,6 +16,10 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +44,10 @@ public final class MainActivity extends Activity {
     private View galleryAnchor;
     private ObjectAnimator pulse;
     private boolean listening=false;
+    private final ExecutorService renderWorker=Executors.newSingleThreadExecutor();
+    private final Handler uiHandler=new Handler(Looper.getMainLooper());
+    private int galleryGeneration=0;
+    private int previewGeneration=0;
     private final BroadcastReceiver live=new BroadcastReceiver(){
         @Override public void onReceive(Context context,Intent intent){updatePreview();}
     };
@@ -55,13 +63,19 @@ public final class MainActivity extends Activity {
             listening=true;
         }
         updatePreview();
-        BatteryWidgetProvider.refresh(this);
+        BatteryWidgetProvider.refreshAsync(this);
         if(pulse!=null && !pulse.isStarted()) pulse.start();
     }
     @Override protected void onPause(){
         if(pulse!=null)pulse.cancel();
         if(listening){unregisterReceiver(live);listening=false;}
         super.onPause();
+    }
+    @Override protected void onDestroy(){
+        galleryGeneration++;
+        previewGeneration++;
+        renderWorker.shutdownNow();
+        super.onDestroy();
     }
     private int dp(float v){return (int)(v*getResources().getDisplayMetrics().density+0.5f);}
     private GradientDrawable gradient(int[] colors,int radius,int stroke){
@@ -104,6 +118,9 @@ public final class MainActivity extends Activity {
         getWindow().setNavigationBarColor(0xFF10163F);
         scroll=new ScrollView(this);
         scroll.setFillViewport(true);
+        scroll.setVerticalScrollBarEnabled(true);
+        scroll.setSmoothScrollingEnabled(true);
+        galleryGeneration++;
         scroll.setBackground(gradient(new int[]{0xFF101B57,0xFF392274,0xFF161B52},0,0));
         root=col();
         root.setPadding(dp(16),dp(19),dp(16),dp(45));
@@ -213,7 +230,7 @@ public final class MainActivity extends Activity {
     private void setMascotMode(boolean auto){
         if(ThemeCatalog.isAuto(this)==auto)return;
         ThemeCatalog.setAuto(this,auto);
-        BatteryWidgetProvider.refresh(this);
+        BatteryWidgetProvider.refreshAsync(this);
         build();
     }
     private void drawScreenTools(){
@@ -307,7 +324,20 @@ public final class MainActivity extends Activity {
                 horizontal.addView(item,part);
                 ImageView image=new ImageView(this);
                 image.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                image.setImageBitmap(BatteryArt.draw(this,420,260,index,battery.percent,battery.charging));
+                final int generation=galleryGeneration;
+                final int theme=index, level=battery.percent;
+                final boolean charging=battery.charging;
+                renderWorker.execute(()->{
+                    if(Thread.currentThread().isInterrupted())return;
+                    android.graphics.Bitmap bmp=BatteryArt.draw(getApplicationContext(),320,200,theme,level,charging);
+                    uiHandler.post(()->{
+                        if(isFinishing()||isDestroyed()||generation!=galleryGeneration){
+                            bmp.recycle();
+                            return;
+                        }
+                        image.setImageBitmap(bmp);
+                    });
+                });
                 item.addView(image,lp(-1,111,0));
                 TextView label=text(getString(names[index])+(selection==index?"  ✓":""),11,WHITE,true);
                 label.setSingleLine(true);label.setGravity(Gravity.CENTER);
@@ -316,7 +346,7 @@ public final class MainActivity extends Activity {
                     selection=index;
                     ThemeCatalog.save(this,index);
                     ThemeCatalog.setAuto(this,false);
-                    BatteryWidgetProvider.refresh(this);
+                    BatteryWidgetProvider.refreshAsync(this);
                     refreshChoice();
                     Toast.makeText(this,getString(R.string.style_saved),Toast.LENGTH_SHORT).show();
                 });
@@ -388,8 +418,19 @@ public final class MainActivity extends Activity {
         BatteryState actual=BatteryState.read(this);
         int pct=previewValue==-1?actual.percent:previewValue==-2?85:previewValue;
         boolean charging=previewValue==-2||(previewValue==-1&&actual.charging);
-        heroArt.setImageBitmap(BatteryArt.draw(this,720,446,
-            ThemeCatalog.resolve(this,selection,pct,charging),pct,charging));
+        final int generation=++previewGeneration;
+        final int theme=ThemeCatalog.resolve(this,selection,pct,charging);
+        renderWorker.execute(()->{
+            if(Thread.currentThread().isInterrupted())return;
+            android.graphics.Bitmap bmp=BatteryArt.draw(getApplicationContext(),720,446,theme,pct,charging);
+            uiHandler.post(()->{
+                if(isFinishing()||isDestroyed()||generation!=previewGeneration){
+                    bmp.recycle();
+                    return;
+                }
+                if(heroArt!=null)heroArt.setImageBitmap(bmp);
+            });
+        });
         String label=previewValue==-1?getString(R.string.battery_real_label)
              :previewValue==-2?getString(R.string.charging_label)
              :getString(R.string.preview_level);
