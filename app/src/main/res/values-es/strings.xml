@@ -12,4 +12,29 @@
 <string name="share">Compartir app</string><string name="share_message">¡Conoce a tus mascotas de batería! Emoji Battery: DIY Widgets</string>
 <string name="preview_levels">Prueba distintos niveles de batería</string><string name="preview_hint">Solo vista previa: el widget real siempre muestra la batería de tu dispositivo.</string>
 <string name="preview_real">REAL</string><string name="preview_charging">CARGANDO</string><string name="preview_percentage">Vista previa: %1$d%%</string>
+<string name="mascot_0">Pip Ajolote</string>
+<string name="mascot_1">Mochi Dragón</string>
+<string name="mascot_2">Lulu Rana</string>
+<string name="mascot_3">Biscuit Perrito</string>
+<string name="mascot_4">Pingo Pingüino</string>
+<string name="mascot_5">Nova Luciérnaga</string>
+<string name="mascot_6">Mimi Gatita</string>
+<string name="mascot_7">Sunny Zorro</string>
+<string name="mascot_8">Boba Conejita</string>
+<string name="mascot_9">Panda Puff</string>
+<string name="mascot_10">Lumi Unicornio</string>
+<string name="mascot_11">Cosmo Astronauta</string>
+<string name="mascot_12">Rosy Ajolote</string>
+<string name="mascot_13">Dragón Lunar</string>
+<string name="mascot_14">Rana Suerte</string>
+<string name="mascot_15">Perrito Cookie</string>
+<string name="mascot_16">Pingüino Helado</string>
+<string name="mascot_17">Luciérnaga Estelar</string>
+<string name="mascot_18">Gatita Algodón</string>
+<string name="mascot_19">Zorro Miel</string>
+<string name="mascot_20">Conejita Nube</string>
+<string name="mascot_21">Panda Nocturno</string>
+<string name="mascot_22">Unicornio Arcoíris</string>
+<string name="mascot_23">Astronauta Galaxia</string>
+<string name="collection_all">Todos</string><string name="collection_original">Originales</string><string name="collection_pastel">Pastel</string>
 </resources>

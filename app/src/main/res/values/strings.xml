@@ -13,4 +13,29 @@
 <string name="share">Share app</string><string name="share_message">Meet your battery buddies! Emoji Battery: DIY Widgets</string>
 <string name="preview_levels">Try different battery levels</string><string name="preview_hint">Preview only: your real widget always shows your device battery.</string>
 <string name="preview_real">REAL</string><string name="preview_charging">CHARGING</string><string name="preview_percentage">Preview: %1$d%%</string>
+<string name="mascot_0">Pip Axolotl</string>
+<string name="mascot_1">Mochi Dragon</string>
+<string name="mascot_2">Lulu Frog</string>
+<string name="mascot_3">Biscuit Pup</string>
+<string name="mascot_4">Pingo Penguin</string>
+<string name="mascot_5">Nova Firefly</string>
+<string name="mascot_6">Mimi Kitten</string>
+<string name="mascot_7">Sunny Fox</string>
+<string name="mascot_8">Boba Bunny</string>
+<string name="mascot_9">Panda Puff</string>
+<string name="mascot_10">Lumi Unicorn</string>
+<string name="mascot_11">Cosmo Astronaut</string>
+<string name="mascot_12">Rosy Axolotl</string>
+<string name="mascot_13">Moon Dragon</string>
+<string name="mascot_14">Lucky Frog</string>
+<string name="mascot_15">Cookie Pup</string>
+<string name="mascot_16">Frost Penguin</string>
+<string name="mascot_17">Starry Firefly</string>
+<string name="mascot_18">Cotton Kitten</string>
+<string name="mascot_19">Honey Fox</string>
+<string name="mascot_20">Cloud Bunny</string>
+<string name="mascot_21">Midnight Panda</string>
+<string name="mascot_22">Rainbow Unicorn</string>
+<string name="mascot_23">Galaxy Astronaut</string>
+<string name="collection_all">All 24</string><string name="collection_original">Originals</string><string name="collection_pastel">Pastel</string>
 </resources>
