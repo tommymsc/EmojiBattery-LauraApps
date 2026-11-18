@@ -150,6 +150,9 @@ public final class MainActivity extends Activity {
         TextView subtitle=text(getString(R.string.hero_subtitle),14,0xFFE5DAFF,false);
         subtitle.setGravity(Gravity.CENTER);
         root.addView(subtitle,lp(-1,-2,7));
+        TextView steps=text("① "+getString(R.string.steps_choose)+"   ② "+getString(R.string.steps_preview)+"   ③ "+getString(R.string.steps_add),12,0xFFFFF3C5,true);
+        steps.setGravity(Gravity.CENTER);
+        root.addView(steps,lp(-1,35,9));
     }
     private void drawHero(){
         LinearLayout panel=col();

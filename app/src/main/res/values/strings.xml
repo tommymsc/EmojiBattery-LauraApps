@@ -18,9 +18,9 @@
 <string name="mascot_2">Lulu Frog</string>
 <string name="mascot_3">Biscuit Pup</string>
 <string name="mascot_4">Pingo Penguin</string>
-<string name="mascot_5">Nova Firefly</string>
+<string name="mascot_5">Sunny Sunflower</string>
 <string name="mascot_6">Mimi Kitten</string>
-<string name="mascot_7">Sunny Fox</string>
+<string name="mascot_7">Sleepy Koala</string>
 <string name="mascot_8">Boba Bunny</string>
 <string name="mascot_9">Panda Puff</string>
 <string name="mascot_10">Lumi Unicorn</string>
@@ -30,9 +30,9 @@
 <string name="mascot_14">Lucky Frog</string>
 <string name="mascot_15">Cookie Pup</string>
 <string name="mascot_16">Frost Penguin</string>
-<string name="mascot_17">Starry Firefly</string>
+<string name="mascot_17">Happy Sunflower</string>
 <string name="mascot_18">Cotton Kitten</string>
-<string name="mascot_19">Honey Fox</string>
+<string name="mascot_19">Dreamy Koala</string>
 <string name="mascot_20">Cloud Bunny</string>
 <string name="mascot_21">Midnight Panda</string>
 <string name="mascot_22">Rainbow Unicorn</string>
@@ -61,4 +61,4 @@
 <string name="app_headline">Cute battery buddies</string>
 <string name="button_gallery">Explore widgets</string>
 <string name="text_apply_success">Your home-screen widgets were updated!</string>
-</resources>
+<string name="steps_choose">Choose</string><string name="steps_preview">Preview</string><string name="steps_add">Add</string></resources>

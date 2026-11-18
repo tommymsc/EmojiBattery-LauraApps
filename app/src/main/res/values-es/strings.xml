@@ -17,9 +17,9 @@
 <string name="mascot_2">Lulu Rana</string>
 <string name="mascot_3">Biscuit Perrito</string>
 <string name="mascot_4">Pingo Pingüino</string>
-<string name="mascot_5">Nova Luciérnaga</string>
+<string name="mascot_5">Girasol Alegre</string>
 <string name="mascot_6">Mimi Gatita</string>
-<string name="mascot_7">Sunny Zorro</string>
+<string name="mascot_7">Koala Dormilón</string>
 <string name="mascot_8">Boba Conejita</string>
 <string name="mascot_9">Panda Puff</string>
 <string name="mascot_10">Lumi Unicornio</string>
@@ -29,9 +29,9 @@
 <string name="mascot_14">Rana Suerte</string>
 <string name="mascot_15">Perrito Cookie</string>
 <string name="mascot_16">Pingüino Helado</string>
-<string name="mascot_17">Luciérnaga Estelar</string>
+<string name="mascot_17">Girasol Feliz</string>
 <string name="mascot_18">Gatita Algodón</string>
-<string name="mascot_19">Zorro Miel</string>
+<string name="mascot_19">Koala Soñador</string>
 <string name="mascot_20">Conejita Nube</string>
 <string name="mascot_21">Panda Nocturno</string>
 <string name="mascot_22">Unicornio Arcoíris</string>
@@ -60,4 +60,4 @@
 <string name="app_headline">Mascotas para tu batería</string>
 <string name="button_gallery">Explorar widgets</string>
 <string name="text_apply_success">¡Tus widgets instalados se actualizaron!</string>
-</resources>
+<string name="steps_choose">Elige</string><string name="steps_preview">Mira</string><string name="steps_add">Agrega</string></resources>

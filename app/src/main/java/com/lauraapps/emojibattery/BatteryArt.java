@@ -23,10 +23,14 @@ public final class BatteryArt {
     private static synchronized Bitmap atlas(Context c){
         if(atlasAttempted)return atlas;
         atlasAttempted=true;
-        try(InputStream in=c.getAssets().open("mascot_atlas.b64")){
-            ByteArrayOutputStream buf=new ByteArrayOutputStream();
-            byte[] a=new byte[4096];int n;
-            while((n=in.read(a))!=-1)buf.write(a,0,n);
+        try {
+            ByteArrayOutputStream buf=new ByteArrayOutputStream(18000);
+            for(int part=1;part<=4;part++){
+                try(InputStream in=c.getAssets().open("mascot_atlas.part"+part)){
+                    byte[] chunk=new byte[4096];int n;
+                    while((n=in.read(chunk))!=-1)buf.write(chunk,0,n);
+                }
+            }
             byte[] raw=Base64.decode(buf.toByteArray(),Base64.DEFAULT);
             atlas=BitmapFactory.decodeByteArray(raw,0,raw.length);
             if(atlas==null || atlas.getWidth()%4!=0 || atlas.getHeight()%3!=0) atlas=null;
