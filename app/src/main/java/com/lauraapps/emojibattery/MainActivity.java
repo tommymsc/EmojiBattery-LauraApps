@@ -3,6 +3,8 @@ package com.lauraapps.emojibattery;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.provider.Settings;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -117,6 +119,7 @@ public final class MainActivity extends Activity {
         drawHeader();
         drawHero();
         drawMenu();
+        drawScreenTools();
         drawGallery();
         drawCustomize();
         drawFooter();
@@ -189,6 +192,49 @@ public final class MainActivity extends Activity {
         TextView apply=action(getString(R.string.button_apply),false,0);
         area.addView(apply,lp(-1,52,10));
         apply.setOnClickListener(v->applyExisting());
+    }
+    private void drawScreenTools(){
+        LinearLayout panel=col();
+        panel.setPadding(dp(14),dp(14),dp(14),dp(16));
+        panel.setBackground(gradient(new int[]{0xFF1B3779,0xFF56329A},22,0xFF82BFFF));
+        root.addView(panel,lp(-1,-2,19));
+        TextView header=text(getString(R.string.screen_tools_title),18,WHITE,true);
+        panel.addView(header,lp(-1,-2,0));
+        TextView explain=text(getString(R.string.screen_tools_desc),12,MUTED,false);
+        panel.addView(explain,lp(-1,-2,8));
+        TextView dream=action(getString(R.string.open_dream_settings),false,0);
+        dream.setOnClickListener(v->openDreamSettings());
+        panel.addView(dream,lp(-1,50,14));
+        TextView lock=action(getString(R.string.set_lock_wallpaper),false,0);
+        lock.setOnClickListener(v->confirmLockWallpaper());
+        panel.addView(lock,lp(-1,50,9));
+        TextView info=text(getString(R.string.lock_static_notice),11,0xFFE4D7FF,false);
+        panel.addView(info,lp(-1,-2,11));
+    }
+    private void openDreamSettings(){
+        try{
+            startActivity(new Intent("android.settings.DREAM_SETTINGS"));
+        }catch(Exception ex){
+            new AlertDialog.Builder(this)
+                .setTitle(R.string.dream_name)
+                .setMessage(R.string.dream_unavailable)
+                .setPositiveButton(android.R.string.ok,null).show();
+        }
+    }
+    private void confirmLockWallpaper(){
+        new AlertDialog.Builder(this).setTitle(R.string.wallpaper_confirm_title)
+            .setMessage(R.string.wallpaper_confirm_message)
+            .setNegativeButton(android.R.string.cancel,null)
+            .setPositiveButton(R.string.apply_wallpaper,(dialog,which)->{
+                try{
+                    BatteryLockWallpaper.apply(this,selection);
+                    Toast.makeText(this,R.string.wallpaper_applied,Toast.LENGTH_LONG).show();
+                }catch(Exception ex){
+                    new AlertDialog.Builder(this).setTitle(R.string.wallpaper_confirm_title)
+                        .setMessage(R.string.wallpaper_failed)
+                        .setPositiveButton(android.R.string.ok,null).show();
+                }
+            }).show();
     }
     private void jumpTo(View target){
         if(target==null)return;

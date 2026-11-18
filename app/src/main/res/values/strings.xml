@@ -61,4 +61,18 @@
 <string name="app_headline">Cute battery buddies</string>
 <string name="button_gallery">Explore widgets</string>
 <string name="text_apply_success">Your home-screen widgets were updated!</string>
-<string name="steps_choose">Choose</string><string name="steps_preview">Preview</string><string name="steps_add">Add</string></resources>
+<string name="steps_choose">Choose</string><string name="steps_preview">Preview</string><string name="steps_add">Add</string><string name="dream_name">Emoji Battery screensaver</string>
+<string name="dream_heading">YOUR BATTERY BUDDY</string>
+<string name="screen_tools_title">✨ On your screen</string>
+<string name="screen_tools_desc">Use your mascot in Android's optional screensaver or as a still lock-screen wallpaper.</string>
+<string name="open_dream_settings">Set up charging screensaver</string>
+<string name="set_lock_wallpaper">Set lock-screen wallpaper</string>
+<string name="lock_static_notice">Lock wallpaper is a static snapshot. The Android screensaver shows the current battery while active; availability depends on your phone.</string>
+<string name="dream_unavailable">Screensaver settings are unavailable on this device. You can still use the home-screen widgets.</string>
+<string name="wallpaper_confirm_title">Change lock-screen wallpaper?</string>
+<string name="wallpaper_confirm_message">Apply the selected mascot as a static lock-screen wallpaper? This will replace your current lock-screen background. The percentage will not update automatically.</string>
+<string name="apply_wallpaper">Apply wallpaper</string>
+<string name="wallpaper_applied">Lock-screen wallpaper updated.</string>
+<string name="wallpaper_failed">Could not set this wallpaper on your device. Your existing background was not intentionally changed.</string>
+<string name="wallpaper_caption">Your battery buddy</string>
+</resources>

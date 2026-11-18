@@ -60,4 +60,18 @@
 <string name="app_headline">Mascotas para tu batería</string>
 <string name="button_gallery">Explorar widgets</string>
 <string name="text_apply_success">¡Tus widgets instalados se actualizaron!</string>
-<string name="steps_choose">Elige</string><string name="steps_preview">Mira</string><string name="steps_add">Agrega</string></resources>
+<string name="steps_choose">Elige</string><string name="steps_preview">Mira</string><string name="steps_add">Agrega</string><string name="dream_name">Salvapantallas Emoji Battery</string>
+<string name="dream_heading">TU MASCOTA DE BATERÍA</string>
+<string name="screen_tools_title">✨ En tu pantalla</string>
+<string name="screen_tools_desc">Muestra tu mascota en el salvapantallas opcional de Android o como fondo fijo de bloqueo.</string>
+<string name="open_dream_settings">Configurar salvapantallas</string>
+<string name="set_lock_wallpaper">Poner fondo de bloqueo</string>
+<string name="lock_static_notice">El fondo de bloqueo es una imagen fija. El salvapantallas muestra la batería real cuando está activo; depende de tu teléfono.</string>
+<string name="dream_unavailable">La configuración de salvapantallas no está disponible en este teléfono. Puedes seguir usando los widgets.</string>
+<string name="wallpaper_confirm_title">¿Cambiar el fondo de bloqueo?</string>
+<string name="wallpaper_confirm_message">¿Aplicar esta mascota como fondo fijo de bloqueo? Reemplazará tu fondo actual y el porcentaje no se actualizará automáticamente.</string>
+<string name="apply_wallpaper">Aplicar fondo</string>
+<string name="wallpaper_applied">Fondo de bloqueo actualizado.</string>
+<string name="wallpaper_failed">No se pudo cambiar el fondo en tu teléfono. No se modificó intencionalmente el fondo anterior.</string>
+<string name="wallpaper_caption">Tu mascota de batería</string>
+</resources>

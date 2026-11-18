@@ -24,9 +24,9 @@ public final class BatteryArt {
         if(atlasAttempted)return atlas;
         atlasAttempted=true;
         try {
-            ByteArrayOutputStream buf=new ByteArrayOutputStream(18000);
+            ByteArrayOutputStream buf=new ByteArrayOutputStream(400000);
             for(int part=1;part<=4;part++){
-                try(InputStream in=c.getAssets().open("mascot_atlas.part"+part)){
+                try(InputStream in=c.getAssets().open("mascot_atlas_hd.part"+part)){
                     byte[] chunk=new byte[4096];int n;
                     while((n=in.read(chunk))!=-1)buf.write(chunk,0,n);
                 }
