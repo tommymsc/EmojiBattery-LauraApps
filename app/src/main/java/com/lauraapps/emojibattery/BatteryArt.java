@@ -38,31 +38,39 @@ public final class BatteryArt {
     private static void paint(Canvas c,int t,int level,boolean charging){
         int accent=ThemeCatalog.ACCENT[t], ink=ThemeCatalog.INK[t];
         int back=ThemeCatalog.BASE[t], body=ThemeCatalog.BODY[t];
-        Paint bg=p(back);
-        bg.setShader(new LinearGradient(0,0,420,260,new int[]{back,0xFFFFFFFF,back},null,Shader.TileMode.CLAMP));
+        Paint bg=p(0xFF14113F);
+        bg.setShader(new LinearGradient(0,0,420,260,new int[]{0xFF121C54,0xFF34207B,0xFF8B42A5},null,Shader.TileMode.CLAMP));
         c.drawRoundRect(new RectF(0,0,420,260),29,29,bg);
-        oval(c,305,-60,480,115,a(accent,38));
-        oval(c,-65,158,85,322,a(accent,34));
+        oval(c,305,-60,480,115,a(0xFFFB6CE7,85));
+        oval(c,120,-70,370,85,a(0xFF56C6FF,48));
+        oval(c,-65,158,85,322,a(0xFFFF74C2,65));
+        oval(c,110,80,410,270,a(accent,32));
         star(c,39,45,10,0xFFFFCB4E);star(c,344,33,8,0xFFFFFFFF);
         star(c,381,98,11,0xFFFFB93F);star(c,20,189,6,a(accent,150));
-        star(c,305,55,5,accent);star(c,79,20,5,0xFFFFFFFF);
+        star(c,305,55,5,0xFFFFB5F9);
+        star(c,254,84,8,0xFF6DF7FA);
+        star(c,389,49,8,0xFFFF78C0);
+        star(c,67,96,7,0xFFFFC96A);
+        star(c,346,101,5,0xFFFFFFFF);star(c,79,20,5,0xFFFFFFFF);
         // Battery shadows and raised glass shell.
-        rr(c,111,121,402,241,33,a(ink,30));
-        rr(c,109,111,398,232,33,0xFFFFFFFF);
-        rr(c,113,114,394,229,31,a(accent,70));
-        rr(c,119,121,388,222,26,ink);
-        rr(c,125,127,382,216,22,0xFFFFF7FF);
-        rr(c,385,151,412,189,8,ink);
-        rr(c,388,154,407,185,5,0xFFFFD26C);
+        rr(c,105,116,404,246,35,a(0xFF15EFFF,80));
+        rr(c,107,111,400,239,35,0xFFAA7FFF);
+        rr(c,111,115,396,235,32,0xFFF5FAFF);
+        rr(c,117,121,391,228,29,0xFF23336C);
+        rr(c,124,128,383,220,24,0xFF151C54);
+        rr(c,387,155,411,195,9,0xFF5B39C4);
+        rr(c,389,157,408,191,7,0xFFFFDB6B);
         int pct=Math.max(0,Math.min(100,level<0?0:level));
         float end=132f+244f*pct/100f;
         if(pct>0){
           Paint fill=p(accent);
-          fill.setShader(new LinearGradient(126,133,379,207,new int[]{0xFFFFC753,accent},null,Shader.TileMode.CLAMP));
-          rr(c,132,133,Math.max(144,end),210,18,0xFFFFC753);
+          int current=pct<=20?0xFFFF4778:pct<=45?0xFFFFA441:pct<=75?0xFF2DADF9:0xFF39E879;
+          int secondary=pct<=20?0xFFFF8F93:pct<=45?0xFFFFD263:pct<=75?0xFF65EDFF:0xFFAAFF78;
+          fill.setShader(new LinearGradient(132,133,375,207,new int[]{secondary,current},null,Shader.TileMode.CLAMP));
+          rr(c,132,133,Math.max(144,end),210,18,current);
           c.drawRoundRect(new RectF(132,133,Math.max(144,end),210),18,18,fill);
         }
-        rr(c,140,133,371,145,7,a(Color.WHITE,135));
+        rr(c,140,133,371,141,7,a(Color.WHITE,115));
         star(c,364,137,4,Color.WHITE);
         // Lightning in foreground, deliberately drawn from vectors, not copied emoji.
         Path bolt=new Path();
@@ -71,6 +79,7 @@ public final class BatteryArt {
         bolt.lineTo(144,175);bolt.close();
         c.drawPath(bolt,p(0xFFFFDE62));c.drawPath(bolt,stroke(0xFFFF8B28,3));
         Paint number=p(Color.WHITE);
+        number.setShadowLayer(4,0,3,a(0xFF13143D,220));
         number.setShadowLayer(3,0,3,a(ink,180));
         number.setTypeface(Typeface.create("sans-serif-black",Typeface.BOLD));
         number.setTextSize(level==100?69:74);

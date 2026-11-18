@@ -38,4 +38,26 @@
 <string name="mascot_23">Astronauta Galaxia</string>
 <string name="collection_all">Todos</string><string name="collection_original">Originales</string><string name="collection_pastel">Pastel</string>
 <string name="apply_existing">Usar este diseño en los widgets instalados</string>
-<string name="applied_existing">Widgets instalados actualizados.</string></resources>
+<string name="applied_existing">Widgets instalados actualizados.</string><string name="gallery_title">Descubre tus mascotas de batería</string>
+<string name="gallery_subtitle">Elige un personaje y dale tu estilo</string>
+<string name="customize_title">Personalízalo a tu gusto</string>
+<string name="style_help">Elige un diseño para verlo en la vista previa.</string>
+<string name="hero_tag">TU BATERÍA REAL</string>
+<string name="hero_title">Batería bonita, teléfono feliz</string>
+<string name="hero_subtitle">Amiguitos coloridos que reaccionan a cada carga.</string>
+<string name="section_explore">Explorar Widgets</string>
+<string name="section_preview">VISTA PREVIA</string>
+<string name="button_add">Agregar a pantalla de inicio</string>
+<string name="button_apply">Aplicar a mis widgets</string>
+<string name="share_design">Compartir</string>
+<string name="filter_all">Todos 24</string>
+<string name="filter_signature">Originales</string>
+<string name="filter_pastel">Pastel</string>
+<string name="preview_level">Solo vista previa</string>
+<string name="charging_label">CARGANDO</string>
+<string name="battery_real_label">BATERÍA REAL</string>
+<string name="label_selected">Seleccionado</string>
+<string name="app_headline">Mascotas para tu batería</string>
+<string name="button_gallery">Explorar widgets</string>
+<string name="text_apply_success">¡Tus widgets instalados se actualizaron!</string>
+</resources>

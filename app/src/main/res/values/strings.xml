@@ -39,4 +39,26 @@
 <string name="mascot_23">Galaxy Astronaut</string>
 <string name="collection_all">All 24</string><string name="collection_original">Originals</string><string name="collection_pastel">Pastel</string>
 <string name="apply_existing">Apply this design to my existing widgets</string>
-<string name="applied_existing">Installed widgets updated.</string></resources>
+<string name="applied_existing">Installed widgets updated.</string><string name="gallery_title">Discover your battery buddies</string>
+<string name="gallery_subtitle">Pick a character, make it yours</string>
+<string name="customize_title">Make it yours</string>
+<string name="style_help">Choose a design to see the live preview.</string>
+<string name="hero_tag">YOUR LIVE BATTERY</string>
+<string name="hero_title">Cute battery, happy phone</string>
+<string name="hero_subtitle">Colorful friends that react to every charge.</string>
+<string name="section_explore">Explore Widgets</string>
+<string name="section_preview">LIVE PREVIEW</string>
+<string name="button_add">Add to home screen</string>
+<string name="button_apply">Use on my widgets</string>
+<string name="share_design">Share</string>
+<string name="filter_all">All 24</string>
+<string name="filter_signature">Original</string>
+<string name="filter_pastel">Pastel</string>
+<string name="preview_level">Preview only</string>
+<string name="charging_label">CHARGING</string>
+<string name="battery_real_label">REAL BATTERY</string>
+<string name="label_selected">Selected</string>
+<string name="app_headline">Cute battery buddies</string>
+<string name="button_gallery">Explore widgets</string>
+<string name="text_apply_success">Your home-screen widgets were updated!</string>
+</resources>
