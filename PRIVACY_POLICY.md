@@ -1,6 +1,6 @@
 # Emoji Battery: DIY Widgets — Privacy policy
 
-Last updated: November 18, 2026. Developer: LauraApps.
+Last updated: November 18, 2026. Developer: LauraApps. Privacy contact / Contacto de privacidad: lauraarias206@gmail.com.
 
 English: Emoji Battery: DIY Widgets displays the device battery percentage and charging status locally in home-screen widgets, its own interface and an optional Android screensaver chosen in the system settings. A user can explicitly request to set a static image as the lock-screen wallpaper; Android's normal SET_WALLPAPER permission is used for that action only. It never reads the user's existing wallpaper. Selected visual preferences are stored locally. Version 1.6.0 does not collect, transmit, sell or share personal data, does not request internet, contacts, camera, microphone, location, storage or accessibility access and does not contain advertising or analytics SDKs. The Android system controls screensaver availability; this app does not bypass the lock screen. Uninstalling or clearing app data deletes local app preferences but does not restore any wallpaper changed by the user's choice. If ads or analytics are introduced later, the Play data safety declaration and this policy must be updated.
 
