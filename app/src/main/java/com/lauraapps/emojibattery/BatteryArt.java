@@ -76,7 +76,7 @@ public final class BatteryArt {
         c.drawText(value,284,197,stroke(a(ink,95),7));
         c.drawText(value,284,197,number);
         // Original mascot overlaps battery: body and expressive paws.
-        drawCreature(c,t,level,charging,body,ink);
+        drawCreature(c,t%6,level,charging,body,ink);
         // Charging sparks are visible only while connected to power.
         if(charging){star(c,356,79,14,0xFFFFBC30);star(c,381,57,7,0xFFFE8A4D);}
     }
