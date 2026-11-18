@@ -1,8 +1,10 @@
-# Emoji Battery: DIY Widgets — v1.6.0
+# Emoji Battery: DIY Widgets — v1.6.1
 
 LauraApps native Android. Target SDK 36, minimum SDK 26. Two languages: English and Spanish. No background network access, tracking or unnecessary permissions.
 
 ## Features
+- New optional adaptive mascot mode: different original character for low / medium / high battery and while charging. Users can switch back to a fixed favorite. The gallery changes the mode to fixed when a mascot is selected. Battery levels refresh under Android's normal widget timing, not continuously.
+
 - Twelve originally generated glossy mascot characters, 24 design variants, 1024×768 pixel atlas checked into source.
 - Battery percentage and charging status from Android APIs. Battery colors adapt to level and previews remain distinctly labeled.
 - Home-screen widget with automatic Android scheduled refresh, battery charging events and immediate refresh while app is visible. Widgets are not continuous animations.
