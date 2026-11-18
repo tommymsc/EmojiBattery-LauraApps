@@ -119,6 +119,7 @@ public final class MainActivity extends Activity {
         drawHeader();
         drawHero();
         drawMenu();
+        drawModeSelector();
         drawScreenTools();
         drawGallery();
         drawCustomize();
@@ -193,6 +194,28 @@ public final class MainActivity extends Activity {
         area.addView(apply,lp(-1,52,10));
         apply.setOnClickListener(v->applyExisting());
     }
+    private void drawModeSelector(){
+        LinearLayout panel=col();
+        panel.setPadding(dp(14),dp(13),dp(14),dp(15));
+        panel.setBackground(gradient(new int[]{0xFF243578,0xFF543B9C},20,0xFF89B5FF));
+        root.addView(panel,lp(-1,-2,17));
+        panel.addView(text(getString(R.string.mode_heading),18,WHITE,true));
+        boolean auto=ThemeCatalog.isAuto(this);
+        TextView favorite=action((auto?"○  ":"✓  ")+getString(R.string.mode_fixed),!auto,0);
+        favorite.setOnClickListener(v->setMascotMode(false));
+        panel.addView(favorite,lp(-1,50,12));
+        TextView automatic=action((auto?"✓  ":"○  ")+getString(R.string.mode_auto),auto,0);
+        automatic.setOnClickListener(v->setMascotMode(true));
+        panel.addView(automatic,lp(-1,50,9));
+        panel.addView(text(getString(auto?R.string.mode_auto_desc:R.string.mode_fixed_desc),
+            12,0xFFEBE5FF,false),lp(-1,-2,11));
+    }
+    private void setMascotMode(boolean auto){
+        if(ThemeCatalog.isAuto(this)==auto)return;
+        ThemeCatalog.setAuto(this,auto);
+        BatteryWidgetProvider.refresh(this);
+        build();
+    }
     private void drawScreenTools(){
         LinearLayout panel=col();
         panel.setPadding(dp(14),dp(14),dp(14),dp(16));
@@ -227,7 +250,8 @@ public final class MainActivity extends Activity {
             .setNegativeButton(android.R.string.cancel,null)
             .setPositiveButton(R.string.apply_wallpaper,(dialog,which)->{
                 try{
-                    BatteryLockWallpaper.apply(this,selection);
+                    BatteryState state=BatteryState.read(this);
+                    BatteryLockWallpaper.apply(this,ThemeCatalog.resolve(this,selection,state.percent,state.charging));
                     Toast.makeText(this,R.string.wallpaper_applied,Toast.LENGTH_LONG).show();
                 }catch(Exception ex){
                     new AlertDialog.Builder(this).setTitle(R.string.wallpaper_confirm_title)
@@ -291,6 +315,8 @@ public final class MainActivity extends Activity {
                 item.setOnClickListener(v->{
                     selection=index;
                     ThemeCatalog.save(this,index);
+                    ThemeCatalog.setAuto(this,false);
+                    BatteryWidgetProvider.refresh(this);
                     refreshChoice();
                     Toast.makeText(this,getString(R.string.style_saved),Toast.LENGTH_SHORT).show();
                 });
@@ -362,7 +388,8 @@ public final class MainActivity extends Activity {
         BatteryState actual=BatteryState.read(this);
         int pct=previewValue==-1?actual.percent:previewValue==-2?85:previewValue;
         boolean charging=previewValue==-2||(previewValue==-1&&actual.charging);
-        heroArt.setImageBitmap(BatteryArt.draw(this,720,446,selection,pct,charging));
+        heroArt.setImageBitmap(BatteryArt.draw(this,720,446,
+            ThemeCatalog.resolve(this,selection,pct,charging),pct,charging));
         String label=previewValue==-1?getString(R.string.battery_real_label)
              :previewValue==-2?getString(R.string.charging_label)
              :getString(R.string.preview_level);
