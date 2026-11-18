@@ -35,7 +35,7 @@ public final class BatteryLockWallpaper {
             canvas.drawBitmap(mascot,null,new RectF(34,430,686,833),new Paint(3));
             Paint caption=new Paint(3);
             caption.setColor(0xFFF2E7FF);
-            caption.setTypeface(android.graphics.Typeface.create("sans-serif-medium",1));
+            caption.setTypeface(android.graphics.Typeface.create("sans-serif-medium",android.graphics.Typeface.BOLD));
             caption.setTextSize(34);
             caption.setTextAlign(Paint.Align.CENTER);
             canvas.drawText(context.getString(R.string.wallpaper_caption),360,890,caption);
