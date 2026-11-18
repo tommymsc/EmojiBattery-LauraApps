@@ -1,4 +1,4 @@
-# Emoji Battery: DIY Widgets — v1.6.1
+# Emoji Battery: DIY Widgets — v1.6.2
 
 LauraApps native Android. Target SDK 36, minimum SDK 26. Two languages: English and Spanish. No background network access, tracking or unnecessary permissions.
 
