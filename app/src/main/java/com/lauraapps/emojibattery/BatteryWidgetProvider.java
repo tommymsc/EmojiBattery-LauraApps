@@ -18,6 +18,15 @@ public class BatteryWidgetProvider extends AppWidgetProvider {
   }
   @Override public void onReceive(Context c,Intent i){super.onReceive(c,i);String a=i.getAction();if(Intent.ACTION_POWER_CONNECTED.equals(a)||Intent.ACTION_POWER_DISCONNECTED.equals(a))refresh(c);}
   @Override public void onAppWidgetOptionsChanged(Context c,AppWidgetManager am,int id,Bundle b){super.onAppWidgetOptionsChanged(c,am,id,b);updateOne(c,am,id);}
+  public static void applyToAll(Context c){
+    AppWidgetManager manager=AppWidgetManager.getInstance(c);
+    int[] ids=manager.getAppWidgetIds(new ComponentName(c,BatteryWidgetProvider.class));
+    SharedPreferences.Editor editor=c.getSharedPreferences("widget_themes",0).edit();
+    int selected=ThemeCatalog.load(c);
+    for(int id:ids)editor.putInt("theme_"+id,selected);
+    editor.apply();
+    refresh(c);
+  }
   public static void refresh(Context c){AppWidgetManager am=AppWidgetManager.getInstance(c);int[] ids=am.getAppWidgetIds(new ComponentName(c,BatteryWidgetProvider.class));for(int id:ids)updateOne(c,am,id);}
   private static void updateOne(Context c,AppWidgetManager am,int id){
     Bundle opts=am.getAppWidgetOptions(id);float d=c.getResources().getDisplayMetrics().density;

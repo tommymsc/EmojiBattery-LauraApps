@@ -73,6 +73,12 @@ public final class MainActivity extends Activity {
     quick.setBackground(gradient(0xFF7260F0,0xFFFF6AA8,20));
     quick.setOnClickListener(v->pin());
     root.addView(quick,lp(-1,59,16));
+    Button update=new Button(this);
+    update.setAllCaps(false);update.setTextSize(14);update.setTextColor(purple);
+    update.setText(getString(R.string.apply_existing));
+    update.setBackground(bg(0xFFEAE2FF,17));
+    update.setOnClickListener(v->{BatteryWidgetProvider.applyToAll(this);Toast.makeText(this,R.string.applied_existing,Toast.LENGTH_SHORT).show();});
+    root.addView(update,lp(-1,48,8));
     root.addView(text(getString(R.string.choose_theme),23,ink,true),lp(-1,-2,26));
     LinearLayout filters=new LinearLayout(this);filters.setOrientation(LinearLayout.HORIZONTAL);
     root.addView(filters,lp(-1,46,10));

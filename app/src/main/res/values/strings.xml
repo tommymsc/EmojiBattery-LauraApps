@@ -8,7 +8,7 @@
 <string name="theme_peach2">Peach Axolotl</string><string name="theme_lavender2">Dream Dragon</string><string name="theme_mint2">Mint Frog</string><string name="theme_dog2">Rose Pup</string><string name="theme_penguin2">Ice Penguin</string><string name="theme_firefly2">Night Firefly</string>
 <string name="add_widget">Add widget to home screen</string><string name="widget_help">Long-press your home screen and choose Widgets if automatic pinning is unavailable.</string>
 <string name="pin_requested">Check your home screen to add the widget.</string><string name="manual_pin">Long-press your home screen, select Widgets, and find Emoji Battery.</string>
-<string name="charging">Charging</string><string name="battery_level">Battery level</string><string name="unknown">Battery unavailable</string><string name="style_saved">Mascot saved!</string>
+<string name="charging">Charging</string><string name="battery_level">Battery level</string><string name="unknown">Battery unavailable</string><string name="style_saved">Mascot selected. Tap Add widget.</string>
 <string name="privacy_title">Private by design</string><string name="privacy_info">Battery information stays on your phone. No accounts, ads or unnecessary permissions.</string>
 <string name="share">Share app</string><string name="share_message">Meet your battery buddies! Emoji Battery: DIY Widgets</string>
 <string name="preview_levels">Try different battery levels</string><string name="preview_hint">Preview only: your real widget always shows your device battery.</string>
@@ -38,4 +38,5 @@
 <string name="mascot_22">Rainbow Unicorn</string>
 <string name="mascot_23">Galaxy Astronaut</string>
 <string name="collection_all">All 24</string><string name="collection_original">Originals</string><string name="collection_pastel">Pastel</string>
-</resources>
+<string name="apply_existing">Apply this design to my existing widgets</string>
+<string name="applied_existing">Installed widgets updated.</string></resources>

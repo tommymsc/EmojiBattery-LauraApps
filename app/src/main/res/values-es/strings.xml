@@ -7,7 +7,7 @@
 <string name="theme_peach2">Ajolote Melocotón</string><string name="theme_lavender2">Dragón Soñador</string><string name="theme_mint2">Rana Menta</string><string name="theme_dog2">Perrito Rosa</string><string name="theme_penguin2">Pingüino Hielo</string><string name="theme_firefly2">Luciérnaga Nocturna</string>
 <string name="add_widget">Agregar widget al inicio</string><string name="widget_help">Mantén pulsada la pantalla de inicio y selecciona Widgets si no puedes agregarlo automáticamente.</string>
 <string name="pin_requested">Revisa tu pantalla de inicio para agregar el widget.</string><string name="manual_pin">Mantén pulsado el inicio, elige Widgets y busca Emoji Battery.</string>
-<string name="charging">Cargando</string><string name="battery_level">Nivel de batería</string><string name="unknown">Batería no disponible</string><string name="style_saved">¡Mascota guardada!</string>
+<string name="charging">Cargando</string><string name="battery_level">Nivel de batería</string><string name="unknown">Batería no disponible</string><string name="style_saved">Mascota elegida. Toca Agregar widget.</string>
 <string name="privacy_title">Privacidad desde el diseño</string><string name="privacy_info">Los datos de batería permanecen en tu teléfono. Sin cuentas, anuncios ni permisos innecesarios.</string>
 <string name="share">Compartir app</string><string name="share_message">¡Conoce a tus mascotas de batería! Emoji Battery: DIY Widgets</string>
 <string name="preview_levels">Prueba distintos niveles de batería</string><string name="preview_hint">Solo vista previa: el widget real siempre muestra la batería de tu dispositivo.</string>
@@ -37,4 +37,5 @@
 <string name="mascot_22">Unicornio Arcoíris</string>
 <string name="mascot_23">Astronauta Galaxia</string>
 <string name="collection_all">Todos</string><string name="collection_original">Originales</string><string name="collection_pastel">Pastel</string>
-</resources>
+<string name="apply_existing">Usar este diseño en los widgets instalados</string>
+<string name="applied_existing">Widgets instalados actualizados.</string></resources>

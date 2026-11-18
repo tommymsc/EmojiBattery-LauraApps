@@ -71,11 +71,12 @@ public final class BatteryArt {
         bolt.lineTo(144,175);bolt.close();
         c.drawPath(bolt,p(0xFFFFDE62));c.drawPath(bolt,stroke(0xFFFF8B28,3));
         Paint number=p(Color.WHITE);
+        number.setShadowLayer(3,0,3,a(ink,180));
         number.setTypeface(Typeface.create("sans-serif-black",Typeface.BOLD));
         number.setTextSize(level==100?69:74);
         number.setTextAlign(Paint.Align.CENTER);
         String value=level<0?"--%":level+"%";
-        c.drawText(value,284,197,stroke(a(ink,95),7));
+        c.drawText(value,284,197,stroke(a(ink,200),7));
         c.drawText(value,284,197,number);
         // Original mascot overlaps battery: body and expressive paws.
         drawCreature(c,ThemeCatalog.species(t),t,level,charging,body,ink);

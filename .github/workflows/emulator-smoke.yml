@@ -1,0 +1,43 @@
+name: Android emulator smoke test
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Build debug APK
+        run: gradle --no-daemon :app:assembleDebug
+      - name: Boot Android emulator and launch
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-boot-timeout: 600
+          script: |
+            adb install -r app/build/outputs/apk/debug/app-debug.apk
+            adb shell am start -W -n com.lauraapps.emojibattery/.MainActivity
+            sleep 5
+            adb shell pidof com.lauraapps.emojibattery
+            adb exec-out screencap -p > emulator-screen.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Emulator-Screenshot
+          path: emulator-screen.png
+          if-no-files-found: ignore
