@@ -78,4 +78,10 @@
 <string name="privacy_read">Read privacy policy</string>
 <string name="privacy_full_title">Emoji Battery — Privacy Policy</string>
 <string name="privacy_full_body">Developer: LauraApps.\n\nEmoji Battery reads your device battery level and charging state using Android system APIs. This information is processed only on your device to display widgets, previews, and the optional Android screensaver.\n\nYour selected design is stored locally in app preferences. If you choose to apply a lock-screen wallpaper, the app creates a static image locally and asks for your confirmation before replacing the existing wallpaper.\n\nThis version does not require an account, access the internet, use advertising or analytics SDKs, or transmit personal information to a server. There is no sale or sharing of user data. Local preferences can be removed by clearing app data or uninstalling the app.\n\nThe Android system controls screensaver availability and widget refresh timing. Emoji Battery does not bypass the device lock screen.\n\nPrivacy contact: lauraarias206@gmail.com\nLast updated: November 18, 2026.</string>
+<string name="mode_heading">Choose how your buddy changes</string>
+<string name="mode_fixed">Favorite mascot</string>
+<string name="mode_auto">Automatic with battery</string>
+<string name="mode_fixed_desc">Keep your chosen mascot; its face and colors react to battery level.</string>
+<string name="mode_auto_desc">Changes mascots when battery levels shift. Widgets refresh at Android's scheduled intervals and power events.</string>
+<string name="mode_now_active">Active mode</string>
 </resources>
