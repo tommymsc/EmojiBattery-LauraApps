@@ -29,43 +29,33 @@ jobs:
         run: gradle --no-daemon :app:testDebugUnitTest
       - name: Android lint
         run: gradle --no-daemon :app:lintDebug
-      - name: Unsigned AAB
+      - name: Build unsigned release AAB
         run: gradle --no-daemon :app:bundleRelease
       - uses: actions/upload-artifact@v4
         with:
-          name: EmojiBattery-UNSIGNED-AAB
+          name: EmojiBattery-v1.6.0-UNSIGNED-AAB-NOT-FOR-PLAY
           path: app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
       - name: Build installable debug APK
         run: gradle --no-daemon :app:assembleDebug
-      - name: Verify generated APK
+      - name: Verify packaged permissions and native libraries
         run: |
-          test -s app/build/outputs/apk/debug/app-debug.apk
-          sha256sum app/build/outputs/apk/debug/app-debug.apk
-      - name: Confirm no native libraries or unapproved permissions
-        run: |
+          set -eu
           APK=app/build/outputs/apk/debug/app-debug.apk
-          if unzip -Z1 "$APK" | grep -E '^lib/.*\\.so
-        run: |
-          "${ANDROID_HOME}/build-tools/35.0.0/apksigner" verify --verbose app/build/outputs/apk/debug/app-debug.apk
-          "${ANDROID_HOME}/build-tools/35.0.0/aapt" dump badging app/build/outputs/apk/debug/app-debug.apk | grep -E "package: name='com.lauraapps.emojibattery' versionCode='7'"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: EmojiBattery-v1.6.0-HD-LOCKSCREEN-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
-          retention-days: 30
-; then
-            echo "::error::Native libraries detected: review 16 KB page-size compatibility."
+          test -s "$APK"
+          sha256sum "$APK"
+          if unzip -Z1 "$APK" | grep -E '^lib/.*[.]so$'; then
+            echo "::error::Native libraries detected: check 16 KB page-size compatibility."
             exit 1
           fi
           PERMISSIONS=$("${ANDROID_HOME}/build-tools/35.0.0/aapt" dump permissions "$APK")
           echo "$PERMISSIONS"
           echo "$PERMISSIONS" | grep -q "android.permission.SET_WALLPAPER"
           if echo "$PERMISSIONS" | grep -E 'android.permission.(INTERNET|READ_CONTACTS|QUERY_ALL_PACKAGES|SYSTEM_ALERT_WINDOW|MANAGE_EXTERNAL_STORAGE)'; then
-            echo "::error::An unexpected permission was bundled."
+            echo "::error::Unexpected packaged permission"
             exit 1
           fi
-      - name: Verify APK signing and version
+      - name: Verify APK signature and version
         run: |
           "${ANDROID_HOME}/build-tools/35.0.0/apksigner" verify --verbose app/build/outputs/apk/debug/app-debug.apk
           "${ANDROID_HOME}/build-tools/35.0.0/aapt" dump badging app/build/outputs/apk/debug/app-debug.apk | grep -E "package: name='com.lauraapps.emojibattery' versionCode='7'"
