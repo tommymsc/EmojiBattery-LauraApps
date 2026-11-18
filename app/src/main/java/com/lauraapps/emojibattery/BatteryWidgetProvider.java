@@ -16,7 +16,7 @@ public class BatteryWidgetProvider extends AppWidgetProvider {
     e.apply();
     super.onDeleted(c,ids);
   }
-  @Override public void onReceive(Context c,Intent i){super.onReceive(c,i);String a=i.getAction();if(Intent.ACTION_POWER_CONNECTED.equals(a)||Intent.ACTION_POWER_DISCONNECTED.equals(a))refresh(c);}
+  @Override public void onReceive(Context c,Intent i){super.onReceive(c,i);String a=i.getAction();if(Intent.ACTION_POWER_CONNECTED.equals(a)||Intent.ACTION_POWER_DISCONNECTED.equals(a)||Intent.ACTION_BATTERY_LOW.equals(a)||Intent.ACTION_BATTERY_OKAY.equals(a))refresh(c);}
   @Override public void onAppWidgetOptionsChanged(Context c,AppWidgetManager am,int id,Bundle b){super.onAppWidgetOptionsChanged(c,am,id,b);updateOne(c,am,id);}
   public static void applyToAll(Context c){
     AppWidgetManager manager=AppWidgetManager.getInstance(c);
@@ -38,7 +38,7 @@ public class BatteryWidgetProvider extends AppWidgetProvider {
     String key="theme_"+id;
     int style=prefs.getInt(key,-1);
     if(style<0){style=ThemeCatalog.load(c);prefs.edit().putInt(key,style).apply();}
-    rv.setImageViewBitmap(R.id.widget_image,BatteryArt.draw(c,w,h,style,b.percent,b.charging));
+    rv.setImageViewBitmap(R.id.widget_image,BatteryArt.draw(c,w,h,ThemeCatalog.resolve(c,style,b.percent,b.charging),b.percent,b.charging));
     Intent launch=new Intent(c,MainActivity.class);launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
     PendingIntent pi=PendingIntent.getActivity(c,0,launch,PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
     rv.setOnClickPendingIntent(R.id.widget_image,pi);am.updateAppWidget(id,rv);
