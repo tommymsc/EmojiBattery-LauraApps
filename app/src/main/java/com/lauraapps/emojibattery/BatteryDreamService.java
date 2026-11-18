@@ -88,7 +88,7 @@ public final class BatteryDreamService extends DreamService {
     private void render(){
         if(art==null)return;
         BatteryState state=BatteryState.read(this);
-        art.setImageBitmap(BatteryArt.draw(this,720,446,ThemeCatalog.load(this),
+        art.setImageBitmap(BatteryArt.draw(this,720,446,ThemeCatalog.resolve(this,ThemeCatalog.load(this),state.percent,state.charging),
             state.percent,state.charging));
         status.setText(state.percent<0?getString(R.string.unknown):
             (state.charging?getString(R.string.charging):getString(R.string.battery_level))
