@@ -14,3 +14,12 @@ LauraApps native Android. Target SDK 36, minimum SDK 26. Two languages: English 
 GitHub Actions runs unit tests, resource parity, HD atlas hash checks, lint and debug APK compilation and signature verification. Manual testing still needed on physical devices from different Android vendors, especially the screensaver settings entry and wallpaper policy support.
 
 **Play Store**: AAB needs the official private upload signing key and Play Console testing and policy declarations. Signed debug APKs are for local test only.
+
+## Google Play compliance review (2026-11-18)
+- Android 16 (API 36) target satisfies the current mobile submission target requirement; minimum API 26 is an app compatibility choice, not a Play minimum.
+- Only the `SET_WALLPAPER` manifest permission is requested. The screensaver service uses the system-required `BIND_DREAM_SERVICE` service protection and is opt-in through Android Settings.
+- Full English/Spanish privacy policy is readable inside the app; a static web version is stored in `docs/privacy.html`. **Enable GitHub Pages** with main branch /docs (or host this HTML at another verified public URL), then enter that verified URL in Play Console. Do not submit an unverified URL.
+- Google Play Data safety: validate the actual signed AAB and all bundled libraries. This source version has no Internet permission, advertising SDK, analytics SDK or user data transmission, but declarations must reflect the real published build.
+- Build checks reject unexpected permissions and native `.so` libraries so that 16 KB device compatibility cannot silently regress. If native libraries are intentionally added in the future, update tests and verify 16 KB support.
+- Do not claim live/animated battery information on the system lock screen; only the home-screen widget and active Android screensaver update. Lock-screen wallpaper is static.
+- Review target audience, content rating, store listing screenshots, legal ownership of assets, privacy contact and developer/trader profile in Play Console. Review in physical Android 8–16 devices and App Bundle Explorer before submitting.
