@@ -10,9 +10,63 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
+import android.graphics.BitmapFactory;
+import android.graphics.Rect;
+import android.util.Base64;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 public final class BatteryArt {
     private BatteryArt(){}
+    private static volatile Bitmap atlas;
+    private static boolean atlasAttempted=false;
+    private static synchronized Bitmap atlas(Context c){
+        if(atlasAttempted)return atlas;
+        atlasAttempted=true;
+        try(InputStream in=c.getAssets().open("mascot_atlas.b64")){
+            ByteArrayOutputStream buf=new ByteArrayOutputStream();
+            byte[] a=new byte[4096];int n;
+            while((n=in.read(a))!=-1)buf.write(a,0,n);
+            byte[] raw=Base64.decode(buf.toByteArray(),Base64.DEFAULT);
+            atlas=BitmapFactory.decodeByteArray(raw,0,raw.length);
+            if(atlas==null || atlas.getWidth()%4!=0 || atlas.getHeight()%3!=0) atlas=null;
+        }catch(Exception ignored){atlas=null;}
+        return atlas;
+    }
+    private static void illustrated(Canvas c,Bitmap sheet,int theme,int level,boolean charging){
+        int kind=ThemeCatalog.species(theme);
+        int col=kind%4,row=kind/4,w=sheet.getWidth()/4,h=sheet.getHeight()/3;
+        int gl=charging?0xFF5BE5FD:level<=20?0xFFFF5D91:level<=45?0xFFFFB353:level<80?0xFF559FFF:0xFF55EBA2;
+        Paint back=p(0xFF101448);
+        back.setShader(new LinearGradient(0,0,420,260,new int[]{0xFF10163E,0xFF2F257E,0xFF732DA1},null,Shader.TileMode.CLAMP));
+        c.drawRoundRect(new RectF(0,0,420,260),26,26,back);
+        oval(c,-70,145,140,330,a(0xFFFF5BC0,70));
+        oval(c,150,-95,490,165,a(0xFF55C4FA,60));
+        star(c,36,42,10,0xFFFFCF55);star(c,339,44,7,0xFFF9A3FF);
+        star(c,388,110,12,0xFFFFD96F);star(c,24,195,7,0xFF76DFFF);
+        star(c,235,89,7,Color.WHITE);star(c,287,28,5,0xFFFF9AEC);
+        Paint glow=p(a(gl,90));glow.setShadowLayer(18,0,0,gl);
+        c.drawRoundRect(new RectF(16,13,257,250),22,22,glow);
+        Paint sprite=p(Color.WHITE);
+        sprite.setFilterBitmap(true);
+        Rect src=new Rect(col*w,row*h,(col+1)*w,(row+1)*h);
+        c.drawBitmap(sheet,src,new RectF(16,12,259,253),sprite);
+        Paint label=p(0xFFE2DAFF);label.setTextSize(15);label.setTypeface(Typeface.DEFAULT_BOLD);
+        label.setTextAlign(Paint.Align.CENTER);
+        c.drawText("BATTERY",337,90,label);
+        int levelText=Math.max(0,Math.min(100,level));
+        String value=level<0?"--%":level+"%";
+        Paint number=p(Color.WHITE);number.setTypeface(Typeface.create("sans-serif-black",Typeface.BOLD));
+        number.setTextSize(value.length()>3?57:68);number.setTextAlign(Paint.Align.CENTER);
+        number.setShadowLayer(8,0,4,0xFF11123C);
+        c.drawText(value,334,163,stroke(0xFF35216E,5));
+        c.drawText(value,334,163,number);
+        rr(c,265,189,404,205,8,0xFF4A3788);
+        if(level>0)rr(c,268,192,268+Math.min(133,133*levelText/100f),202,6,gl);
+        Paint state=p(0xFFFFFFFF);state.setTextAlign(Paint.Align.CENTER);
+        state.setTextSize(13);
+        c.drawText(charging?"⚡ CHARGING":level<0?"OFFLINE":level<=20?"LOW POWER":level>=90?"FULL OF JOY":"LIVE LEVEL",335,231,state);
+    }
     private static Paint p(int c){Paint x=new Paint(3);x.setColor(c);return x;}
     private static Paint stroke(int c,float width){Paint x=p(c);x.setStyle(Paint.Style.STROKE);x.setStrokeWidth(width);x.setStrokeCap(Paint.Cap.ROUND);x.setStrokeJoin(Paint.Join.ROUND);return x;}
     private static int a(int c,int alpha){return (c & 0xffffff) | (alpha<<24);}
@@ -31,7 +85,9 @@ public final class BatteryArt {
         c.drawColor(Color.TRANSPARENT);
         c.save();
         c.scale(w/420f,h/260f);
-        paint(c,theme,level,charging);
+        Bitmap art=atlas(context);
+        if(art!=null)illustrated(c,art,theme,level,charging);
+        else paint(c,theme,level,charging);
         c.restore();
         return bitmap;
     }
