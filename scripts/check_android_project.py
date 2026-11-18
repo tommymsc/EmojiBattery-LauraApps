@@ -18,11 +18,13 @@ assert '.BatteryDreamService' in manifest
 assert 'MANAGE_EXTERNAL_STORAGE' not in manifest and 'SYSTEM_ALERT_WINDOW' not in manifest
 gradle=(root/'app/build.gradle').read_text()
 assert re.search(r'targetSdk\s+36',gradle)
-assert re.search(r'versionCode\s+7',gradle)
+assert re.search(r'versionCode\s+8',gradle)
 source=(app/'java/com/lauraapps/emojibattery/BatteryArt.java').read_text()
 assert 'ThemeCatalog.species(t)' in source
 catalog=(app/'java/com/lauraapps/emojibattery/ThemeCatalog.java').read_text()
 assert 'COUNT=24' in catalog and 'SPECIES=12' in catalog
+assert 'auto_mode' in catalog and 'automaticTheme' in catalog
+assert 'mode_heading' in sets[0] and 'mode_fixed' in sets[0] and 'mode_auto' in sets[0]
 # Protect the minimal-permissions design and the in-app privacy notice.
 assert 'android.permission.INTERNET' not in manifest
 for forbidden in ('READ_CONTACTS','ACCESS_FINE_LOCATION','QUERY_ALL_PACKAGES',
