@@ -1,12 +1,7 @@
 # Emoji Battery: DIY Widgets — Privacy policy
-Last updated: November 18, 2026
 
-Developer: LauraApps
+Last updated: November 18, 2026. Developer: LauraApps.
 
-Emoji Battery: DIY Widgets reads the device battery percentage and charging status locally to show them in its Android widget and in-app preview. The application stores a selected visual style locally in device preferences.
+English: Emoji Battery: DIY Widgets displays the device battery percentage and charging status locally in home-screen widgets, its own interface and an optional Android screensaver chosen in the system settings. A user can explicitly request to set a static image as the lock-screen wallpaper; Android's normal SET_WALLPAPER permission is used for that action only. It never reads the user's existing wallpaper. Selected visual preferences are stored locally. Version 1.6.0 does not collect, transmit, sell or share personal data, does not request internet, contacts, camera, microphone, location, storage or accessibility access and does not contain advertising or analytics SDKs. The Android system controls screensaver availability; this app does not bypass the lock screen. Uninstalling or clearing app data deletes local app preferences but does not restore any wallpaper changed by the user's choice. If ads or analytics are introduced later, the Play data safety declaration and this policy must be updated.
 
-Version 1.0.0 does not request Internet, location, storage, contacts, microphone or camera permissions. It does not transmit personal information to servers and contains no third-party advertising SDK or analytics SDK. Android may process diagnostic data independently of this application.
-
-No account is required. Users can remove stored preferences by clearing the app data or uninstalling the app.
-
-If advertising or analytics services are added later, this policy and the Google Play Data safety declarations must be updated before release.
+Español: Emoji Battery: DIY Widgets muestra localmente el porcentaje y estado de carga en widgets, dentro de la aplicación y en un salvapantallas opcional que el usuario selecciona en los ajustes de Android. El usuario puede solicitar expresamente colocar una imagen estática como fondo de bloqueo; solo para esa acción se utiliza el permiso normal de Android SET_WALLPAPER. No se lee el fondo de pantalla existente. Las preferencias visuales se guardan únicamente en el dispositivo. La versión 1.6.0 no recopila, transmite, vende ni comparte datos personales, no requiere internet, contactos, cámara, micrófono, ubicación, almacenamiento ni accesibilidad, y no contiene SDK de anuncios o analíticas. Android controla la disponibilidad del salvapantallas; esta app no evade la pantalla de bloqueo. Al borrar datos o desinstalar se eliminan las preferencias locales, pero no se restaura automáticamente un fondo cambiado voluntariamente. Si se incorporan anuncios o analíticas, actualizaremos esta política y la declaración de seguridad de datos.

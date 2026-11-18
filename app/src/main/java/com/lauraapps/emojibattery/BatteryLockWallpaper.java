@@ -15,7 +15,7 @@ public final class BatteryLockWallpaper {
     private BatteryLockWallpaper(){}
     public static void apply(Context context,int theme) throws IOException {
         WallpaperManager wm=WallpaperManager.getInstance(context);
-        if(!wm.isWallpaperSupported())throw new IOException("Wallpaper not supported");
+        if(android.os.Build.VERSION.SDK_INT>=27 && !wm.isWallpaperSupported())throw new IOException("Wallpaper not supported");
         final int w=720,h=1280;
         Bitmap image=Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
         try{

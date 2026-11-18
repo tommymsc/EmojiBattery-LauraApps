@@ -64,7 +64,7 @@
 <string name="steps_choose">Choose</string><string name="steps_preview">Preview</string><string name="steps_add">Add</string><string name="dream_name">Emoji Battery screensaver</string>
 <string name="dream_heading">YOUR BATTERY BUDDY</string>
 <string name="screen_tools_title">✨ On your screen</string>
-<string name="screen_tools_desc">Use your mascot in Android's optional screensaver or as a still lock-screen wallpaper.</string>
+<string name="screen_tools_desc">Use your mascot in the optional Android screensaver or as a still lock-screen wallpaper.</string>
 <string name="open_dream_settings">Set up charging screensaver</string>
 <string name="set_lock_wallpaper">Set lock-screen wallpaper</string>
 <string name="lock_static_notice">Lock wallpaper is a static snapshot. The Android screensaver shows the current battery while active; availability depends on your phone.</string>

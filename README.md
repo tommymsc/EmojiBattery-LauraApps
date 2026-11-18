@@ -1,11 +1,16 @@
-# Emoji Battery: DIY Widgets
+# Emoji Battery: DIY Widgets — v1.6.0
 
-LauraApps Android, Java 17, target API 36, English and Spanish.
+LauraApps native Android. Target SDK 36, minimum SDK 26. Two languages: English and Spanish. No background network access, tracking or unnecessary permissions.
 
-Version 1.3.0 contains twelve original mascot species and two color variants per species, giving 24 selectable designs. Each widget uses the real battery level and changes its illustrated expression at low, medium, high or charging states. The app includes category filters, preview levels, a quick Add Widget button and local-only theme storage.
+## Features
+- Twelve originally generated glossy mascot characters, 24 design variants, 1024×768 pixel atlas checked into source.
+- Battery percentage and charging status from Android APIs. Battery colors adapt to level and previews remain distinctly labeled.
+- Home-screen widget with automatic Android scheduled refresh, battery charging events and immediate refresh while app is visible. Widgets are not continuous animations.
+- Optional Android screensaver via DreamService; user must select it in Android Settings and Android decides when it runs. While active, it updates the displayed battery periodically and animates gently without acquiring wake locks.
+- Optional **static** lock-screen wallpaper selected with explicit confirmation. Changing the lock-screen background requires Android's normal SET_WALLPAPER permission. The image is a snapshot and does not update automatically. This is not an overlay, lock-screen bypass or system battery indicator replacement.
+- All changes process images and battery status on device.
 
-Existing home-screen widgets retain their selected design independently. To add another design, choose it in the gallery then tap Add Widget beside the preview. No accounts, Internet, ads, analytics or invasive permissions are required.
+## Test
+GitHub Actions runs unit tests, resource parity, HD atlas hash checks, lint and debug APK compilation and signature verification. Manual testing still needed on physical devices from different Android vendors, especially the screensaver settings entry and wallpaper policy support.
 
-Home-screen widgets update on Android's scheduled intervals (30 minutes or later, at the system's discretion), on supported charging events, and when the app is opened. The app itself listens to battery events while visible. No continuously animated status-bar replacement is claimed.
-
-The Android CI workflow runs unit tests, Android Lint, resource validation, builds an unsigned AAB and a debug APK, and checks APK signature/package metadata. The debug APK is for device testing only. Play releases require private upload-key secrets; never commit a keystore.
+**Play Store**: AAB needs the official private upload signing key and Play Console testing and policy declarations. Signed debug APKs are for local test only.
