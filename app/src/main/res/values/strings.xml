@@ -82,6 +82,6 @@
 <string name="mode_fixed">Favorite mascot</string>
 <string name="mode_auto">Automatic with battery</string>
 <string name="mode_fixed_desc">Keep your chosen mascot; its face and colors react to battery level.</string>
-<string name="mode_auto_desc">Changes mascots when battery levels shift. Widgets refresh at Android's scheduled intervals and power events.</string>
+<string name="mode_auto_desc">Changes mascots when battery levels shift. Widgets refresh on the schedule controlled by Android and on power events.</string>
 <string name="mode_now_active">Active mode</string>
 </resources>
