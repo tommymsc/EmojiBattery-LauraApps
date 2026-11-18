@@ -44,10 +44,10 @@ jobs:
       - name: Verify APK signing and version
         run: |
           "${ANDROID_HOME}/build-tools/35.0.0/apksigner" verify --verbose app/build/outputs/apk/debug/app-debug.apk
-          "${ANDROID_HOME}/build-tools/35.0.0/aapt" dump badging app/build/outputs/apk/debug/app-debug.apk | grep -E "package: name='com.lauraapps.emojibattery' versionCode='4'"
+          "${ANDROID_HOME}/build-tools/35.0.0/aapt" dump badging app/build/outputs/apk/debug/app-debug.apk | grep -E "package: name='com.lauraapps.emojibattery' versionCode='5'"
       - uses: actions/upload-artifact@v4
         with:
-          name: EmojiBattery-v1.3.0-DEBUG-APK
+          name: EmojiBattery-v1.4.0-DEBUG-APK
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30

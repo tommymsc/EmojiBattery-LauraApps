@@ -13,7 +13,7 @@ assert all('mascot_'+str(i) in sets[0] for i in range(24))
 assert '<uses-permission' not in (app/'AndroidManifest.xml').read_text()
 gradle=(root/'app/build.gradle').read_text()
 assert re.search(r'targetSdk\s+36',gradle)
-assert re.search(r'versionCode\s+4',gradle)
+assert re.search(r'versionCode\s+5',gradle)
 source=(app/'java/com/lauraapps/emojibattery/BatteryArt.java').read_text()
 assert 'ThemeCatalog.species(t)' in source
 catalog=(app/'java/com/lauraapps/emojibattery/ThemeCatalog.java').read_text()
