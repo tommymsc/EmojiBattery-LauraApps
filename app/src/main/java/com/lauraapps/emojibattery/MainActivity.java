@@ -341,6 +341,13 @@ public final class MainActivity extends Activity {
         root.addView(card,lp(-1,-2,18));
         card.addView(text("🔒  "+getString(R.string.privacy_title),15,WHITE,true));
         card.addView(text(getString(R.string.privacy_info),12,MUTED,false),lp(-1,-2,6));
+        TextView privacy=action(getString(R.string.privacy_read),false,0);
+        privacy.setOnClickListener(v->new AlertDialog.Builder(this)
+            .setTitle(R.string.privacy_full_title)
+            .setMessage(R.string.privacy_full_body)
+            .setPositiveButton(android.R.string.ok,null)
+            .show());
+        card.addView(privacy,lp(-1,50,12));
         TextView share=text("♡  "+getString(R.string.share_design)+"   ↗",15,0xFFFFC4EB,true);
         share.setGravity(Gravity.CENTER);
         root.addView(share,lp(-1,52,8));
