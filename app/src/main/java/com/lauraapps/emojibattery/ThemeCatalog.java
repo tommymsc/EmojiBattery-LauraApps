@@ -11,5 +11,10 @@ public final class ThemeCatalog {
   public static int clamp(int v){return Math.max(0,Math.min(COUNT-1,v));}
   public static int load(Context c){return clamp(c.getSharedPreferences("style",0).getInt("theme",0));}
   public static void save(Context c,int v){c.getSharedPreferences("style",0).edit().putInt("theme",clamp(v)).apply();}
+  public static boolean isAuto(Context c){return c.getSharedPreferences("style",0).getBoolean("auto_mode",false);}
+  public static void setAuto(Context c,boolean enabled){c.getSharedPreferences("style",0).edit().putBoolean("auto_mode",enabled).apply();}
+  public static int resolve(Context c,int fixedTheme,int level,boolean charging){
+    return isAuto(c)?BatteryMath.automaticTheme(level,charging,fixedTheme):clamp(fixedTheme);
+  }
   public static int species(int theme){return new int[]{8,6,7,3,5,11,0,9,2,1,4,10}[clamp(theme)%SPECIES];}
 }
