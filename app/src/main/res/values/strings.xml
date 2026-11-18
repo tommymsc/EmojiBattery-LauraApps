@@ -1,19 +1,23 @@
 <resources>
 <string name="app_name">Emoji Battery: DIY Widgets</string>
-<string name="widget_title">Emoji battery widget</string>
-<string name="headline">Your battery, your style ✨</string>
-<string name="subtitle">Choose a cute theme and add a live battery widget to your home screen.</string>
-<string name="live_preview">LIVE BATTERY PREVIEW</string>
-<string name="choose_theme">Choose a style</string>
-<string name="theme_pink">Peach Pop</string><string name="theme_lavender">Lavender Dream</string><string name="theme_mint">Mint Glow</string><string name="theme_dark">Midnight</string>
+<string name="widget_title">Cute battery mascot widget</string>
+<string name="headline">Meet your battery buddies ✨</string>
+<string name="subtitle">Original little characters that react to your real battery level. Choose your favorite!</string>
+<string name="live_preview">YOUR BATTERY BUDDY</string>
+<string name="choose_theme">Choose your mascot</string>
+<string name="theme_pink">Pip the Axolotl</string><string name="theme_lavender">Mochi Dragon</string><string name="theme_mint">Lulu Frog</string><string name="theme_dark">Biscuit Pup</string><string name="theme_sun">Pingo Penguin</string><string name="theme_star">Nova Firefly</string>
 <string name="add_widget">Add widget to home screen</string>
-<string name="widget_help">If your launcher cannot pin widgets, long-press your home screen and choose Widgets.</string>
+<string name="widget_help">Hold your home screen and choose Widgets if automatic pinning is unavailable.</string>
 <string name="pin_requested">Check your home screen to add the widget.</string>
-<string name="manual_pin">Long-press the home screen, tap Widgets and select Emoji Battery.</string>
+<string name="manual_pin">Long-press your home screen, select Widgets, and find Emoji Battery.</string>
 <string name="charging">Charging</string><string name="battery_level">Battery level</string><string name="unknown">Battery unavailable</string>
-<string name="style_saved">Style saved</string>
+<string name="style_saved">Mascot saved!</string>
 <string name="privacy_title">Private by design</string>
-<string name="privacy_info">Battery information is processed on your phone. No account, internet, location, or file access required.</string>
-<string name="share">Share app</string>
-<string name="share_message">Check out Emoji Battery: DIY Widgets!</string>
+<string name="privacy_info">Battery information stays on your phone. No accounts, ads or unnecessary permissions.</string>
+<string name="share">Share app</string><string name="share_message">Meet your battery buddies! Emoji Battery: DIY Widgets</string>
+<string name="preview_levels">Try different battery levels</string>
+<string name="preview_hint">Preview only: your real widget always shows your device battery.</string>
+<string name="preview_real">REAL</string>
+<string name="preview_charging">CHARGING</string>
+<string name="preview_percentage">Preview: %1$d%%</string>
 </resources>
