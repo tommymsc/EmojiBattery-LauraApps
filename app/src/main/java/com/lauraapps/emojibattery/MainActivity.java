@@ -45,6 +45,7 @@ public final class MainActivity extends Activity {
     private ObjectAnimator pulse;
     private boolean listening=false;
     private final ExecutorService renderWorker=Executors.newSingleThreadExecutor();
+    private final ExecutorService previewWorker=Executors.newSingleThreadExecutor();
     private final Handler uiHandler=new Handler(Looper.getMainLooper());
     private int galleryGeneration=0;
     private int previewGeneration=0;
@@ -75,6 +76,7 @@ public final class MainActivity extends Activity {
         galleryGeneration++;
         previewGeneration++;
         renderWorker.shutdownNow();
+        previewWorker.shutdownNow();
         super.onDestroy();
     }
     private int dp(float v){return (int)(v*getResources().getDisplayMetrics().density+0.5f);}
@@ -420,7 +422,7 @@ public final class MainActivity extends Activity {
         boolean charging=previewValue==-2||(previewValue==-1&&actual.charging);
         final int generation=++previewGeneration;
         final int theme=ThemeCatalog.resolve(this,selection,pct,charging);
-        renderWorker.execute(()->{
+        previewWorker.execute(()->{
             if(Thread.currentThread().isInterrupted())return;
             android.graphics.Bitmap bmp=BatteryArt.draw(getApplicationContext(),720,446,theme,pct,charging);
             uiHandler.post(()->{
