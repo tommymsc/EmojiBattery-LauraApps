@@ -8,7 +8,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.content.SharedPreferences;
 import android.widget.RemoteViews;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 public class BatteryWidgetProvider extends AppWidgetProvider {
+  private static final ExecutorService worker=Executors.newSingleThreadExecutor();
+  public static void refreshAsync(Context c){Context app=c.getApplicationContext();worker.execute(()->refresh(app));}
   @Override public void onUpdate(Context c,AppWidgetManager am,int[] ids){for(int id:ids)updateOne(c,am,id);}
   @Override public void onDeleted(Context c,int[] ids){
     SharedPreferences.Editor e=c.getSharedPreferences("widget_themes",0).edit();
@@ -25,7 +29,7 @@ public class BatteryWidgetProvider extends AppWidgetProvider {
     int selected=ThemeCatalog.load(c);
     for(int id:ids)editor.putInt("theme_"+id,selected);
     editor.apply();
-    refresh(c);
+    refreshAsync(c);
   }
   public static void refresh(Context c){AppWidgetManager am=AppWidgetManager.getInstance(c);int[] ids=am.getAppWidgetIds(new ComponentName(c,BatteryWidgetProvider.class));for(int id:ids)updateOne(c,am,id);}
   private static void updateOne(Context c,AppWidgetManager am,int id){
