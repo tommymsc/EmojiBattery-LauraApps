@@ -13,4 +13,13 @@ public final class BatteryMath {
     if(value>=85)return 3;
     return 2;
   }
+  /** A different original mascot for each battery state; no system icon changes. */
+  public static int automaticTheme(int level,boolean charging,int fallback){
+    if(level<0)return Math.max(0,Math.min(23,fallback));
+    if(charging)return 1;  // Mochi Dragon
+    if(level<=20)return 7; // Sleepy Koala
+    if(level<=45)return 9; // Panda Puff
+    if(level<80)return 6;  // Mimi Kitten
+    return 10;             // Lumi Unicorn
+  }
 }
