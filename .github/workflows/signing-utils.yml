@@ -1,0 +1,28 @@
+name: Temporary APK signing utilities
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tools:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Android build tools
+        run: |
+          "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" "build-tools;35.0.0"
+          test -f "${ANDROID_HOME}/build-tools/35.0.0/lib/apksigner.jar"
+          test -x "${ANDROID_HOME}/build-tools/35.0.0/zipalign"
+      - name: Export signing utilities
+        run: |
+          mkdir -p tools
+          cp "${ANDROID_HOME}/build-tools/35.0.0/lib/apksigner.jar" tools/
+          cp "${ANDROID_HOME}/build-tools/35.0.0/zipalign" tools/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Android-APK-Signing-Utilities
+          path: tools/
+          retention-days: 1
