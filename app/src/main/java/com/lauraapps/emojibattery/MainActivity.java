@@ -1,9 +1,14 @@
 package com.lauraapps.emojibattery;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -11,8 +16,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -20,137 +27,304 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public final class MainActivity extends Activity {
-  private final int ink=0xFF26213F, muted=0xFF76718D, purple=0xFF7B54E9, background=0xFFF9F6FF;
-  private ImageView preview;
-  private ScrollView currentScroll;
-  private int collection=0;
-  private TextView statusLabel;
-  private int previewPercent=-1; // -1 = real, -2 = charging demo
-  private final int[] names={R.string.mascot_0,R.string.mascot_1,R.string.mascot_2,R.string.mascot_3,R.string.mascot_4,R.string.mascot_5,R.string.mascot_6,R.string.mascot_7,R.string.mascot_8,R.string.mascot_9,R.string.mascot_10,R.string.mascot_11,R.string.mascot_12,R.string.mascot_13,R.string.mascot_14,R.string.mascot_15,R.string.mascot_16,R.string.mascot_17,R.string.mascot_18,R.string.mascot_19,R.string.mascot_20,R.string.mascot_21,R.string.mascot_22,R.string.mascot_23};
-  @Override public void onCreate(Bundle state){super.onCreate(state);build();}
-  private boolean batteryListening=false;
-  private final android.content.BroadcastReceiver batteryListener=new android.content.BroadcastReceiver(){
-    @Override public void onReceive(android.content.Context c,Intent i){refresh();BatteryWidgetProvider.refresh(c);}
-  };
-  @Override protected void onResume(){
-    super.onResume();
-    registerReceiver(batteryListener,new android.content.IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-    batteryListening=true;
-    refresh();BatteryWidgetProvider.refresh(this);
-  }
-  @Override protected void onPause(){
-    if(batteryListening){unregisterReceiver(batteryListener);batteryListening=false;}
-    super.onPause();
-  }
-  private int dp(float n){return (int)(n*getResources().getDisplayMetrics().density+.5f);}
-  private GradientDrawable bg(int color,int r){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(dp(r));return d;}
-  private GradientDrawable gradient(int a,int b,int r){GradientDrawable d=new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{a,b});d.setCornerRadius(dp(r));return d;}
-  private TextView text(String value,int size,int color,boolean bold){TextView t=new TextView(this);t.setText(value);t.setTextSize(size);t.setTextColor(color);if(bold)t.setTypeface(Typeface.create("sans-serif",Typeface.BOLD));return t;}
-  private LinearLayout.LayoutParams lp(int w,int h,int top){LinearLayout.LayoutParams v=new LinearLayout.LayoutParams(w<0?w:dp(w),h<0?h:dp(h));v.topMargin=dp(top);return v;}
-  private void build(){
-    getWindow().setStatusBarColor(background);getWindow().setNavigationBarColor(background);
-    ScrollView sc=new ScrollView(this);currentScroll=sc;sc.setFillViewport(true);sc.setBackgroundColor(background);
-    LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);root.setPadding(dp(19),dp(28),dp(19),dp(35));sc.addView(root);
-    setContentView(sc);
-    if(Build.VERSION.SDK_INT>=35)sc.setOnApplyWindowInsetsListener((v,i)->{
-      android.graphics.Insets z=i.getInsets(WindowInsets.Type.systemBars());root.setPadding(dp(19),dp(22)+z.top,dp(19),dp(35)+z.bottom);return i;});
-    root.addView(text("✦  LAURAAPPS   /   DIY STUDIO",12,purple,true));
-    root.addView(text(getString(R.string.headline),29,ink,true),lp(-1,-2,17));
-    root.addView(text(getString(R.string.subtitle),14,muted,false),lp(-1,-2,7));
-    LinearLayout hero=new LinearLayout(this);hero.setOrientation(LinearLayout.VERTICAL);hero.setPadding(dp(16),dp(16),dp(16),dp(16));hero.setBackground(gradient(0xFFEEE5FF,0xFFFFFFFF,25));root.addView(hero,lp(-1,-2,22));
-    hero.addView(text(getString(R.string.live_preview),12,purple,true));
-    preview=new ImageView(this);preview.setScaleType(ImageView.ScaleType.FIT_XY);hero.addView(preview,lp(-1,224,10));
-    statusLabel=text("",13,muted,false);statusLabel.setGravity(Gravity.CENTER);hero.addView(statusLabel,lp(-1,-2,8));
-    root.addView(text(getString(R.string.preview_levels),19,ink,true),lp(-1,-2,21));
-    LinearLayout levels=new LinearLayout(this);levels.setOrientation(LinearLayout.HORIZONTAL);root.addView(levels,lp(-1,44,10));
-    addLevel(levels,getString(R.string.preview_real),-1);
-    addLevel(levels,"15%",15);addLevel(levels,"40%",40);addLevel(levels,"70%",70);addLevel(levels,"100%",100);
-    addLevel(levels,"⚡",-2);
-    TextView hint=text(getString(R.string.preview_hint),12,muted,false);root.addView(hint,lp(-1,-2,10));
-    Button quick=new Button(this);
-    quick.setAllCaps(false);quick.setTextSize(16);quick.setTextColor(Color.WHITE);
-    quick.setText(getString(R.string.add_widget)+"  ＋");
-    quick.setBackground(gradient(0xFF7260F0,0xFFFF6AA8,20));
-    quick.setOnClickListener(v->pin());
-    root.addView(quick,lp(-1,59,16));
-    Button update=new Button(this);
-    update.setAllCaps(false);update.setTextSize(14);update.setTextColor(purple);
-    update.setText(getString(R.string.apply_existing));
-    update.setBackground(bg(0xFFEAE2FF,17));
-    update.setOnClickListener(v->{BatteryWidgetProvider.applyToAll(this);Toast.makeText(this,R.string.applied_existing,Toast.LENGTH_SHORT).show();});
-    root.addView(update,lp(-1,48,8));
-    root.addView(text(getString(R.string.choose_theme),23,ink,true),lp(-1,-2,26));
-    LinearLayout filters=new LinearLayout(this);filters.setOrientation(LinearLayout.HORIZONTAL);
-    root.addView(filters,lp(-1,46,10));
-    addFilter(filters,getString(R.string.collection_all),0);
-    addFilter(filters,getString(R.string.collection_original),1);
-    addFilter(filters,getString(R.string.collection_pastel),2);
-    TextView count=text("24  •  ORIGINAL DIY WIDGETS",12,purple,true);root.addView(count,lp(-1,-2,5));
-    BatteryState state=BatteryState.read(this);
-    for(int row=0;row<(collection==0?ThemeCatalog.COUNT/2:ThemeCatalog.COUNT/4);row++){
-      LinearLayout line=new LinearLayout(this);line.setOrientation(LinearLayout.HORIZONTAL);root.addView(line,lp(-1,157,12));
-      for(int col=0;col<2;col++){
-        final int index=row*2+col+(collection==2?ThemeCatalog.SPECIES:0);
-        LinearLayout cell=new LinearLayout(this);cell.setOrientation(LinearLayout.VERTICAL);cell.setPadding(dp(7),dp(7),dp(7),dp(9));cell.setBackground(bg(0xFFFFFFFF,18));
-        LinearLayout.LayoutParams cp=new LinearLayout.LayoutParams(0,-1,1);if(col==1)cp.leftMargin=dp(9);line.addView(cell,cp);
-        ImageView mini=new ImageView(this);mini.setScaleType(ImageView.ScaleType.FIT_XY);
-        mini.setImageBitmap(BatteryArt.draw(this,370,220,index,state.percent,state.charging));cell.addView(mini,lp(-1,106,0));
-        TextView name=text(getString(names[index])+(ThemeCatalog.load(this)==index?"  ✓":""),12,ink,true);
-        name.setGravity(Gravity.CENTER);name.setSingleLine(true);name.setTextSize(11);cell.addView(name,lp(-1,-2,7));
-        cell.setOnClickListener(v->{
-          int previousY=currentScroll.getScrollY();
-          ThemeCatalog.save(this,index);
-          build();
-          currentScroll.post(()->currentScroll.scrollTo(0,previousY));
-          Toast.makeText(this,R.string.style_saved,Toast.LENGTH_SHORT).show();
+    private final int WHITE=0xFFFFFFFF, MUTED=0xFFC5C7EE, LILAC=0xFFBFA9FF;
+    private final int[] names={R.string.mascot_0,R.string.mascot_1,R.string.mascot_2,R.string.mascot_3,R.string.mascot_4,R.string.mascot_5,R.string.mascot_6,R.string.mascot_7,R.string.mascot_8,R.string.mascot_9,R.string.mascot_10,R.string.mascot_11,R.string.mascot_12,R.string.mascot_13,R.string.mascot_14,R.string.mascot_15,R.string.mascot_16,R.string.mascot_17,R.string.mascot_18,R.string.mascot_19,R.string.mascot_20,R.string.mascot_21,R.string.mascot_22,R.string.mascot_23};
+    private int selection=0,filter=0,previewValue=-1;
+    private ScrollView scroll;
+    private LinearLayout root;
+    private LinearLayout gallery,filters;
+    private ImageView heroArt;
+    private TextView heroStatus,selectionLabel;
+    private View galleryAnchor;
+    private ObjectAnimator pulse;
+    private boolean listening=false;
+    private final BroadcastReceiver live=new BroadcastReceiver(){
+        @Override public void onReceive(Context context,Intent intent){updatePreview();}
+    };
+    @Override public void onCreate(Bundle state){
+        super.onCreate(state);
+        selection=ThemeCatalog.load(this);
+        build();
+    }
+    @Override protected void onResume(){
+        super.onResume();
+        if(!listening){
+            registerReceiver(live,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            listening=true;
+        }
+        updatePreview();
+        BatteryWidgetProvider.refresh(this);
+        if(pulse!=null && !pulse.isStarted()) pulse.start();
+    }
+    @Override protected void onPause(){
+        if(pulse!=null)pulse.cancel();
+        if(listening){unregisterReceiver(live);listening=false;}
+        super.onPause();
+    }
+    private int dp(float v){return (int)(v*getResources().getDisplayMetrics().density+0.5f);}
+    private GradientDrawable gradient(int[] colors,int radius,int stroke){
+        GradientDrawable d=new GradientDrawable(GradientDrawable.Orientation.TL_BR,colors);
+        d.setCornerRadius(dp(radius));
+        if(stroke!=0)d.setStroke(dp(1.5f),stroke);
+        return d;
+    }
+    private GradientDrawable solid(int color,int radius){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(dp(radius));return d;}
+    private TextView text(String value,int size,int color,boolean bold){
+        TextView v=new TextView(this);v.setText(value);v.setTextColor(color);v.setTextSize(size);
+        v.setGravity(Gravity.CENTER_VERTICAL);
+        if(bold)v.setTypeface(Typeface.create("sans-serif",Typeface.BOLD));
+        return v;
+    }
+    private LinearLayout col(){
+        LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.VERTICAL);return l;
+    }
+    private LinearLayout row(){
+        LinearLayout l=new LinearLayout(this);l.setOrientation(LinearLayout.HORIZONTAL);l.setGravity(Gravity.CENTER_VERTICAL);return l;
+    }
+    private LinearLayout.LayoutParams lp(int w,int h,int top){
+        LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(w<0?w:dp(w),h<0?h:dp(h));
+        p.topMargin=dp(top);return p;
+    }
+    private TextView action(String name,boolean primary,int icon){
+        TextView b=text((icon==0?"":Character.toString((char)icon)+"  ")+name+"    ›",16,primary?WHITE:0xFF33305E,true);
+        b.setGravity(Gravity.CENTER_VERTICAL);
+        b.setPadding(dp(19),0,dp(12),0);
+        b.setBackground(primary
+            ?gradient(new int[]{0xFFFF7D59,0xFFFA469D,0xFF8747FF},20,0xFFFDCEFF)
+            :gradient(new int[]{0xFFFFFFFF,0xFFE4D9FF},20,0xFFD7BEFF));
+        b.setElevation(dp(4));
+        return b;
+    }
+    private void build(){
+        int oldY=scroll==null?0:scroll.getScrollY();
+        if(pulse!=null){pulse.cancel();pulse=null;}
+        getWindow().setStatusBarColor(0xFF111A53);
+        getWindow().setNavigationBarColor(0xFF10163F);
+        scroll=new ScrollView(this);
+        scroll.setFillViewport(true);
+        scroll.setBackground(gradient(new int[]{0xFF101B57,0xFF392274,0xFF161B52},0,0));
+        root=col();
+        root.setPadding(dp(16),dp(19),dp(16),dp(45));
+        scroll.addView(root);
+        setContentView(scroll);
+        if(Build.VERSION.SDK_INT>=35){
+            scroll.setOnApplyWindowInsetsListener((v,i)->{
+                android.graphics.Insets e=i.getInsets(WindowInsets.Type.systemBars());
+                root.setPadding(dp(16),dp(14)+e.top,dp(16),dp(40)+e.bottom);
+                return i;
+            });
+        }
+        drawHeader();
+        drawHero();
+        drawMenu();
+        drawGallery();
+        drawCustomize();
+        drawFooter();
+        scroll.post(()->scroll.scrollTo(0,Math.max(0,oldY)));
+        updatePreview();
+        if(heroArt!=null){
+            pulse=ObjectAnimator.ofFloat(heroArt,"scaleX",1.0f,1.025f,1.0f);
+            pulse.setDuration(2300);
+            pulse.setRepeatCount(ValueAnimator.INFINITE);
+            pulse.start();
+        }
+    }
+    private void drawHeader(){
+        LinearLayout top=row();
+        root.addView(top,lp(-1,38,0));
+        TextView brand=text("✦  LAURAAPPS    /    DIY STUDIO",12,0xFFB5DEFF,true);
+        top.addView(brand,new LinearLayout.LayoutParams(0,-1,1));
+        TextView lang=text("ES  •  EN",12,0xFFFFE394,true);
+        top.addView(lang);
+        TextView star=text("✦  ✧  ✨",26,0xFFFFD86E,true);
+        star.setGravity(Gravity.CENTER);
+        root.addView(star,lp(-1,46,7));
+        TextView title=text("Emoji Battery:",29,WHITE,true);
+        title.setGravity(Gravity.CENTER);
+        title.setShadowLayer(6,0,3,0xFF8854F4);
+        root.addView(title,lp(-1,-2,0));
+        TextView title2=text("DIY Widgets",32,0xFFFFD354,true);
+        title2.setGravity(Gravity.CENTER);
+        title2.setShadowLayer(5,0,3,0xFFDD5789);
+        root.addView(title2,lp(-1,-2,0));
+        TextView subtitle=text(getString(R.string.hero_subtitle),14,0xFFE5DAFF,false);
+        subtitle.setGravity(Gravity.CENTER);
+        root.addView(subtitle,lp(-1,-2,7));
+    }
+    private void drawHero(){
+        LinearLayout panel=col();
+        panel.setPadding(dp(10),dp(10),dp(10),dp(12));
+        panel.setBackground(gradient(new int[]{0xFF172B7A,0xFF5431A7,0xFFB656B6},24,0xFF8FE2FF));
+        panel.setElevation(dp(6));
+        root.addView(panel,lp(-1,-2,19));
+        TextView tag=text("✦    "+getString(R.string.hero_tag)+"    ✦",12,0xFFFFE7B9,true);
+        tag.setGravity(Gravity.CENTER);
+        panel.addView(tag,lp(-1,24,3));
+        heroArt=new ImageView(this);
+        heroArt.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        heroArt.setAdjustViewBounds(true);
+        panel.addView(heroArt,lp(-1,203,1));
+        heroStatus=text("",13,0xFFFFF2FF,true);
+        heroStatus.setGravity(Gravity.CENTER);
+        panel.addView(heroStatus,lp(-1,-2,0));
+        TextView add=action(getString(R.string.button_add),true,0);
+        add.setOnClickListener(v->pin());
+        panel.addView(add,lp(-1,55,12));
+        TextView help=text(getString(R.string.widget_help),11,0xFFE5DBFF,false);
+        help.setGravity(Gravity.CENTER);
+        panel.addView(help,lp(-1,-2,9));
+    }
+    private void drawMenu(){
+        LinearLayout area=col();
+        root.addView(area,lp(-1,-2,17));
+        TextView explore=action(getString(R.string.button_gallery),true,0);
+        area.addView(explore,lp(-1,55,0));
+        explore.setOnClickListener(v->jumpTo(galleryAnchor));
+        TextView personalize=action(getString(R.string.customize_title),false,0);
+        area.addView(personalize,lp(-1,52,10));
+        personalize.setOnClickListener(v->jumpTo(filters));
+        TextView apply=action(getString(R.string.button_apply),false,0);
+        area.addView(apply,lp(-1,52,10));
+        apply.setOnClickListener(v->applyExisting());
+    }
+    private void jumpTo(View target){
+        if(target==null)return;
+        scroll.post(()->scroll.smoothScrollTo(0,Math.max(0,target.getTop()-dp(20))));
+    }
+    private void drawGallery(){
+        galleryAnchor=text("✦  "+getString(R.string.section_explore),23,WHITE,true);
+        root.addView(galleryAnchor,lp(-1,-2,26));
+        TextView sub=text(getString(R.string.gallery_subtitle),13,MUTED,false);
+        root.addView(sub,lp(-1,-2,4));
+        filters=row();
+        root.addView(filters,lp(-1,44,13));
+        addFilter(getString(R.string.filter_all),0);
+        addFilter(getString(R.string.filter_signature),1);
+        addFilter(getString(R.string.filter_pastel),2);
+        gallery=col();
+        root.addView(gallery,lp(-1,-2,8));
+        renderGallery();
+    }
+    private void addFilter(String name,int index){
+        TextView label=text(name,12,filter==index?WHITE:0xFFE5DFFF,true);
+        label.setGravity(Gravity.CENTER);
+        label.setBackground(filter==index
+          ?gradient(new int[]{0xFF06BEFE,0xFF8555FF},17,0xFFADEBFF)
+          :gradient(new int[]{0xFF293B80,0xFF423475},17,0xFF655BB6));
+        LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(0,dp(42),1);
+        p.rightMargin=dp(6);filters.addView(label,p);
+        label.setOnClickListener(v->{if(filter==index)return;filter=index;build();jumpTo(galleryAnchor);});
+    }
+    private void renderGallery(){
+        gallery.removeAllViews();
+        final int start=filter==2?12:0;
+        final int count=filter==0?24:12;
+        BatteryState battery=BatteryState.read(this);
+        for(int line=0;line<count/2;line++){
+            LinearLayout horizontal=row();
+            gallery.addView(horizontal,lp(-1,156,10));
+            for(int col=0;col<2;col++){
+                int index=start+line*2+col;
+                LinearLayout item=col();
+                item.setPadding(dp(5),dp(6),dp(5),dp(9));
+                item.setBackground(gradient(new int[]{0xFF222A79,0xFF39226E},17,index==selection?0xFF6CEFFF:0xFF7558CB));
+                item.setElevation(index==selection?dp(5):0);
+                LinearLayout.LayoutParams part=new LinearLayout.LayoutParams(0,-1,1);
+                if(col==1)part.leftMargin=dp(9);
+                horizontal.addView(item,part);
+                ImageView image=new ImageView(this);
+                image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                image.setImageBitmap(BatteryArt.draw(this,420,260,index,battery.percent,battery.charging));
+                item.addView(image,lp(-1,111,0));
+                TextView label=text(getString(names[index])+(selection==index?"  ✓":""),11,WHITE,true);
+                label.setSingleLine(true);label.setGravity(Gravity.CENTER);
+                item.addView(label,lp(-1,27,0));
+                item.setOnClickListener(v->{
+                    selection=index;
+                    ThemeCatalog.save(this,index);
+                    refreshChoice();
+                    Toast.makeText(this,getString(R.string.style_saved),Toast.LENGTH_SHORT).show();
+                });
+            }
+        }
+    }
+    private void refreshChoice(){
+        int y=scroll.getScrollY();
+        build();
+        scroll.post(()->scroll.scrollTo(0,y));
+    }
+    private void drawCustomize(){
+        LinearLayout section=col();
+        section.setPadding(dp(13),dp(13),dp(13),dp(13));
+        section.setBackground(gradient(new int[]{0xFF282377,0xFF423390},20,0xFF8863DE));
+        root.addView(section,lp(-1,-2,24));
+        selectionLabel=text("✦  "+getString(R.string.section_preview),19,WHITE,true);
+        section.addView(selectionLabel);
+        TextView instruction=text(getString(R.string.preview_levels),13,MUTED,false);
+        section.addView(instruction,lp(-1,-2,6));
+        LinearLayout switches=row();
+        section.addView(switches,lp(-1,39,10));
+        level(switches,getString(R.string.preview_real),-1);
+        level(switches,"15%",15);level(switches,"40%",40);
+        level(switches,"70%",70);level(switches,"100%",100);
+        level(switches,"⚡",-2);
+        TextView tip=text(getString(R.string.preview_hint),11,0xFFD8D4FF,false);
+        section.addView(tip,lp(-1,-2,8));
+        TextView apply=text("✓  "+getString(R.string.button_apply),14,WHITE,true);
+        apply.setGravity(Gravity.CENTER);
+        apply.setBackground(gradient(new int[]{0xFF26BFF6,0xFFB654E3},14,0xFF95D7FF));
+        apply.setOnClickListener(v->applyExisting());
+        section.addView(apply,lp(-1,46,14));
+    }
+    private void level(LinearLayout items,String caption,int percent){
+        TextView chip=text(caption,11,previewValue==percent?WHITE:0xFFE1D8FF,true);
+        chip.setGravity(Gravity.CENTER);
+        chip.setBackground(previewValue==percent?gradient(new int[]{0xFF06B6EF,0xFF9165EF},13,0xFFA2E6FF):solid(0xFF352A73,13));
+        LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(0,dp(38),1);
+        p.rightMargin=dp(3);
+        items.addView(chip,p);
+        chip.setOnClickListener(v->{previewValue=percent;updatePreview();for(int i=0;i<items.getChildCount();i++){View ch=items.getChildAt(i);ch.setAlpha(ch==chip?1f:0.65f);}});
+    }
+    private void drawFooter(){
+        LinearLayout card=col();
+        card.setPadding(dp(14),dp(15),dp(14),dp(15));
+        card.setBackground(gradient(new int[]{0xFF30237B,0xFF283D8B},18,0xFF6B60A9));
+        root.addView(card,lp(-1,-2,18));
+        card.addView(text("🔒  "+getString(R.string.privacy_title),15,WHITE,true));
+        card.addView(text(getString(R.string.privacy_info),12,MUTED,false),lp(-1,-2,6));
+        TextView share=text("♡  "+getString(R.string.share_design)+"   ↗",15,0xFFFFC4EB,true);
+        share.setGravity(Gravity.CENTER);
+        root.addView(share,lp(-1,52,8));
+        share.setOnClickListener(v->{
+            Intent out=new Intent(Intent.ACTION_SEND);out.setType("text/plain");
+            out.putExtra(Intent.EXTRA_TEXT,getString(R.string.share_message));
+            startActivity(Intent.createChooser(out,getString(R.string.share)));
         });
-      }
     }
-    Button add=new Button(this);add.setText(getString(R.string.add_widget)+"  +");add.setTextSize(16);add.setAllCaps(false);add.setTextColor(Color.WHITE);add.setBackground(gradient(0xFF8662FF,0xFFFF6CB0,18));add.setOnClickListener(v->pin());root.addView(add,lp(-1,62,24));
-    TextView help=text(getString(R.string.widget_help),13,muted,false);help.setGravity(Gravity.CENTER);root.addView(help,lp(-1,-2,13));
-    LinearLayout privacy=new LinearLayout(this);privacy.setPadding(dp(16),dp(16),dp(16),dp(16));privacy.setOrientation(LinearLayout.VERTICAL);privacy.setBackground(bg(0xFFF1EDFC,20));root.addView(privacy,lp(-1,-2,25));
-    privacy.addView(text(getString(R.string.privacy_title),16,ink,true));
-    privacy.addView(text(getString(R.string.privacy_info),13,muted,false),lp(-1,-2,7));
-    TextView share=text(getString(R.string.share)+"  ↗",15,purple,true);share.setGravity(Gravity.CENTER);root.addView(share,lp(-1,52,12));
-    share.setOnClickListener(v->{Intent send=new Intent(Intent.ACTION_SEND);send.setType("text/plain");send.putExtra(Intent.EXTRA_TEXT,getString(R.string.share_message));startActivity(Intent.createChooser(send,getString(R.string.share)));});
-    refresh();
-  }
-  private void addFilter(LinearLayout parent,String label,int target){
-    TextView chip=text(label,12,collection==target?Color.WHITE:purple,true);
-    chip.setGravity(Gravity.CENTER);
-    chip.setBackground(bg(collection==target?purple:0xFFEAE4FA,13));
-    LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(0,dp(42),1);
-    p.rightMargin=dp(5);
-    parent.addView(chip,p);
-    chip.setOnClickListener(v->{
-      if(collection==target)return;
-      collection=target;
-      build();
-    });
-  }
-  private void addLevel(LinearLayout parent,String label,int value){
-    TextView chip=text(label,12,previewPercent==value?Color.WHITE:purple,true);
-    chip.setGravity(Gravity.CENTER);chip.setBackground(bg(previewPercent==value?purple:0xFFECE5FF,12));
-    LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(0,dp(42),1);p.rightMargin=dp(4);parent.addView(chip,p);
-    chip.setOnClickListener(v->{previewPercent=value;build();});
-  }
-  private void refresh(){
-    if(preview==null)return;
-    BatteryState real=BatteryState.read(this);
-    int pct=previewPercent==-1?real.percent:previewPercent==-2?85:previewPercent;
-    boolean charging=previewPercent==-2||previewPercent==-1&&real.charging;
-    preview.setImageBitmap(BatteryArt.draw(this,720,440,ThemeCatalog.load(this),pct,charging));
-    String caption=previewPercent==-1?getString(R.string.preview_real)+"  •  "+(real.percent<0?"--%":real.percent+"%"):
-      previewPercent==-2?getString(R.string.preview_charging)+"  •  85%":getString(R.string.preview_percentage,previewPercent);
-    statusLabel.setText(caption);
-  }
-  private void pin(){
-    AppWidgetManager am=AppWidgetManager.getInstance(this);
-    if(Build.VERSION.SDK_INT>=26&&am.isRequestPinAppWidgetSupported()){
-      if(am.requestPinAppWidget(new ComponentName(this,BatteryWidgetProvider.class),null,null)){
-        Toast.makeText(this,R.string.pin_requested,Toast.LENGTH_LONG).show();return;
-      }
+    private void updatePreview(){
+        if(heroArt==null)return;
+        BatteryState actual=BatteryState.read(this);
+        int pct=previewValue==-1?actual.percent:previewValue==-2?85:previewValue;
+        boolean charging=previewValue==-2||(previewValue==-1&&actual.charging);
+        heroArt.setImageBitmap(BatteryArt.draw(this,720,446,selection,pct,charging));
+        String label=previewValue==-1?getString(R.string.battery_real_label)
+             :previewValue==-2?getString(R.string.charging_label)
+             :getString(R.string.preview_level);
+        heroStatus.setText(label+"   •   "+(pct<0?"--%":pct+"%"));
     }
-    Toast.makeText(this,R.string.manual_pin,Toast.LENGTH_LONG).show();
-  }
+    private void applyExisting(){
+        BatteryWidgetProvider.applyToAll(this);
+        Toast.makeText(this,R.string.text_apply_success,Toast.LENGTH_SHORT).show();
+    }
+    private void pin(){
+        AppWidgetManager am=AppWidgetManager.getInstance(this);
+        ComponentName provider=new ComponentName(this,BatteryWidgetProvider.class);
+        if(am.isRequestPinAppWidgetSupported()){
+            if(am.requestPinAppWidget(provider,null,null)){
+                Toast.makeText(this,R.string.pin_requested,Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+        Toast.makeText(this,R.string.manual_pin,Toast.LENGTH_LONG).show();
+    }
 }
