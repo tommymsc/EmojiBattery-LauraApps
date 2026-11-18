@@ -49,6 +49,7 @@ public final class BatteryArt {
         // Battery shadows and raised glass shell.
         rr(c,111,121,402,241,33,a(ink,30));
         rr(c,109,111,398,232,33,0xFFFFFFFF);
+        rr(c,113,114,394,229,31,a(accent,70));
         rr(c,119,121,388,222,26,ink);
         rr(c,125,127,382,216,22,0xFFFFF7FF);
         rr(c,385,151,412,189,8,ink);
@@ -61,7 +62,8 @@ public final class BatteryArt {
           rr(c,132,133,Math.max(144,end),210,18,0xFFFFC753);
           c.drawRoundRect(new RectF(132,133,Math.max(144,end),210),18,18,fill);
         }
-        rr(c,140,133,371,145,7,a(Color.WHITE,110));
+        rr(c,140,133,371,145,7,a(Color.WHITE,135));
+        star(c,364,137,4,Color.WHITE);
         // Lightning in foreground, deliberately drawn from vectors, not copied emoji.
         Path bolt=new Path();
         bolt.moveTo(155,147);bolt.lineTo(172,147);bolt.lineTo(163,165);
@@ -76,7 +78,7 @@ public final class BatteryArt {
         c.drawText(value,284,197,stroke(a(ink,95),7));
         c.drawText(value,284,197,number);
         // Original mascot overlaps battery: body and expressive paws.
-        drawCreature(c,t%6,level,charging,body,ink);
+        drawCreature(c,ThemeCatalog.species(t),t,level,charging,body,ink);
         // Charging sparks are visible only while connected to power.
         if(charging){star(c,356,79,14,0xFFFFBC30);star(c,381,57,7,0xFFFE8A4D);}
     }
@@ -98,18 +100,54 @@ public final class BatteryArt {
           oval(c,-69,-52,-37,35,secondary);oval(c,38,-52,69,35,secondary);
         }else if(kind==4){ // penguin head crest
           Path tuft=new Path();tuft.moveTo(-10,-49);tuft.quadTo(-35,-95,4,-70);tuft.quadTo(29,-87,13,-43);tuft.close();c.drawPath(tuft,p(body));
-        }else { // glowing firefly antennae
+        }else if(kind==5){ // firefly
           c.drawLine(-26,-43,-37,-77,stroke(ink,6));c.drawLine(26,-43,37,-77,stroke(ink,6));
           oval(c,-49,-94,-26,-72,0xFFFFDF69);oval(c,26,-94,49,-72,0xFFFFDF69);
           oval(c,-70,8,-38,53,secondary);oval(c,38,8,70,53,secondary);
+        }else if(kind==6){ // kitten with pointy pink ears and a small bow
+          Path left=new Path();left.moveTo(-50,-24);left.lineTo(-48,-82);left.quadTo(-14,-66,-17,-38);left.close();
+          Path right=new Path();right.moveTo(18,-38);right.quadTo(23,-63,49,-82);right.lineTo(51,-24);right.close();
+          c.drawPath(left,p(ink));c.drawPath(right,p(ink));
+          c.save();c.scale(.75f,.75f);c.drawPath(left,p(secondary));c.drawPath(right,p(secondary));c.restore();
+          oval(c,10,-64,27,-51,0xFFFFD45A);oval(c,26,-64,43,-51,0xFFFFD45A);
+        }else if(kind==7){ // fox ears and fluffy side cheeks
+          Path left=new Path();left.moveTo(-49,-27);left.lineTo(-58,-89);left.lineTo(-12,-50);left.close();
+          Path right=new Path();right.moveTo(12,-50);right.lineTo(58,-89);right.lineTo(49,-27);right.close();
+          c.drawPath(left,p(ink));c.drawPath(right,p(ink));
+          c.drawPath(left,p(body));c.drawPath(right,p(body));
+          oval(c,-60,-15,-36,28,secondary);oval(c,36,-15,60,28,secondary);
+        }else if(kind==8){ // bunny with long rounded ears
+          oval(c,-41,-122,-12,-32,ink);oval(c,14,-122,43,-32,ink);
+          oval(c,-35,-113,-18,-35,secondary);oval(c,20,-113,37,-35,secondary);
+        }else if(kind==9){ // panda with dark rounded ears
+          oval(c,-60,-71,-26,-25,ink);oval(c,26,-71,60,-25,ink);
+          oval(c,-53,-62,-32,-32,secondary);oval(c,32,-62,53,-32,secondary);
+        }else if(kind==10){ // star unicorn with colorful horn
+          Path horn=new Path();horn.moveTo(-7,-48);horn.lineTo(8,-105);horn.lineTo(24,-48);horn.close();
+          c.drawPath(horn,p(0xFFFFC542));
+          oval(c,-52,-67,-30,-33,secondary);oval(c,30,-67,52,-33,secondary);
+          star(c,10,-86,7,Color.WHITE);
+        }else if(kind==11){ // tiny astronaut, with helmet rim
+          oval(c,-67,-70,67,65,ink);oval(c,-62,-65,62,59,0xFFBCEBFF);
+          oval(c,-55,-58,55,52,0xFFEEF8FF);
+          rr(c,-20,-78,20,-63,8,0xFFFFC955);
         }
     }
-    private static void drawCreature(Canvas c,int kind,int level,boolean charging,int body,int ink){
+    private static void drawCreature(Canvas c,int kind,int theme,int level,boolean charging,int body,int ink){
         c.save();c.translate(108,102);
         // wings and ears are character-specific, designed for LauraApps.
-        ear(c,kind,body,ThemeCatalog.SECONDARY[kind],ink);
+        ear(c,kind,body,ThemeCatalog.SECONDARY[theme],ink);
+        oval(c,-55,-49,55,60,a(ink,55));
         oval(c,-53,-47,53,57,ink);
-        oval(c,-50,-45,50,53,body);
+        Paint shiny=p(body);shiny.setShader(new LinearGradient(-51,-43,40,50,new int[]{Color.WHITE,body,body},null,Shader.TileMode.CLAMP));
+        c.drawOval(new RectF(-50,-45,50,53),shiny);
+        oval(c,-43,-36,-12,-25,a(Color.WHITE,110));
+        if(kind==9){oval(c,-43,-25,-3,20,0xFF4B456A);oval(c,4,-25,44,20,0xFF4B456A);}
+        if(kind==6){oval(c,-28,16,27,41,0xFFFFF8F2);c.drawLine(-7,18,7,18,stroke(ink,2));}
+        if(kind==7){oval(c,-30,18,29,46,0xFFFFFFFF);}
+        if(kind==8){oval(c,-28,14,29,44,0xFFFFFAFB);}
+        if(kind==10){oval(c,-25,18,26,46,0xFFFFFFFF);}
+        if(kind==11){oval(c,-33,11,34,43,0xFFB1E7FF);}
         if(kind==4){oval(c,-37,-24,38,51,0xFFF4FAFF);oval(c,-48,0,-25,37,0xFFF4FAFF);oval(c,24,0,48,37,0xFFF4FAFF);}
         if(kind==3)oval(c,-27,-3,26,46,0xFFFFF8EF);
         if(kind==0)oval(c,-29,13,30,47,0xFFFFF4DD);
@@ -125,9 +163,11 @@ public final class BatteryArt {
           }else if(delighted){
              c.drawArc(new RectF(ex-12,-12,ex+12,13),188,167,false,stroke(ink,5));
           }else{
+             oval(c,ex-14,-16,ex+14,14,a(ink,40));
              oval(c,ex-12,-14,ex+12,13,ink);
              oval(c,ex-5,-10,ex+2,1,Color.WHITE);
              oval(c,ex+4,2,ex+7,6,a(Color.WHITE,180));
+             oval(c,ex-10,-10,ex-7,-7,Color.WHITE);
           }
           oval(c,ex-17,12,ex-1,24,0xFFFF9BB5);
         }
@@ -143,7 +183,8 @@ public final class BatteryArt {
           c.drawArc(new RectF(-14,14,14,43),2,177,false,stroke(ink,3.5f));
           if(delighted){oval(c,-7,25,7,39,0xFFFF6688);}
         }
-        // paws on top of the battery (soft curved hands)
+        // tiny blush details and glossy paws on top of the battery
+        oval(c,-40,8,-19,19,a(0xFFFF8DAE,135));oval(c,19,8,40,19,a(0xFFFF8DAE,135));
         oval(c,-51,41,-13,65,ink);oval(c,-49,42,-16,62,0xFFFFF8F7);
         oval(c,15,41,53,65,ink);oval(c,18,42,51,62,0xFFFFF8F7);
         c.restore();
