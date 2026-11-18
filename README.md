@@ -1,18 +1,11 @@
 # Emoji Battery: DIY Widgets
 
-LauraApps native Android app · Java 17 · Android API 36 · English + Spanish.
+LauraApps Android, Java 17, target API 36, English and Spanish.
 
-## Real features
-- Four selectable battery emoji widget themes (Peach Pop, Lavender Dream, Mint Glow, Midnight).
-- Real battery percentage and charging status, charging and scheduled widget updates.
-- Add-to-home-screen flow through standard Android widget pinning (or launcher Widgets).
-- Privacy-first local-only implementation; no network access or tracking.
+Version 1.3.0 contains twelve original mascot species and two color variants per species, giving 24 selectable designs. Each widget uses the real battery level and changes its illustrated expression at low, medium, high or charging states. The app includes category filters, preview levels, a quick Add Widget button and local-only theme storage.
 
-## Build
-GitHub Actions **Android CI** runs Android lint, JUnit tests and generates an **unsigned** Android App Bundle (AAB). The signed-release workflow is manual and requires four repository secrets:
-ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD.
+Existing home-screen widgets retain their selected design independently. To add another design, choose it in the gallery then tap Add Widget beside the preview. No accounts, Internet, ads, analytics or invasive permissions are required.
 
-**Do not reuse keys from other apps without verifying ownership.** Never commit a keystore or secret. CI success does not equal Google Play approval. Test on physical phones before release.
+Home-screen widgets update on Android's scheduled intervals (30 minutes or later, at the system's discretion), on supported charging events, and when the app is opened. The app itself listens to battery events while visible. No continuously animated status-bar replacement is claimed.
 
-## ASO
-See STORE_LISTINGS.md. 25,000 installs in 90 days is a growth goal, not a guarantee. Avoid claiming custom Android system status-bar replacement because this app provides home-screen widgets only.
+The Android CI workflow runs unit tests, Android Lint, resource validation, builds an unsigned AAB and a debug APK, and checks APK signature/package metadata. The debug APK is for device testing only. Play releases require private upload-key secrets; never commit a keystore.
