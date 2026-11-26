@@ -138,5 +138,75 @@
     "git_sha": "4729172d79b024b05244b76c5267981a25605521",
     "width": 512,
     "height": 512
+  },
+  {
+    "id": "dog_astronaut",
+    "index": 14,
+    "theme_id": 1098,
+    "default_palette": 4,
+    "bytes": 53904,
+    "git_sha": "21fe454d523fcd7322b052bf8c909872a5542c1a",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "dog_chocolate",
+    "index": 15,
+    "theme_id": 1105,
+    "default_palette": 3,
+    "bytes": 58178,
+    "git_sha": "8366cc7ce13bc628c0ce9464a033784fcd4d0c99",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "dog_cotton_candy",
+    "index": 16,
+    "theme_id": 1112,
+    "default_palette": 5,
+    "bytes": 53430,
+    "git_sha": "42d6af8883c53b75fc3206f893d2ef5517a757c5",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "dog_princess",
+    "index": 17,
+    "theme_id": 1119,
+    "default_palette": 0,
+    "bytes": 65468,
+    "git_sha": "a103d8844371c1a0f0e5a83d2fccf5e82d265167",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "dog_rainbow",
+    "index": 18,
+    "theme_id": 1126,
+    "default_palette": 5,
+    "bytes": 55038,
+    "git_sha": "2bdaaf122cb041910a971acf44c4d0ded2cd7965",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "dog_sleepy_moon",
+    "index": 19,
+    "theme_id": 1133,
+    "default_palette": 1,
+    "bytes": 53090,
+    "git_sha": "136daf03f48ff896c4334781fe513f2a070adea7",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "dog_strawberry",
+    "index": 20,
+    "theme_id": 1140,
+    "default_palette": 0,
+    "bytes": 52988,
+    "git_sha": "6d5928afc29295e3ed11a6e779740c7df32d626d",
+    "width": 512,
+    "height": 512
   }
 ]

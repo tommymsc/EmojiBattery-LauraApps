@@ -113,4 +113,12 @@
 <string name="cat_astronaut_star">Galaxy Explorer Kitten</string>
 <string name="cat_rainbow_cloud">Rainbow Cloud Kitten</string>
 <string name="cat_princess_wave">Princess Wink</string>
+<string name="filter_dogs">Puppies</string>
+<string name="dog_astronaut">Astronaut Puppy</string>
+<string name="dog_chocolate">Chocolate Puppy</string>
+<string name="dog_cotton_candy">Cotton Candy Puppy</string>
+<string name="dog_princess">Princess Puppy</string>
+<string name="dog_rainbow">Rainbow Puppy</string>
+<string name="dog_sleepy_moon">Sleepy Moon Puppy</string>
+<string name="dog_strawberry">Strawberry Puppy</string>
 </resources>

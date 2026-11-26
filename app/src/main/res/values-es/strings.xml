@@ -112,4 +112,12 @@
 <string name="cat_astronaut_star">Gatito Explorador Galáctico</string>
 <string name="cat_rainbow_cloud">Gatito Nube Arcoíris</string>
 <string name="cat_princess_wave">Gatita Princesa Guiño</string>
+<string name="filter_dogs">Perritos</string>
+<string name="dog_astronaut">Perrito Astronauta</string>
+<string name="dog_chocolate">Perrito Chocolate</string>
+<string name="dog_cotton_candy">Perrito Algodón de Azúcar</string>
+<string name="dog_princess">Perrita Princesa</string>
+<string name="dog_rainbow">Perrito Arcoíris</string>
+<string name="dog_sleepy_moon">Perrito Dormilón</string>
+<string name="dog_strawberry">Perrito Fresa</string>
 </resources>
