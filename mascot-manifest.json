@@ -208,5 +208,65 @@
     "git_sha": "6d5928afc29295e3ed11a6e779740c7df32d626d",
     "width": 512,
     "height": 512
+  },
+  {
+    "id": "bear_polar",
+    "index": 21,
+    "theme_id": 1147,
+    "default_palette": 4,
+    "bytes": 51764,
+    "git_sha": "7eac62f56369e29376f72f9cfe9ff36d75d4f385",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "bear_teddy",
+    "index": 22,
+    "theme_id": 1154,
+    "default_palette": 4,
+    "bytes": 52556,
+    "git_sha": "9b7113f5d908855b6fbe8f69dc0233f6e0b78175",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "panda_rainbow",
+    "index": 23,
+    "theme_id": 1161,
+    "default_palette": 5,
+    "bytes": 41884,
+    "git_sha": "9daf5a582e5de4f1c85195820c04cabd59de7809",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "koala_leaf",
+    "index": 24,
+    "theme_id": 1168,
+    "default_palette": 2,
+    "bytes": 50780,
+    "git_sha": "6ceaad866f48d8886489e4903ab6b69fa6463fec",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "bear_honey",
+    "index": 25,
+    "theme_id": 1175,
+    "default_palette": 3,
+    "bytes": 55720,
+    "git_sha": "cde54b3f4b51c8303fa4e5600040a84ef650ceec",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "panda_red",
+    "index": 26,
+    "theme_id": 1182,
+    "default_palette": 3,
+    "bytes": 53684,
+    "git_sha": "167dcbc73c31fa13a80d261dd097acb44bc74d78",
+    "width": 512,
+    "height": 512
   }
 ]

@@ -120,4 +120,11 @@
 <string name="dog_rainbow">Perrito Arcoíris</string>
 <string name="dog_sleepy_moon">Perrito Dormilón</string>
 <string name="dog_strawberry">Perrito Fresa</string>
+<string name="filter_bears">Ositos y amigos</string>
+<string name="bear_polar">Osito Polar</string>
+<string name="bear_teddy">Osito Estrella</string>
+<string name="panda_rainbow">Panda Corazón Arcoíris</string>
+<string name="koala_leaf">Koala Eucalipto</string>
+<string name="bear_honey">Osito Miel</string>
+<string name="panda_red">Panda Rojo Explorador</string>
 </resources>
