@@ -186,4 +186,7 @@
 <string name="dream_guide">In Android settings, select Emoji Battery screensaver, choose when to start (charging or docked), and use Start now if available. Keep the phone connected and allow the screen to time out. Some phones do not support system screensavers.</string>
 <string name="dream_preview">Preview screensaver</string>
 <string name="dream_preview_notice">This preview does not activate the Android system screensaver.</string>
+<string name="back_gallery">Back to gallery</string>
+<string name="edit_selected">Edit selected mascot</string>
+<string name="battery_guide_short">Widget setup: tap here for help.</string>
 </resources>

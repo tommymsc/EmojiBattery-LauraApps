@@ -33,6 +33,11 @@ adb("shell", "am", "start", "-W", "-n",
     "com.lauraapps.emojibattery/.MainActivity")
 time.sleep(3)
 initial = hierarchy()
+for node in initial.iter('node'):
+    if 'Edit selected mascot' in node.get('text',''):
+        x1,y1,x2,y2=map(int,re.findall(r'\d+',node.get('bounds','')))
+        adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));time.sleep(1);break
+initial=hierarchy()
 item = find_toggle(initial)
 for _ in range(7):
     if item is not None:

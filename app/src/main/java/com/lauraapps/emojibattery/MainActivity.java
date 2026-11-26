@@ -37,6 +37,11 @@ public final class MainActivity extends Activity {
     private final int[] newNames={R.string.cat_strawberry,R.string.cat_cotton_candy,R.string.cat_princess,R.string.cat_astronaut,R.string.cat_sleepy,R.string.cat_rainbow,R.string.cat_chocolate,R.string.cat_strawberry_original,R.string.cat_strawberry_wave,R.string.cat_cotton_wave,R.string.cat_sleepy_star,R.string.cat_astronaut_star,R.string.cat_rainbow_cloud,R.string.cat_princess_wave,R.string.dog_astronaut,R.string.dog_chocolate,R.string.dog_cotton_candy,R.string.dog_princess,R.string.dog_rainbow,R.string.dog_sleepy_moon,R.string.dog_strawberry,R.string.bear_polar,R.string.bear_teddy,R.string.panda_rainbow,R.string.koala_leaf,R.string.bear_honey,R.string.panda_red,R.string.fruit_avocado,R.string.fruit_grapes,R.string.fruit_orange,R.string.fruit_peach,R.string.fruit_pineapple,R.string.fruit_strawberry,R.string.fruit_watermelon,R.string.fantasy_ghost,R.string.fantasy_unicorn,R.string.fantasy_wizard,R.string.fantasy_dragon,R.string.fantasy_phoenix,R.string.fantasy_fairy,R.string.food_pizza,R.string.food_icecream,R.string.food_donut,R.string.food_boba,R.string.food_burger,R.string.food_cupcake,R.string.food_sushi,R.string.aquatic_dolphin,R.string.aquatic_jellyfish,R.string.aquatic_octopus,R.string.aquatic_shark,R.string.aquatic_tropical_fish,R.string.aquatic_turtle,R.string.space_alien,R.string.space_astronaut,R.string.space_comet,R.string.space_moon,R.string.space_planet,R.string.space_rocket,R.string.space_star,R.string.emotion_love,R.string.emotion_crystal,R.string.emotion_laugh,R.string.emotion_rainbow,R.string.emotion_sleepy,R.string.emotion_cool,R.string.emotion_hug,R.string.nature_sun,R.string.nature_blossom,R.string.nature_snow};
     private int selection=0,filter=0,previewValue=-1;
     private int galleryLimit=16;
+    private boolean editing=false;
+    private LinearLayout modePanel,levelControls;
+    private final android.util.LruCache<String,android.graphics.Bitmap> thumbnails=new android.util.LruCache<String,android.graphics.Bitmap>(8*1024*1024){@Override protected int sizeOf(String k,android.graphics.Bitmap v){return v.getAllocationByteCount();}};
+    private final android.util.LruCache<String,android.graphics.Bitmap> previews=new android.util.LruCache<String,android.graphics.Bitmap>(5*1024*1024){@Override protected int sizeOf(String k,android.graphics.Bitmap v){return v.getAllocationByteCount();}};
+    private String requestedPreview="";
     private View customAnchor;
     private final int[] paletteNames={R.string.palette_0,R.string.palette_1,R.string.palette_2,R.string.palette_3,R.string.palette_4,R.string.palette_5,R.string.palette_6};
     private ScrollView scroll;
@@ -49,12 +54,12 @@ public final class MainActivity extends Activity {
     private boolean listening=false;
     private final java.util.concurrent.ThreadPoolExecutor renderWorker=new java.util.concurrent.ThreadPoolExecutor(1,1,0L,java.util.concurrent.TimeUnit.MILLISECONDS,new java.util.concurrent.LinkedBlockingQueue<>());
     private final ExecutorService wallpaperWorker=Executors.newSingleThreadExecutor();
-    private final ExecutorService previewWorker=Executors.newSingleThreadExecutor();
+    private final java.util.concurrent.ThreadPoolExecutor previewWorker=new java.util.concurrent.ThreadPoolExecutor(1,1,0L,java.util.concurrent.TimeUnit.MILLISECONDS,new java.util.concurrent.LinkedBlockingQueue<>());
     private final Handler uiHandler=new Handler(Looper.getMainLooper());
     private volatile int galleryGeneration=0;
     private volatile int previewGeneration=0;
     private final BroadcastReceiver live=new BroadcastReceiver(){
-        @Override public void onReceive(Context context,Intent intent){updatePreview();}
+        @Override public void onReceive(Context context,Intent intent){if(previewValue==-1)updatePreview();BatteryWidgetProvider.refreshAsync(context);}
     };
     @Override protected void attachBaseContext(Context base){super.attachBaseContext(AppLanguage.wrap(base));}
     @Override public void onCreate(Bundle state){
@@ -122,7 +127,6 @@ public final class MainActivity extends Activity {
         return b;
     }
     private void build(){
-        int oldY=scroll==null?0:scroll.getScrollY();
         if(pulse!=null){pulse.cancel();pulse=null;}
         if(Build.VERSION.SDK_INT<35){
             getWindow().setStatusBarColor(0xFF111A53);
@@ -148,15 +152,16 @@ public final class MainActivity extends Activity {
             });
             scroll.requestApplyInsets();
         }
+        heroArt=null;requestedPreview="";previewGeneration++;previewWorker.getQueue().clear();
         drawHeader();
-        drawHero();
-        drawMenu();
-        drawModeSelector();
-        drawCustomize();
-        drawGallery();
-        drawScreenTools();
-        drawFooter();
-        scroll.post(()->scroll.scrollTo(0,Math.max(0,oldY)));
+        if(editing){
+            TextView back=action(getString(R.string.back_gallery),false,0);root.addView(back,lp(-1,48,6));back.setOnClickListener(v->showGallery());
+            drawHero();drawCustomize();drawModeSelector();drawScreenTools();
+        }else{
+            TextView edit=action(getString(R.string.edit_selected),true,0);root.addView(edit,lp(-1,48,8));edit.setOnClickListener(v->showEditor());
+            drawGallery();drawFooter();
+        }
+        scroll.post(()->scroll.scrollTo(0,0));
         updatePreview();
         if(heroArt!=null){
             pulse=ObjectAnimator.ofFloat(heroArt,"alpha",1.0f,0.97f,1.0f);
@@ -165,6 +170,9 @@ public final class MainActivity extends Activity {
             pulse.start();
         }
     }
+    private void showEditor(){editing=true;previewValue=-1;build();}
+    private void showGallery(){editing=false;build();}
+    @Override public void onBackPressed(){if(editing)showGallery();else super.onBackPressed();}
     private void drawHeader(){
         LinearLayout top=row();
         root.addView(top,lp(-1,38,0));
@@ -175,7 +183,7 @@ public final class MainActivity extends Activity {
         top.addView(lang);lang.setOnClickListener(v->chooseLanguage());
         TextView star=text("✦  ✧  ✨",26,0xFFFFD86E,true);
         star.setGravity(Gravity.CENTER);
-        root.addView(star,lp(-1,46,7));
+        if(!editing)root.addView(star,lp(-1,28,3));
         TextView title=text("Emoji Battery:",29,WHITE,true);
         title.setGravity(Gravity.CENTER);
         title.setShadowLayer(6,0,3,0xFF8854F4);
@@ -183,13 +191,13 @@ public final class MainActivity extends Activity {
         TextView title2=text("DIY Widgets",32,0xFFFFD354,true);
         title2.setGravity(Gravity.CENTER);
         title2.setShadowLayer(5,0,3,0xFFDD5789);
-        root.addView(title2,lp(-1,-2,0));
+        if(!editing)root.addView(title2,lp(-1,-2,0));
         TextView subtitle=text(getString(R.string.hero_subtitle),14,0xFFE5DAFF,false);
         subtitle.setGravity(Gravity.CENTER);
-        root.addView(subtitle,lp(-1,-2,7));
+        if(!editing)root.addView(subtitle,lp(-1,-2,5));
         TextView steps=text("① "+getString(R.string.steps_choose)+"   ② "+getString(R.string.steps_preview)+"   ③ "+getString(R.string.steps_add),12,0xFFFFF3C5,true);
         steps.setGravity(Gravity.CENTER);
-        root.addView(steps,lp(-1,35,9));
+        if(!editing)root.addView(steps,lp(-1,28,4));
     }
     private void chooseLanguage(){
         String current=AppLanguage.selected(this);
@@ -213,14 +221,14 @@ public final class MainActivity extends Activity {
         heroArt=new ImageView(this);
         heroArt.setScaleType(ImageView.ScaleType.FIT_CENTER);
         heroArt.setAdjustViewBounds(true);
-        panel.addView(heroArt,lp(-1,203,1));
+        panel.addView(heroArt,lp(-1,154,1));
         heroStatus=text("",13,0xFFFFF2FF,true);
         heroStatus.setGravity(Gravity.CENTER);
         panel.addView(heroStatus,lp(-1,-2,0));
         TextView real=action(getString(R.string.real_battery_action),false,0);
-        real.setOnClickListener(v->{previewValue=-1;updatePreview();});
+        real.setOnClickListener(v->{previewValue=-1;refreshLevels();updatePreview();});
         panel.addView(real,lp(-1,48,8));
-        panel.addView(text(getString(R.string.battery_guide),12,WHITE,false),lp(-1,-2,8));
+        TextView helpGuide=text(getString(R.string.battery_guide_short),12,WHITE,false);panel.addView(helpGuide,lp(-1,-2,5));helpGuide.setOnClickListener(v->new AlertDialog.Builder(this).setMessage(R.string.battery_guide).setPositiveButton(android.R.string.ok,null).show());
         TextView add=action(getString(R.string.button_add),true,0);
         add.setOnClickListener(v->pin());
         panel.addView(add,lp(-1,55,12));
@@ -245,7 +253,12 @@ public final class MainActivity extends Activity {
         LinearLayout panel=col();
         panel.setPadding(dp(14),dp(13),dp(14),dp(15));
         panel.setBackground(gradient(new int[]{0xFF243578,0xFF543B9C},20,0xFF89B5FF));
-        root.addView(panel,lp(-1,-2,17));
+        modePanel=panel;
+        root.addView(panel,lp(-1,-2,8));
+        fillModes();
+    }
+    private void fillModes(){
+        LinearLayout panel=modePanel;panel.removeAllViews();
         panel.addView(text(getString(R.string.mode_heading),18,WHITE,true));
         boolean auto=ThemeCatalog.isAuto(this);
         TextView favorite=action((auto?"○  ":"✓  ")+getString(R.string.mode_fixed),!auto,0);
@@ -261,7 +274,7 @@ public final class MainActivity extends Activity {
         if(ThemeCatalog.isAuto(this)==auto)return;
         ThemeCatalog.setAuto(this,auto);
         BatteryWidgetProvider.refreshAsync(this);
-        build();
+        fillModes();updatePreview();
     }
     private void drawScreenTools(){
         LinearLayout panel=col();
@@ -368,10 +381,11 @@ public final class MainActivity extends Activity {
         label.setSelected(filter==index);
         LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-2,dp(44));
         p.rightMargin=dp(6);filters.addView(label,p);
-        label.setOnClickListener(v->{if(filter==index)return;filter=index;galleryLimit=16;build();jumpTo(galleryAnchor);});
+        label.setOnClickListener(v->{if(filter==index)return;filter=index;galleryLimit=16;refreshFilters();renderGallery();});
     }
+    private void refreshFilters(){for(int i=0;i<filters.getChildCount();i++){TextView v=(TextView)filters.getChildAt(i);boolean selected=i==filter;v.setSelected(selected);v.setTextColor(selected?WHITE:0xFFE5DFFF);v.setBackground(selected?gradient(new int[]{0xFF06BEFE,0xFF8555FF},17,0xFFA2E6FF):gradient(new int[]{0xFF293B80,0xFF423475},17,0xFF655BB6));}}
     private void renderGallery(){
-        gallery.removeAllViews();
+        galleryGeneration++;renderWorker.getQueue().clear();gallery.removeAllViews();
         final int start=filter==12?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT+ThemeCatalog.AQUATIC_COUNT+ThemeCatalog.SPACE_COUNT+ThemeCatalog.EMOTION_COUNT:filter==11?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT+ThemeCatalog.AQUATIC_COUNT+ThemeCatalog.SPACE_COUNT:filter==10?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT+ThemeCatalog.AQUATIC_COUNT:filter==9?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT:filter==8?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT:filter==7?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT:filter==6?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT:filter==5?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT:filter==4?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT:filter==3?ThemeCatalog.COUNT:filter==2?12:0;
         final int count=filter==0?ThemeCatalog.COUNT+ThemeCatalog.NEW_COUNT:filter==3?ThemeCatalog.KITTEN_COUNT:filter==4?ThemeCatalog.DOG_COUNT:filter==5?ThemeCatalog.BEAR_COUNT:filter==6?ThemeCatalog.FRUIT_COUNT:filter==7?ThemeCatalog.FANTASY_COUNT:filter==8?ThemeCatalog.FOOD_COUNT:filter==9?ThemeCatalog.AQUATIC_COUNT:filter==10?ThemeCatalog.SPACE_COUNT:filter==11?ThemeCatalog.EMOTION_COUNT:filter==12?ThemeCatalog.NATURE_COUNT:12;
         final int visibleCount=Math.min(count,galleryLimit);
@@ -399,15 +413,15 @@ public final class MainActivity extends Activity {
                 final int generation=galleryGeneration;
                 final int theme=shownTheme, level=battery.percent;
                 final boolean charging=battery.charging;
-                renderWorker.execute(()->{
+                final String thumbKey=theme+":"+level+":"+charging;
+                android.graphics.Bitmap hit=thumbnails.get(thumbKey);
+                if(hit!=null)image.setImageBitmap(hit);
+                else renderWorker.execute(()->{
                     if(Thread.currentThread().isInterrupted() || generation!=galleryGeneration)return;
-                    android.graphics.Bitmap bmp=BatteryArt.draw(getApplicationContext(),320,200,theme,level,charging);
+                    android.graphics.Bitmap bmp=BatteryArt.draw(getApplicationContext(),240,150,theme,level,charging);
+                    thumbnails.put(thumbKey,bmp);
                     uiHandler.post(()->{
-                        if(isFinishing()||isDestroyed()||generation!=galleryGeneration){
-                            bmp.recycle();
-                            return;
-                        }
-                        image.setImageBitmap(bmp);
+                        if(!isFinishing()&&!isDestroyed()&&generation==galleryGeneration)image.setImageBitmap(bmp);
                     });
                 });
                 item.addView(image,lp(-1,111,0));
@@ -421,14 +435,13 @@ public final class MainActivity extends Activity {
                     ThemeCatalog.save(this,selection);
                     ThemeCatalog.setAuto(this,false);
                     BatteryWidgetProvider.refreshAsync(this);
-                    refreshChoice();
-                    Toast.makeText(this,getString(R.string.style_saved),Toast.LENGTH_SHORT).show();
+                    showEditor();
                 });
             }
         }
         if(visibleCount<count){
             TextView more=action(getString(R.string.gallery_more,visibleCount,count),false,0);
-            more.setOnClickListener(v->{galleryLimit+=16;refreshChoice();});
+            more.setOnClickListener(v->{galleryLimit+=16;renderGallery();});
             gallery.addView(more,lp(-1,52,12));
         }
     }
@@ -443,31 +456,33 @@ public final class MainActivity extends Activity {
         section.setPadding(dp(13),dp(13),dp(13),dp(13));
         section.setBackground(gradient(new int[]{0xFF282377,0xFF423390},20,0xFF8863DE));
         root.addView(section,lp(-1,-2,24));
-        selectionLabel=text("✦  "+getString(R.string.section_preview),19,WHITE,true);
+        int ni=ThemeCatalog.newIndex(selection);
+        selectionLabel=text(getString(ni>=0?newNames[ni]:names[selection%ThemeCatalog.SPECIES]),19,WHITE,true);
         section.addView(selectionLabel);
         section.addView(text(getString(R.string.palette_title),16,WHITE,true),lp(-1,-2,12));
+        final TextView[] swatches=new TextView[ThemeCatalog.PALETTES];
         for(int start=0;start<ThemeCatalog.PALETTES;start+=3){
             LinearLayout colors=row();
-            section.addView(colors,lp(-1,54,7));
+            section.addView(colors,lp(-1,39,5));
             for(int i=start;i<Math.min(start+3,ThemeCatalog.PALETTES);i++){
                 final int palette=i;
                 final int theme=ThemeCatalog.withPalette(selection,palette);
                 TextView swatch=text(getString(paletteNames[i])+(ThemeCatalog.palette(selection)==i?" ✓":""),12,WHITE,true);
-                swatch.setGravity(Gravity.CENTER);
+                swatches[i]=swatch;swatch.setGravity(Gravity.CENTER);
                 swatch.setBackground(solid(ThemeCatalog.background(theme),14));
                 LinearLayout.LayoutParams colorParams=new LinearLayout.LayoutParams(0,-1,1);
                 colorParams.rightMargin=dp(5);
                 colors.addView(swatch,colorParams);
                 swatch.setOnClickListener(v->{
-                    selection=theme;ThemeCatalog.save(this,theme);ThemeCatalog.setAuto(this,false);
-                    BatteryWidgetProvider.refreshAsync(this);
-                    refreshChoice();
+                    selection=ThemeCatalog.withPalette(selection,palette);ThemeCatalog.save(this,selection);
+                    for(int k=0;k<swatches.length;k++)if(swatches[k]!=null)swatches[k].setText(getString(paletteNames[k])+(k==palette?" ✓":""));
+                    BatteryWidgetProvider.refreshAsync(this);updatePreview();
                 });
             }
         }
         TextView instruction=text(getString(R.string.preview_levels),13,MUTED,false);
         section.addView(instruction,lp(-1,-2,6));
-        LinearLayout switches=row();
+        LinearLayout switches=row();levelControls=switches;
         section.addView(switches,lp(-1,39,10));
         level(switches,getString(R.string.preview_real),-1);
         level(switches,"15%",15);level(switches,"40%",40);
@@ -488,8 +503,9 @@ public final class MainActivity extends Activity {
         LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(0,dp(38),1);
         p.rightMargin=dp(3);
         items.addView(chip,p);
-        chip.setOnClickListener(v->{previewValue=percent;updatePreview();for(int i=0;i<items.getChildCount();i++){View ch=items.getChildAt(i);ch.setAlpha(ch==chip?1f:0.65f);}});
+        chip.setTag(percent);chip.setOnClickListener(v->{previewValue=percent;refreshLevels();updatePreview();});
     }
+    private void refreshLevels(){if(levelControls==null)return;for(int i=0;i<levelControls.getChildCount();i++){TextView chip=(TextView)levelControls.getChildAt(i);boolean active=((Integer)chip.getTag())==previewValue;chip.setSelected(active);chip.setTextColor(active?WHITE:0xFFE1D8FF);chip.setBackground(active?gradient(new int[]{0xFF06B6EF,0xFF9165EF},13,0xFFA2E6FF):solid(0xFF352A73,13));}}
     private void drawFooter(){
         LinearLayout card=col();
         card.setPadding(dp(14),dp(15),dp(14),dp(15));
@@ -518,19 +534,21 @@ public final class MainActivity extends Activity {
         BatteryState actual=BatteryState.read(this);
         int pct=previewValue==-1?actual.percent:previewValue==-2?85:previewValue;
         boolean charging=previewValue==-2||(previewValue==-1&&actual.charging);
-        final int generation=++previewGeneration;
         final int theme=ThemeCatalog.resolve(this,selection,pct,charging);
-        previewWorker.execute(()->{
-            if(Thread.currentThread().isInterrupted() || generation!=previewGeneration)return;
-            android.graphics.Bitmap bmp=BatteryArt.draw(getApplicationContext(),720,446,theme,pct,charging);
-            uiHandler.post(()->{
-                if(isFinishing()||isDestroyed()||generation!=previewGeneration){
-                    bmp.recycle();
-                    return;
-                }
-                if(heroArt!=null)heroArt.setImageBitmap(bmp);
+        final String key=theme+":"+pct+":"+charging;
+        if(!key.equals(requestedPreview)){
+            requestedPreview=key;
+            final int generation=++previewGeneration;
+            previewWorker.getQueue().clear();
+            android.graphics.Bitmap cached=previews.get(key);
+            if(cached!=null)heroArt.setImageBitmap(cached);
+            else previewWorker.execute(()->{
+                if(Thread.currentThread().isInterrupted()||generation!=previewGeneration)return;
+                android.graphics.Bitmap bmp=BatteryArt.draw(getApplicationContext(),540,335,theme,pct,charging);
+                previews.put(key,bmp);
+                uiHandler.post(()->{if(!isFinishing()&&!isDestroyed()&&generation==previewGeneration&&heroArt!=null)heroArt.setImageBitmap(bmp);});
             });
-        });
+        }
         String label=previewValue==-1?getString(R.string.battery_real_label)
              :previewValue==-2?getString(R.string.charging_label)
              :getString(R.string.preview_level);

@@ -185,4 +185,7 @@
 <string name="dream_guide">En los ajustes de Android selecciona Salvapantallas Emoji Battery, elige cuándo iniciarlo (durante la carga o en una base) y pulsa Iniciar ahora si aparece. Conecta el cargador y deja que la pantalla se apague por inactividad. Algunos teléfonos no admiten salvapantallas.</string>
 <string name="dream_preview">Vista previa del salvapantallas</string>
 <string name="dream_preview_notice">Esta vista previa no activa el salvapantallas del sistema Android.</string>
+<string name="back_gallery">Volver a la galería</string>
+<string name="edit_selected">Editar mascota elegida</string>
+<string name="battery_guide_short">Configurar widget: toca aquí para ver la ayuda.</string>
 </resources>
