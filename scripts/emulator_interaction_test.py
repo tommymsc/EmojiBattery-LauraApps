@@ -1,63 +1,67 @@
-"""UI smoke test: swipe the screen and actually toggle automatic mascot mode."""
+"""Exercise gallery/editor navigation, real preview and both battery modes."""
 import re
 import subprocess
 import time
 import xml.etree.ElementTree as ET
 
 def adb(*args):
-    result = subprocess.run(["adb", *args], check=True, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE, text=True, timeout=35)
-    return result.stdout
+    return subprocess.run(["adb", *args], check=True, stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE, text=True, timeout=45).stdout
 
 def hierarchy():
-    for attempt in range(3):
+    for attempt in range(4):
         try:
             adb("shell", "uiautomator", "dump", "/sdcard/emoji-window.xml")
             return ET.fromstring(adb("shell", "cat", "/sdcard/emoji-window.xml"))
         except (subprocess.SubprocessError, ET.ParseError):
-            if attempt == 2:
+            if attempt == 3:
                 raise
-            time.sleep(2)
+            time.sleep(1)
 
-def find_toggle(tree):
-    for node in tree.iter("node"):
-        if "Automatic with battery" in node.get("text", ""):
-            bounds = re.findall(r"\d+", node.get("bounds", ""))
-            if len(bounds) == 4:
-                x1, y1, x2, y2 = map(int, bounds)
-                if x2 > x1 and y2 > y1 and y2 > 0 and y1 < 2200:
-                    return node.get("text", ""), (x1+x2)//2, (y1+y2)//2
+sizes = re.findall(r"(\d+)x(\d+)", adb("shell", "wm", "size"))
+width, height = map(int, sizes[-1])
+def locate(key):
+    for n in hierarchy().iter("node"):
+        if n.get("content-desc") != key:
+            continue
+        coords = re.findall(r"-?\d+", n.get("bounds", ""))
+        if len(coords) != 4:
+            continue
+        x1,y1,x2,y2 = map(int,coords)
+        x1,y1,x2,y2 = max(0,x1),max(0,y1),min(width,x2),min(height,y2)
+        if x2-x1>10 and y2-y1>18:
+            return n.get("text",""),(x1+x2)//2,(y1+y2)//2
     return None
 
-adb("shell", "am", "start", "-W", "-n",
-    "com.lauraapps.emojibattery/.MainActivity")
-time.sleep(3)
-initial = hierarchy()
-for node in initial.iter('node'):
-    if 'Edit selected mascot' in node.get('text',''):
-        x1,y1,x2,y2=map(int,re.findall(r'\d+',node.get('bounds','')))
-        adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2));time.sleep(1);break
-initial=hierarchy()
-item = find_toggle(initial)
-for _ in range(7):
-    if item is not None:
-        break
-    adb("shell", "input", "swipe", "450", "1540", "450", "580", "450")
+def seek(key, direction="down", attempts=10):
+    for _ in range(attempts):
+        result=locate(key)
+        if result:
+            return result
+        start,end=(int(height*.80),int(height*.30)) if direction=="down" else (int(height*.30),int(height*.80))
+        adb("shell","input","swipe",str(width//2),str(start),str(width//2),str(end),"400")
+        time.sleep(.7)
+    raise AssertionError("Control not reachable: "+key)
+
+def tap(key,direction="down"):
+    _,x,y=seek(key,direction)
+    adb("shell","input","tap",str(x),str(y))
     time.sleep(1)
-    item = find_toggle(hierarchy())
-assert item is not None, "Automatic mode button not reachable through vertical swipes"
-text, x, y = item
-if "✓" not in text:
-    adb("shell", "input", "tap", str(x), str(y))
-    time.sleep(2)
-    updated = find_toggle(hierarchy())
-    assert updated is not None and "✓" in updated[0], "Automatic mode tap did not update UI"
-else:
-    adb("shell", "input", "tap", str(x), str(y))
-    time.sleep(2)
-    updated = find_toggle(hierarchy())
-    assert updated is not None and "✓" not in updated[0], "Mode toggle tap did not update UI"
-adb("shell", "input", "swipe", "450", "600", "450", "1500", "430")
-time.sleep(1)
-assert adb("shell", "pidof", "com.lauraapps.emojibattery").strip(), "App stopped after interaction"
-print("PASS: scroll down/up, tap mascot mode, UI state changes and app remains alive")
+
+adb("shell","am","force-stop","com.lauraapps.emojibattery")
+adb("shell","am","start","-W","-n","com.lauraapps.emojibattery/.MainActivity")
+time.sleep(3)
+tap("edit_selected_mascot")
+assert locate("back_to_gallery"), "Editor did not open"
+tap("automatic_battery_mode")
+assert "✓" in seek("automatic_battery_mode")[0], "Automatic mode did not activate"
+tap("fixed_battery_mode","up")
+assert "✓" in seek("fixed_battery_mode","up")[0], "Fixed mode did not activate"
+tap("battery_preview_15")
+assert locate("battery_preview_15"), "Preview controls disappeared"
+tap("battery_preview_100")
+tap("battery_preview_-1")
+tap("back_to_gallery","up")
+assert seek("edit_selected_mascot","up"), "Gallery did not reopen"
+assert adb("shell","pidof","com.lauraapps.emojibattery").strip(), "App stopped"
+print("PASS: gallery/editor navigation, automatic and fixed mode, preview level controls, return to gallery")

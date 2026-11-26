@@ -155,10 +155,10 @@ public final class MainActivity extends Activity {
         heroArt=null;requestedPreview="";previewGeneration++;previewWorker.getQueue().clear();
         drawHeader();
         if(editing){
-            TextView back=action(getString(R.string.back_gallery),false,0);root.addView(back,lp(-1,48,6));back.setOnClickListener(v->showGallery());
-            drawHero();drawCustomize();drawModeSelector();drawScreenTools();
+            TextView back=action(getString(R.string.back_gallery),false,0);root.addView(back,lp(-1,48,6));back.setContentDescription("back_to_gallery");back.setOnClickListener(v->showGallery());
+            drawHero();drawModeSelector();drawCustomize();drawScreenTools();
         }else{
-            TextView edit=action(getString(R.string.edit_selected),true,0);root.addView(edit,lp(-1,48,8));edit.setOnClickListener(v->showEditor());
+            TextView edit=action(getString(R.string.edit_selected),true,0);root.addView(edit,lp(-1,48,8));edit.setContentDescription("edit_selected_mascot");edit.setOnClickListener(v->showEditor());
             drawGallery();drawFooter();
         }
         scroll.post(()->scroll.scrollTo(0,0));
@@ -285,10 +285,10 @@ public final class MainActivity extends Activity {
         panel.addView(text(getString(R.string.mode_heading),18,WHITE,true));
         boolean auto=ThemeCatalog.isAuto(this);
         TextView favorite=action((auto?"○  ":"✓  ")+getString(R.string.mode_fixed),!auto,0);
-        favorite.setOnClickListener(v->setMascotMode(false));
+        favorite.setContentDescription("fixed_battery_mode");favorite.setOnClickListener(v->setMascotMode(false));
         panel.addView(favorite,lp(-1,50,12));
         TextView automatic=action((auto?"✓  ":"○  ")+getString(R.string.mode_auto),auto,0);
-        automatic.setOnClickListener(v->setMascotMode(true));
+        automatic.setContentDescription("automatic_battery_mode");automatic.setOnClickListener(v->setMascotMode(true));
         panel.addView(automatic,lp(-1,50,9));
         panel.addView(text(getString(auto?R.string.mode_auto_desc:R.string.mode_fixed_desc),
             12,0xFFEBE5FF,false),lp(-1,-2,11));
@@ -526,7 +526,7 @@ public final class MainActivity extends Activity {
         LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(0,dp(38),1);
         p.rightMargin=dp(3);
         items.addView(chip,p);
-        chip.setTag(percent);chip.setOnClickListener(v->{previewValue=percent;refreshLevels();updatePreview();});
+        chip.setContentDescription("battery_preview_"+percent);chip.setTag(percent);chip.setOnClickListener(v->{previewValue=percent;refreshLevels();updatePreview();});
     }
     private void refreshLevels(){if(levelControls==null)return;for(int i=0;i<levelControls.getChildCount();i++){TextView chip=(TextView)levelControls.getChildAt(i);boolean active=((Integer)chip.getTag())==previewValue;chip.setSelected(active);chip.setTextColor(active?WHITE:0xFFE1D8FF);chip.setBackground(active?gradient(new int[]{0xFF06B6EF,0xFF9165EF},13,0xFFA2E6FF):solid(0xFF352A73,13));}}
     private void drawFooter(){
