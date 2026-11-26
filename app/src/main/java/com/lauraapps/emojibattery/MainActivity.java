@@ -170,9 +170,32 @@ public final class MainActivity extends Activity {
             pulse.start();
         }
     }
-    private void showEditor(){editing=true;previewValue=-1;build();}
-    private void showGallery(){editing=false;build();}
-    @Override public void onBackPressed(){if(editing)showGallery();else super.onBackPressed();}
+    private void showEditor(){editing=true;previewValue=-1;build();syncBackNavigation();}
+    private void showGallery(){editing=false;build();syncBackNavigation();}
+    private Object backCallback;
+    private void syncBackNavigation(){
+        if(Build.VERSION.SDK_INT>=33)syncModernBack();
+    }
+    @android.annotation.TargetApi(33)
+    private void syncModernBack(){
+        if(backCallback!=null){
+            getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback((android.window.OnBackInvokedCallback)backCallback);
+            backCallback=null;
+        }
+        if(editing){
+            android.window.OnBackInvokedCallback callback=this::showGallery;
+            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT,callback);
+            backCallback=callback;
+        }
+    }
+    @Override public boolean onKeyDown(int keyCode,android.view.KeyEvent event){
+        if(Build.VERSION.SDK_INT<33&&editing&&keyCode==android.view.KeyEvent.KEYCODE_BACK){event.startTracking();return true;}
+        return super.onKeyDown(keyCode,event);
+    }
+    @Override public boolean onKeyUp(int keyCode,android.view.KeyEvent event){
+        if(Build.VERSION.SDK_INT<33&&editing&&keyCode==android.view.KeyEvent.KEYCODE_BACK&&event.isTracking()&&!event.isCanceled()){showGallery();return true;}
+        return super.onKeyUp(keyCode,event);
+    }
     private void drawHeader(){
         LinearLayout top=row();
         root.addView(top,lp(-1,38,0));
