@@ -398,5 +398,75 @@
     "git_sha": "8ad3cd0b111f37be1c7c1779a1254a454e73d09d",
     "width": 512,
     "height": 512
+  },
+  {
+    "id": "food_pizza",
+    "index": 40,
+    "theme_id": 1280,
+    "default_palette": 3,
+    "bytes": 63760,
+    "git_sha": "333e68112a0ff741e2896909b64d0183304cf028",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "food_icecream",
+    "index": 41,
+    "theme_id": 1287,
+    "default_palette": 5,
+    "bytes": 47520,
+    "git_sha": "7f8d4dc599b7f39ec526df8b906f653af2537298",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "food_donut",
+    "index": 42,
+    "theme_id": 1294,
+    "default_palette": 0,
+    "bytes": 59056,
+    "git_sha": "5499750694fe8f5c0e57207916bdd4776d9a5cd0",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "food_boba",
+    "index": 43,
+    "theme_id": 1301,
+    "default_palette": 1,
+    "bytes": 54472,
+    "git_sha": "3abff3deea4f99342841876a5ebc9376a9a23d62",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "food_burger",
+    "index": 44,
+    "theme_id": 1308,
+    "default_palette": 3,
+    "bytes": 58536,
+    "git_sha": "e28b93794c01884c7c5031fd6c094b5690eea5c6",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "food_cupcake",
+    "index": 45,
+    "theme_id": 1315,
+    "default_palette": 5,
+    "bytes": 58362,
+    "git_sha": "2cd8aaef259a05ab490f09382a355caacb3f4d35",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "food_sushi",
+    "index": 46,
+    "theme_id": 1322,
+    "default_palette": 3,
+    "bytes": 57664,
+    "git_sha": "de8d609a5f82e6567d2606630401243febb08e40",
+    "width": 512,
+    "height": 512
   }
 ]

@@ -143,4 +143,12 @@
 <string name="fantasy_dragon">Baby Dragon</string>
 <string name="fantasy_phoenix">Golden Phoenix</string>
 <string name="fantasy_fairy">Sparkle Fairy</string>
+<string name="filter_food">Cute Food</string>
+<string name="food_pizza">Cute Pizza</string>
+<string name="food_icecream">Rainbow Ice Cream</string>
+<string name="food_donut">Glazed Donut</string>
+<string name="food_boba">Bubble Tea</string>
+<string name="food_burger">Happy Burger</string>
+<string name="food_cupcake">Magic Cupcake</string>
+<string name="food_sushi">Kawaii Sushi</string>
 </resources>

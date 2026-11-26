@@ -142,4 +142,12 @@
 <string name="fantasy_dragon">Dragón Bebé</string>
 <string name="fantasy_phoenix">Fénix Dorado</string>
 <string name="fantasy_fairy">Hada Brillante</string>
+<string name="filter_food">Comida adorable</string>
+<string name="food_pizza">Pizza Adorable</string>
+<string name="food_icecream">Helado Arcoíris</string>
+<string name="food_donut">Dona Glaseada</string>
+<string name="food_boba">Té de Burbujas</string>
+<string name="food_burger">Hamburguesa Feliz</string>
+<string name="food_cupcake">Cupcake Mágico</string>
+<string name="food_sushi">Sushi Kawaii</string>
 </resources>
