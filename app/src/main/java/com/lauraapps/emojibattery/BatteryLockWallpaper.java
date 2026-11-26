@@ -32,7 +32,7 @@ public final class BatteryLockWallpaper {
             canvas.drawCircle(560,930,280,glow);
             BatteryState battery=BatteryState.read(context);
             Bitmap mascot=BatteryArt.draw(context,720,446,theme,battery.percent,battery.charging);
-            canvas.drawBitmap(mascot,null,new RectF(34,430,686,833),new Paint(3));
+            try{canvas.drawBitmap(mascot,null,new RectF(34,430,686,833),new Paint(3));}finally{mascot.recycle();}
             Paint caption=new Paint(3);
             caption.setColor(0xFFF2E7FF);
             caption.setTypeface(android.graphics.Typeface.create("sans-serif-medium",android.graphics.Typeface.BOLD));

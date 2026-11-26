@@ -26,6 +26,8 @@ public final class BatteryDreamService extends DreamService {
     private TextView status;
     private ObjectAnimator floatAnimation;
     private boolean listening;
+    private int lastTheme=-1,lastPercent=-2;
+    private boolean lastCharging;
     private final Runnable refresh=new Runnable(){
         @Override public void run(){
             render();
@@ -88,8 +90,10 @@ public final class BatteryDreamService extends DreamService {
     private void render(){
         if(art==null)return;
         BatteryState state=BatteryState.read(this);
-        art.setImageBitmap(BatteryArt.draw(this,720,446,ThemeCatalog.resolve(this,ThemeCatalog.load(this),state.percent,state.charging),
-            state.percent,state.charging));
+        int theme=ThemeCatalog.resolve(this,ThemeCatalog.load(this),state.percent,state.charging);
+        if(theme==lastTheme && state.percent==lastPercent && state.charging==lastCharging && art.getDrawable()!=null)return;
+        art.setImageBitmap(BatteryArt.draw(this,720,446,theme,state.percent,state.charging));
+        lastTheme=theme;lastPercent=state.percent;lastCharging=state.charging;
         status.setText(state.percent<0?getString(R.string.unknown):
             (state.charging?getString(R.string.charging):getString(R.string.battery_level))
                 +"  •  "+state.percent+"%");

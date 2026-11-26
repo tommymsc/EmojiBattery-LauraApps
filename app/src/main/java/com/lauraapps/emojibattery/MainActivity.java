@@ -36,6 +36,7 @@ public final class MainActivity extends Activity {
     private final int[] names={R.string.mascot_0,R.string.mascot_1,R.string.mascot_2,R.string.mascot_3,R.string.mascot_4,R.string.mascot_5,R.string.mascot_6,R.string.mascot_7,R.string.mascot_8,R.string.mascot_9,R.string.mascot_10,R.string.mascot_11,R.string.mascot_12,R.string.mascot_13,R.string.mascot_14,R.string.mascot_15,R.string.mascot_16,R.string.mascot_17,R.string.mascot_18,R.string.mascot_19,R.string.mascot_20,R.string.mascot_21,R.string.mascot_22,R.string.mascot_23};
     private final int[] newNames={R.string.cat_strawberry,R.string.cat_cotton_candy,R.string.cat_princess,R.string.cat_astronaut,R.string.cat_sleepy,R.string.cat_rainbow,R.string.cat_chocolate,R.string.cat_strawberry_original,R.string.cat_strawberry_wave,R.string.cat_cotton_wave,R.string.cat_sleepy_star,R.string.cat_astronaut_star,R.string.cat_rainbow_cloud,R.string.cat_princess_wave,R.string.dog_astronaut,R.string.dog_chocolate,R.string.dog_cotton_candy,R.string.dog_princess,R.string.dog_rainbow,R.string.dog_sleepy_moon,R.string.dog_strawberry,R.string.bear_polar,R.string.bear_teddy,R.string.panda_rainbow,R.string.koala_leaf,R.string.bear_honey,R.string.panda_red,R.string.fruit_avocado,R.string.fruit_grapes,R.string.fruit_orange,R.string.fruit_peach,R.string.fruit_pineapple,R.string.fruit_strawberry,R.string.fruit_watermelon,R.string.fantasy_ghost,R.string.fantasy_unicorn,R.string.fantasy_wizard,R.string.fantasy_dragon,R.string.fantasy_phoenix,R.string.fantasy_fairy,R.string.food_pizza,R.string.food_icecream,R.string.food_donut,R.string.food_boba,R.string.food_burger,R.string.food_cupcake,R.string.food_sushi,R.string.aquatic_dolphin,R.string.aquatic_jellyfish,R.string.aquatic_octopus,R.string.aquatic_shark,R.string.aquatic_tropical_fish,R.string.aquatic_turtle,R.string.space_alien,R.string.space_astronaut,R.string.space_comet,R.string.space_moon,R.string.space_planet,R.string.space_rocket,R.string.space_star,R.string.emotion_love,R.string.emotion_crystal,R.string.emotion_laugh,R.string.emotion_rainbow,R.string.emotion_sleepy,R.string.emotion_cool,R.string.emotion_hug,R.string.nature_sun,R.string.nature_blossom,R.string.nature_snow};
     private int selection=0,filter=0,previewValue=-1;
+    private int galleryLimit=16;
     private View customAnchor;
     private final int[] paletteNames={R.string.palette_0,R.string.palette_1,R.string.palette_2,R.string.palette_3,R.string.palette_4,R.string.palette_5,R.string.palette_6};
     private ScrollView scroll;
@@ -340,18 +341,19 @@ public final class MainActivity extends Activity {
         label.setSelected(filter==index);
         LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-2,dp(44));
         p.rightMargin=dp(6);filters.addView(label,p);
-        label.setOnClickListener(v->{if(filter==index)return;filter=index;build();jumpTo(galleryAnchor);});
+        label.setOnClickListener(v->{if(filter==index)return;filter=index;galleryLimit=16;build();jumpTo(galleryAnchor);});
     }
     private void renderGallery(){
         gallery.removeAllViews();
         final int start=filter==12?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT+ThemeCatalog.AQUATIC_COUNT+ThemeCatalog.SPACE_COUNT+ThemeCatalog.EMOTION_COUNT:filter==11?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT+ThemeCatalog.AQUATIC_COUNT+ThemeCatalog.SPACE_COUNT:filter==10?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT+ThemeCatalog.AQUATIC_COUNT:filter==9?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT:filter==8?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT:filter==7?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT:filter==6?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT:filter==5?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT:filter==4?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT:filter==3?ThemeCatalog.COUNT:filter==2?12:0;
         final int count=filter==0?ThemeCatalog.COUNT+ThemeCatalog.NEW_COUNT:filter==3?ThemeCatalog.KITTEN_COUNT:filter==4?ThemeCatalog.DOG_COUNT:filter==5?ThemeCatalog.BEAR_COUNT:filter==6?ThemeCatalog.FRUIT_COUNT:filter==7?ThemeCatalog.FANTASY_COUNT:filter==8?ThemeCatalog.FOOD_COUNT:filter==9?ThemeCatalog.AQUATIC_COUNT:filter==10?ThemeCatalog.SPACE_COUNT:filter==11?ThemeCatalog.EMOTION_COUNT:filter==12?ThemeCatalog.NATURE_COUNT:12;
+        final int visibleCount=Math.min(count,galleryLimit);
         BatteryState battery=BatteryState.read(this);
-        for(int line=0;line<(count+1)/2;line++){
+        for(int line=0;line<(visibleCount+1)/2;line++){
             LinearLayout horizontal=row();
             gallery.addView(horizontal,lp(-1,156,10));
             for(int col=0;col<2;col++){
-                if(line*2+col>=count){
+                if(line*2+col>=visibleCount){
                     View empty=new View(this);horizontal.addView(empty,new LinearLayout.LayoutParams(0,-1,1));break;
                 }
                 final int catalogIndex=start+line*2+col;
@@ -385,6 +387,8 @@ public final class MainActivity extends Activity {
                 TextView label=text(getString(catalogIndex<ThemeCatalog.COUNT?names[catalogIndex]:newNames[catalogIndex-ThemeCatalog.COUNT])+(chosen?"  ✓":""),11,WHITE,true);
                 label.setMaxLines(2);label.setEllipsize(android.text.TextUtils.TruncateAt.END);label.setGravity(Gravity.CENTER);
                 item.addView(label,lp(-1,32,0));
+                item.setFocusable(true);
+                item.setContentDescription(label.getText());
                 item.setOnClickListener(v->{
                     selection=shownTheme;
                     ThemeCatalog.save(this,selection);
@@ -394,6 +398,11 @@ public final class MainActivity extends Activity {
                     Toast.makeText(this,getString(R.string.style_saved),Toast.LENGTH_SHORT).show();
                 });
             }
+        }
+        if(visibleCount<count){
+            TextView more=action(getString(R.string.gallery_more,visibleCount,count),false,0);
+            more.setOnClickListener(v->{galleryLimit+=16;refreshChoice();});
+            gallery.addView(more,lp(-1,52,12));
         }
     }
     private void refreshChoice(){
@@ -424,6 +433,7 @@ public final class MainActivity extends Activity {
                 colors.addView(swatch,colorParams);
                 swatch.setOnClickListener(v->{
                     selection=theme;ThemeCatalog.save(this,theme);ThemeCatalog.setAuto(this,false);
+                    BatteryWidgetProvider.refreshAsync(this);
                     refreshChoice();
                 });
             }

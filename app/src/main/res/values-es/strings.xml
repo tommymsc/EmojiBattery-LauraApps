@@ -177,4 +177,5 @@
 <string name="nature_sun">Sol Sonriente</string>
 <string name="nature_blossom">Flor de Cerezo</string>
 <string name="nature_snow">Copo de Nieve</string>
+<string name="gallery_more">Ver más (%1$d/%2$d)</string>
 </resources>
