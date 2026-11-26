@@ -1,7 +1,6 @@
 package com.lauraapps.emojibattery;
 
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.provider.Settings;
@@ -47,8 +46,8 @@ public final class MainActivity extends Activity {
     private final ExecutorService renderWorker=Executors.newSingleThreadExecutor();
     private final ExecutorService previewWorker=Executors.newSingleThreadExecutor();
     private final Handler uiHandler=new Handler(Looper.getMainLooper());
-    private int galleryGeneration=0;
-    private int previewGeneration=0;
+    private volatile int galleryGeneration=0;
+    private volatile int previewGeneration=0;
     private final BroadcastReceiver live=new BroadcastReceiver(){
         @Override public void onReceive(Context context,Intent intent){updatePreview();}
     };
@@ -77,6 +76,7 @@ public final class MainActivity extends Activity {
         previewGeneration++;
         renderWorker.shutdownNow();
         previewWorker.shutdownNow();
+        uiHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
     private int dp(float v){return (int)(v*getResources().getDisplayMetrics().density+0.5f);}
@@ -116,8 +116,10 @@ public final class MainActivity extends Activity {
     private void build(){
         int oldY=scroll==null?0:scroll.getScrollY();
         if(pulse!=null){pulse.cancel();pulse=null;}
-        getWindow().setStatusBarColor(0xFF111A53);
-        getWindow().setNavigationBarColor(0xFF10163F);
+        if(Build.VERSION.SDK_INT<35){
+            getWindow().setStatusBarColor(0xFF111A53);
+            getWindow().setNavigationBarColor(0xFF10163F);
+        }
         scroll=new ScrollView(this);
         scroll.setFillViewport(true);
         scroll.setVerticalScrollBarEnabled(true);
@@ -130,10 +132,11 @@ public final class MainActivity extends Activity {
         setContentView(scroll);
         if(Build.VERSION.SDK_INT>=35){
             scroll.setOnApplyWindowInsetsListener((v,i)->{
-                android.graphics.Insets e=i.getInsets(WindowInsets.Type.systemBars());
-                root.setPadding(dp(16),dp(14)+e.top,dp(16),dp(40)+e.bottom);
+                android.graphics.Insets e=i.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
+                root.setPadding(dp(16)+e.left,dp(14)+e.top,dp(16)+e.right,dp(40)+e.bottom);
                 return i;
             });
+            scroll.requestApplyInsets();
         }
         drawHeader();
         drawHero();
@@ -146,9 +149,9 @@ public final class MainActivity extends Activity {
         scroll.post(()->scroll.scrollTo(0,Math.max(0,oldY)));
         updatePreview();
         if(heroArt!=null){
-            pulse=ObjectAnimator.ofFloat(heroArt,"scaleX",1.0f,1.025f,1.0f);
+            pulse=ObjectAnimator.ofFloat(heroArt,"alpha",1.0f,0.97f,1.0f);
             pulse.setDuration(2300);
-            pulse.setRepeatCount(ValueAnimator.INFINITE);
+            pulse.setRepeatCount(0);
             pulse.start();
         }
     }
@@ -270,8 +273,15 @@ public final class MainActivity extends Activity {
             .setPositiveButton(R.string.apply_wallpaper,(dialog,which)->{
                 try{
                     BatteryState state=BatteryState.read(this);
-                    BatteryLockWallpaper.apply(this,ThemeCatalog.resolve(this,selection,state.percent,state.charging));
-                    Toast.makeText(this,R.string.wallpaper_applied,Toast.LENGTH_LONG).show();
+                    final int theme=ThemeCatalog.resolve(this,selection,state.percent,state.charging);
+                    renderWorker.execute(()->{
+                        try{
+                            BatteryLockWallpaper.apply(getApplicationContext(),theme);
+                            uiHandler.post(()->{if(!isDestroyed()&&!isFinishing())Toast.makeText(this,R.string.wallpaper_applied,Toast.LENGTH_LONG).show();});
+                        }catch(Exception ex){
+                            uiHandler.post(()->{if(!isDestroyed()&&!isFinishing())new AlertDialog.Builder(this).setTitle(R.string.wallpaper_confirm_title).setMessage(R.string.wallpaper_failed).setPositiveButton(android.R.string.ok,null).show();});
+                        }
+                    });
                 }catch(Exception ex){
                     new AlertDialog.Builder(this).setTitle(R.string.wallpaper_confirm_title)
                         .setMessage(R.string.wallpaper_failed)
@@ -330,7 +340,7 @@ public final class MainActivity extends Activity {
                 final int theme=index, level=battery.percent;
                 final boolean charging=battery.charging;
                 renderWorker.execute(()->{
-                    if(Thread.currentThread().isInterrupted())return;
+                    if(Thread.currentThread().isInterrupted() || generation!=galleryGeneration)return;
                     android.graphics.Bitmap bmp=BatteryArt.draw(getApplicationContext(),320,200,theme,level,charging);
                     uiHandler.post(()->{
                         if(isFinishing()||isDestroyed()||generation!=galleryGeneration){
@@ -423,7 +433,7 @@ public final class MainActivity extends Activity {
         final int generation=++previewGeneration;
         final int theme=ThemeCatalog.resolve(this,selection,pct,charging);
         previewWorker.execute(()->{
-            if(Thread.currentThread().isInterrupted())return;
+            if(Thread.currentThread().isInterrupted() || generation!=previewGeneration)return;
             android.graphics.Bitmap bmp=BatteryArt.draw(getApplicationContext(),720,446,theme,pct,charging);
             uiHandler.post(()->{
                 if(isFinishing()||isDestroyed()||generation!=previewGeneration){

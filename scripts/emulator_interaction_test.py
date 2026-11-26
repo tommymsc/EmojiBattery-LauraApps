@@ -10,8 +10,14 @@ def adb(*args):
     return result.stdout
 
 def hierarchy():
-    adb("shell", "uiautomator", "dump", "/sdcard/emoji-window.xml")
-    return ET.fromstring(adb("shell", "cat", "/sdcard/emoji-window.xml"))
+    for attempt in range(3):
+        try:
+            adb("shell", "uiautomator", "dump", "/sdcard/emoji-window.xml")
+            return ET.fromstring(adb("shell", "cat", "/sdcard/emoji-window.xml"))
+        except (subprocess.SubprocessError, ET.ParseError):
+            if attempt == 2:
+                raise
+            time.sleep(2)
 
 def find_toggle(tree):
     for node in tree.iter("node"):
