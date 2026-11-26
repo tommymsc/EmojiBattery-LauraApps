@@ -598,5 +598,105 @@
     "git_sha": "9ee14a40f169216fdaf3c3f0ed4285c17e9acb7b",
     "width": 512,
     "height": 512
+  },
+  {
+    "id": "emotion_love",
+    "index": 60,
+    "theme_id": 1420,
+    "default_palette": 0,
+    "bytes": 48114,
+    "git_sha": "6e0b28e5309224566185d96e65b298cd42945766",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "emotion_crystal",
+    "index": 61,
+    "theme_id": 1427,
+    "default_palette": 1,
+    "bytes": 46772,
+    "git_sha": "c65950272647febe7baf0c66c94a0a79a1c63a84",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "emotion_laugh",
+    "index": 62,
+    "theme_id": 1434,
+    "default_palette": 3,
+    "bytes": 35564,
+    "git_sha": "7af5d3570a5e0c56a246134bc1c0ca91988f4b6a",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "emotion_rainbow",
+    "index": 63,
+    "theme_id": 1441,
+    "default_palette": 5,
+    "bytes": 38390,
+    "git_sha": "241289bacaa6f26baeec75c438fb269defd2cc5d",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "emotion_sleepy",
+    "index": 64,
+    "theme_id": 1448,
+    "default_palette": 4,
+    "bytes": 39706,
+    "git_sha": "60dc11a07708a63fa175102d76ca742d00f3706a",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "emotion_cool",
+    "index": 65,
+    "theme_id": 1455,
+    "default_palette": 6,
+    "bytes": 40454,
+    "git_sha": "e53c11881dfd85d8c410bf869cc4cd463dfa3e48",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "emotion_hug",
+    "index": 66,
+    "theme_id": 1462,
+    "default_palette": 0,
+    "bytes": 36714,
+    "git_sha": "efd05fa4ca2c322378b9e4af1bfa5406f92e3d0b",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "nature_sun",
+    "index": 67,
+    "theme_id": 1469,
+    "default_palette": 3,
+    "bytes": 40260,
+    "git_sha": "d833a672530630f7170f41cda87c2c433fa51c34",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "nature_blossom",
+    "index": 68,
+    "theme_id": 1476,
+    "default_palette": 0,
+    "bytes": 35442,
+    "git_sha": "a12eebdd06e7e540b3bd7c3d80d70a477b2e2849",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "nature_snow",
+    "index": 69,
+    "theme_id": 1483,
+    "default_palette": 4,
+    "bytes": 57932,
+    "git_sha": "fd38093b40b63e68c7030bab07c8829e39139c37",
+    "width": 512,
+    "height": 512
   }
 ]

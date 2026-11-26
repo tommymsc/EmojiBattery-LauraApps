@@ -166,4 +166,16 @@
 <string name="space_planet">Happy Planet</string>
 <string name="space_rocket">Cute Rocket</string>
 <string name="space_star">Shining Star</string>
+<string name="filter_emotions">Emotions &amp; hearts</string>
+<string name="filter_nature">Nature &amp; seasons</string>
+<string name="emotion_love">Love Heart</string>
+<string name="emotion_crystal">Crystal Heart</string>
+<string name="emotion_laugh">Laughing Emoji</string>
+<string name="emotion_rainbow">Rainbow Heart</string>
+<string name="emotion_sleepy">Sleepy Emoji</string>
+<string name="emotion_cool">Cool Emoji</string>
+<string name="emotion_hug">Hugging Emoji</string>
+<string name="nature_sun">Happy Sun</string>
+<string name="nature_blossom">Cherry Blossom</string>
+<string name="nature_snow">Crystal Snowflake</string>
 </resources>

@@ -165,4 +165,16 @@
 <string name="space_planet">Planeta Sonriente</string>
 <string name="space_rocket">Cohete Adorable</string>
 <string name="space_star">Estrella Brillante</string>
+<string name="filter_emotions">Emociones y corazones</string>
+<string name="filter_nature">Naturaleza y estaciones</string>
+<string name="emotion_love">Corazón Enamorado</string>
+<string name="emotion_crystal">Corazón de Cristal</string>
+<string name="emotion_laugh">Emoji Risueño</string>
+<string name="emotion_rainbow">Corazón Arcoíris</string>
+<string name="emotion_sleepy">Emoji Dormilón</string>
+<string name="emotion_cool">Emoji Divertido</string>
+<string name="emotion_hug">Emoji Cariñoso</string>
+<string name="nature_sun">Sol Sonriente</string>
+<string name="nature_blossom">Flor de Cerezo</string>
+<string name="nature_snow">Copo de Nieve</string>
 </resources>
