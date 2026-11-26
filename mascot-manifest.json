@@ -468,5 +468,135 @@
     "git_sha": "de8d609a5f82e6567d2606630401243febb08e40",
     "width": 512,
     "height": 512
+  },
+  {
+    "id": "aquatic_dolphin",
+    "index": 47,
+    "theme_id": 1329,
+    "default_palette": 4,
+    "bytes": 69882,
+    "git_sha": "660795e525834372568c1428d5e40ba2fdb1c5e8",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "aquatic_jellyfish",
+    "index": 48,
+    "theme_id": 1336,
+    "default_palette": 5,
+    "bytes": 87448,
+    "git_sha": "2c4b03f9e84829e8aef4a5747afd71545740a913",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "aquatic_octopus",
+    "index": 49,
+    "theme_id": 1343,
+    "default_palette": 5,
+    "bytes": 57300,
+    "git_sha": "d6bb49c4034bd9576de1375e30158219c193a595",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "aquatic_shark",
+    "index": 50,
+    "theme_id": 1350,
+    "default_palette": 4,
+    "bytes": 52244,
+    "git_sha": "b7aeda510ec7f6dcf6147427b589e2bb822e5bf3",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "aquatic_tropical_fish",
+    "index": 51,
+    "theme_id": 1357,
+    "default_palette": 5,
+    "bytes": 54514,
+    "git_sha": "561b67bd520cbfec791432d4c4e301986c39069f",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "aquatic_turtle",
+    "index": 52,
+    "theme_id": 1364,
+    "default_palette": 2,
+    "bytes": 89508,
+    "git_sha": "13e259e88533967808081a13c8e2dd640c7b9f3d",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "space_alien",
+    "index": 53,
+    "theme_id": 1371,
+    "default_palette": 2,
+    "bytes": 50828,
+    "git_sha": "d59cb4c837b3472297922836439a55b89f1544b2",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "space_astronaut",
+    "index": 54,
+    "theme_id": 1378,
+    "default_palette": 0,
+    "bytes": 58826,
+    "git_sha": "673ef35eb5c1998f4fb2acc59817eb4a78034498",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "space_comet",
+    "index": 55,
+    "theme_id": 1385,
+    "default_palette": 5,
+    "bytes": 48096,
+    "git_sha": "e51ef67622ef4533c7e1afc8ac62080f68250773",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "space_moon",
+    "index": 56,
+    "theme_id": 1392,
+    "default_palette": 1,
+    "bytes": 51056,
+    "git_sha": "a3b6b4a4cf68e3f830d687fc4b4b3c100fc07a28",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "space_planet",
+    "index": 57,
+    "theme_id": 1399,
+    "default_palette": 5,
+    "bytes": 52312,
+    "git_sha": "df4c1763bb73683dbaf3813fdeaa356b9b47745b",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "space_rocket",
+    "index": 58,
+    "theme_id": 1406,
+    "default_palette": 0,
+    "bytes": 83806,
+    "git_sha": "19a94673b5cac4777de7dc1a9fe08780b8c9170f",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "space_star",
+    "index": 59,
+    "theme_id": 1413,
+    "default_palette": 3,
+    "bytes": 86452,
+    "git_sha": "9ee14a40f169216fdaf3c3f0ed4285c17e9acb7b",
+    "width": 512,
+    "height": 512
   }
 ]

@@ -151,4 +151,19 @@
 <string name="food_burger">Happy Burger</string>
 <string name="food_cupcake">Magic Cupcake</string>
 <string name="food_sushi">Kawaii Sushi</string>
+<string name="filter_aquatic">Aquatic animals</string>
+<string name="filter_space">Space &amp; galaxies</string>
+<string name="aquatic_dolphin">Magic Dolphin</string>
+<string name="aquatic_jellyfish">Sparkling Jellyfish</string>
+<string name="aquatic_octopus">Rainbow Octopus</string>
+<string name="aquatic_shark">Cute Shark</string>
+<string name="aquatic_tropical_fish">Tropical Fish</string>
+<string name="aquatic_turtle">Sea Turtle</string>
+<string name="space_alien">Cute Alien</string>
+<string name="space_astronaut">Star Astronaut</string>
+<string name="space_comet">Magic Comet</string>
+<string name="space_moon">Sleepy Moon</string>
+<string name="space_planet">Happy Planet</string>
+<string name="space_rocket">Cute Rocket</string>
+<string name="space_star">Shining Star</string>
 </resources>

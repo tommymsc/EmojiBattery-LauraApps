@@ -150,4 +150,19 @@
 <string name="food_burger">Hamburguesa Feliz</string>
 <string name="food_cupcake">Cupcake Mágico</string>
 <string name="food_sushi">Sushi Kawaii</string>
+<string name="filter_aquatic">Animales acuáticos</string>
+<string name="filter_space">Espacio y galaxias</string>
+<string name="aquatic_dolphin">Delfín Mágico</string>
+<string name="aquatic_jellyfish">Medusa Brillante</string>
+<string name="aquatic_octopus">Pulpo Arcoíris</string>
+<string name="aquatic_shark">Tiburón Adorable</string>
+<string name="aquatic_tropical_fish">Pez Tropical</string>
+<string name="aquatic_turtle">Tortuga Marina</string>
+<string name="space_alien">Alien Tierno</string>
+<string name="space_astronaut">Astronauta Estelar</string>
+<string name="space_comet">Cometa Mágico</string>
+<string name="space_moon">Luna Dormilona</string>
+<string name="space_planet">Planeta Sonriente</string>
+<string name="space_rocket">Cohete Adorable</string>
+<string name="space_star">Estrella Brillante</string>
 </resources>
