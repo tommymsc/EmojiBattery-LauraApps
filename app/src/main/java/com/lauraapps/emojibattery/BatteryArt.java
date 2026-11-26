@@ -37,14 +37,14 @@ public final class BatteryArt {
         }catch(Exception ignored){atlas=null;}
         return atlas;
     }
-    private static void illustrated(Canvas c,Bitmap sheet,int theme,int level,boolean charging){
+    private static void illustrated(Context context,Canvas c,Bitmap sheet,int theme,int level,boolean charging){
         int kind=ThemeCatalog.species(theme);
         int col=kind%4,row=kind/4,w=sheet.getWidth()/4,h=sheet.getHeight()/3;
         int gl=charging?0xFF5BE5FD:level<=20?0xFFFF5D91:level<=45?0xFFFFB353:level<80?0xFF559FFF:0xFF55EBA2;
         Paint back=p(0xFF101448);
-        back.setShader(new LinearGradient(0,0,420,260,new int[]{0xFF10163E,0xFF2F257E,0xFF732DA1},null,Shader.TileMode.CLAMP));
+        back.setShader(new LinearGradient(0,0,420,260,new int[]{0xFF10163E,ThemeCatalog.background(theme),ThemeCatalog.accent(theme)},null,Shader.TileMode.CLAMP));
         c.drawRoundRect(new RectF(0,0,420,260),26,26,back);
-        oval(c,-70,145,140,330,a(0xFFFF5BC0,70));
+        oval(c,-70,145,140,330,a(ThemeCatalog.accent(theme),100));
         oval(c,150,-95,490,165,a(0xFF55C4FA,60));
         star(c,36,42,10,0xFFFFCF55);star(c,339,44,7,0xFFF9A3FF);
         star(c,388,110,12,0xFFFFD96F);star(c,24,195,7,0xFF76DFFF);
@@ -57,7 +57,7 @@ public final class BatteryArt {
         c.drawBitmap(sheet,src,new RectF(16,12,259,253),sprite);
         Paint label=p(0xFFE2DAFF);label.setTextSize(15);label.setTypeface(Typeface.DEFAULT_BOLD);
         label.setTextAlign(Paint.Align.CENTER);
-        c.drawText("BATTERY",337,90,label);
+        c.drawText(context.getString(R.string.art_battery),337,90,label);
         int levelText=Math.max(0,Math.min(100,level));
         String value=level<0?"--%":level+"%";
         Paint number=p(Color.WHITE);number.setTypeface(Typeface.create("sans-serif-black",Typeface.BOLD));
@@ -69,7 +69,7 @@ public final class BatteryArt {
         if(level>0)rr(c,268,192,268+Math.min(133,133*levelText/100f),202,6,gl);
         Paint state=p(0xFFFFFFFF);state.setTextAlign(Paint.Align.CENTER);
         state.setTextSize(13);
-        c.drawText(charging?"⚡ CHARGING":level<0?"OFFLINE":level<=20?"LOW POWER":level>=90?"FULL OF JOY":"LIVE LEVEL",335,231,state);
+        c.drawText(context.getString(charging?R.string.art_charging:level<0?R.string.art_unknown:level<=20?R.string.art_low:level>=90?R.string.art_full:R.string.art_live),335,231,state);
     }
     private static Paint p(int c){Paint x=new Paint(3);x.setColor(c);return x;}
     private static Paint stroke(int c,float width){Paint x=p(c);x.setStyle(Paint.Style.STROKE);x.setStrokeWidth(width);x.setStrokeCap(Paint.Cap.ROUND);x.setStrokeJoin(Paint.Join.ROUND);return x;}
@@ -90,8 +90,8 @@ public final class BatteryArt {
         c.save();
         c.scale(w/420f,h/260f);
         Bitmap art=atlas(context);
-        if(art!=null)illustrated(c,art,theme,level,charging);
-        else paint(c,theme,level,charging);
+        if(art!=null)illustrated(context,c,art,theme,level,charging);
+        else paint(c,theme%ThemeCatalog.COUNT,level,charging);
         c.restore();
         return bitmap;
     }

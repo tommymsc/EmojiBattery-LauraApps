@@ -13,15 +13,15 @@ import java.util.concurrent.Executors;
 public class BatteryWidgetProvider extends AppWidgetProvider {
   private static final ExecutorService worker=Executors.newSingleThreadExecutor();
   public static void refreshAsync(Context c){Context app=c.getApplicationContext();worker.execute(()->refresh(app));}
-  @Override public void onUpdate(Context c,AppWidgetManager am,int[] ids){for(int id:ids)updateOne(c,am,id);}
+  @Override public void onUpdate(Context c,AppWidgetManager am,int[] ids){refreshAsync(c);}
   @Override public void onDeleted(Context c,int[] ids){
     SharedPreferences.Editor e=c.getSharedPreferences("widget_themes",0).edit();
     for(int id:ids)e.remove("theme_"+id);
     e.apply();
     super.onDeleted(c,ids);
   }
-  @Override public void onReceive(Context c,Intent i){super.onReceive(c,i);String a=i.getAction();if(Intent.ACTION_POWER_CONNECTED.equals(a)||Intent.ACTION_POWER_DISCONNECTED.equals(a)||Intent.ACTION_BATTERY_LOW.equals(a)||Intent.ACTION_BATTERY_OKAY.equals(a))refresh(c);}
-  @Override public void onAppWidgetOptionsChanged(Context c,AppWidgetManager am,int id,Bundle b){super.onAppWidgetOptionsChanged(c,am,id,b);updateOne(c,am,id);}
+  @Override public void onReceive(Context c,Intent i){super.onReceive(c,i);String a=i.getAction();if(Intent.ACTION_POWER_CONNECTED.equals(a)||Intent.ACTION_POWER_DISCONNECTED.equals(a)||Intent.ACTION_BATTERY_LOW.equals(a)||Intent.ACTION_BATTERY_OKAY.equals(a))refreshAsync(c);}
+  @Override public void onAppWidgetOptionsChanged(Context c,AppWidgetManager am,int id,Bundle b){super.onAppWidgetOptionsChanged(c,am,id,b);refreshAsync(c);}
   public static void applyToAll(Context c){
     AppWidgetManager manager=AppWidgetManager.getInstance(c);
     int[] ids=manager.getAppWidgetIds(new ComponentName(c,BatteryWidgetProvider.class));

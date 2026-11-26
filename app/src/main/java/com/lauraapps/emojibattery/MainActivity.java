@@ -35,6 +35,8 @@ public final class MainActivity extends Activity {
     private final int WHITE=0xFFFFFFFF, MUTED=0xFFC5C7EE, LILAC=0xFFBFA9FF;
     private final int[] names={R.string.mascot_0,R.string.mascot_1,R.string.mascot_2,R.string.mascot_3,R.string.mascot_4,R.string.mascot_5,R.string.mascot_6,R.string.mascot_7,R.string.mascot_8,R.string.mascot_9,R.string.mascot_10,R.string.mascot_11,R.string.mascot_12,R.string.mascot_13,R.string.mascot_14,R.string.mascot_15,R.string.mascot_16,R.string.mascot_17,R.string.mascot_18,R.string.mascot_19,R.string.mascot_20,R.string.mascot_21,R.string.mascot_22,R.string.mascot_23};
     private int selection=0,filter=0,previewValue=-1;
+    private View customAnchor;
+    private final int[] paletteNames={R.string.palette_0,R.string.palette_1,R.string.palette_2,R.string.palette_3,R.string.palette_4,R.string.palette_5,R.string.palette_6};
     private ScrollView scroll;
     private LinearLayout root;
     private LinearLayout gallery,filters;
@@ -111,6 +113,7 @@ public final class MainActivity extends Activity {
             ?gradient(new int[]{0xFFFF7D59,0xFFFA469D,0xFF8747FF},20,0xFFFDCEFF)
             :gradient(new int[]{0xFFFFFFFF,0xFFE4D9FF},20,0xFFD7BEFF));
         b.setElevation(dp(4));
+        b.setFocusable(true);
         return b;
     }
     private void build(){
@@ -122,6 +125,7 @@ public final class MainActivity extends Activity {
         }
         scroll=new ScrollView(this);
         scroll.setFillViewport(true);
+        scroll.setClipToPadding(false);
         scroll.setVerticalScrollBarEnabled(true);
         scroll.setSmoothScrollingEnabled(true);
         galleryGeneration++;
@@ -142,9 +146,9 @@ public final class MainActivity extends Activity {
         drawHero();
         drawMenu();
         drawModeSelector();
-        drawScreenTools();
-        drawGallery();
         drawCustomize();
+        drawGallery();
+        drawScreenTools();
         drawFooter();
         scroll.post(()->scroll.scrollTo(0,Math.max(0,oldY)));
         updatePreview();
@@ -211,7 +215,7 @@ public final class MainActivity extends Activity {
         explore.setOnClickListener(v->jumpTo(galleryAnchor));
         TextView personalize=action(getString(R.string.customize_title),false,0);
         area.addView(personalize,lp(-1,52,10));
-        personalize.setOnClickListener(v->jumpTo(filters));
+        personalize.setOnClickListener(v->jumpTo(customAnchor));
         TextView apply=action(getString(R.string.button_apply),false,0);
         area.addView(apply,lp(-1,52,10));
         apply.setOnClickListener(v->applyExisting());
@@ -372,11 +376,31 @@ public final class MainActivity extends Activity {
     }
     private void drawCustomize(){
         LinearLayout section=col();
+        customAnchor=section;
         section.setPadding(dp(13),dp(13),dp(13),dp(13));
         section.setBackground(gradient(new int[]{0xFF282377,0xFF423390},20,0xFF8863DE));
         root.addView(section,lp(-1,-2,24));
         selectionLabel=text("✦  "+getString(R.string.section_preview),19,WHITE,true);
         section.addView(selectionLabel);
+        section.addView(text(getString(R.string.palette_title),16,WHITE,true),lp(-1,-2,12));
+        for(int start=0;start<ThemeCatalog.PALETTES;start+=3){
+            LinearLayout colors=row();
+            section.addView(colors,lp(-1,54,7));
+            for(int i=start;i<Math.min(start+3,ThemeCatalog.PALETTES);i++){
+                final int palette=i;
+                final int theme=palette*ThemeCatalog.SPECIES+selection%ThemeCatalog.SPECIES;
+                TextView swatch=text(getString(paletteNames[i])+(ThemeCatalog.palette(selection)==i?" ✓":""),12,WHITE,true);
+                swatch.setGravity(Gravity.CENTER);
+                swatch.setBackground(solid(ThemeCatalog.background(theme),14));
+                LinearLayout.LayoutParams colorParams=new LinearLayout.LayoutParams(0,-1,1);
+                colorParams.rightMargin=dp(5);
+                colors.addView(swatch,colorParams);
+                swatch.setOnClickListener(v->{
+                    selection=theme;ThemeCatalog.save(this,theme);ThemeCatalog.setAuto(this,false);
+                    refreshChoice();
+                });
+            }
+        }
         TextView instruction=text(getString(R.string.preview_levels),13,MUTED,false);
         section.addView(instruction,lp(-1,-2,6));
         LinearLayout switches=row();
@@ -449,6 +473,8 @@ public final class MainActivity extends Activity {
         heroStatus.setText(label+"   •   "+(pct<0?"--%":pct+"%"));
     }
     private void applyExisting(){
+        AppWidgetManager manager=AppWidgetManager.getInstance(this);
+        if(manager.getAppWidgetIds(new ComponentName(this,BatteryWidgetProvider.class)).length==0){pin();return;}
         BatteryWidgetProvider.applyToAll(this);
         Toast.makeText(this,R.string.text_apply_success,Toast.LENGTH_SHORT).show();
     }

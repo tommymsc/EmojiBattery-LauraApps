@@ -83,4 +83,18 @@
 <string name="mode_fixed_desc">Conserva tu mascota; su expresión y colores cambian según la batería.</string>
 <string name="mode_auto_desc">Cambia de mascota según la batería. Los widgets se actualizan en intervalos programados por Android y eventos de carga.</string>
 <string name="mode_now_active">Modo activo</string>
+<string name="palette_title">Elige una colección de colores</string>
+<string name="palette_0">Fresa</string>
+<string name="palette_1">Lavanda</string>
+<string name="palette_2">Menta</string>
+<string name="palette_3">Durazno</string>
+<string name="palette_4">Océano</string>
+<string name="palette_5">Dulce</string>
+<string name="palette_6">Noche</string>
+<string name="art_battery">BATERÍA</string>
+<string name="art_charging">CARGANDO</string>
+<string name="art_unknown">SIN DATOS</string>
+<string name="art_low">BAJA</string>
+<string name="art_full">LLENA</string>
+<string name="art_live">NIVEL REAL</string>
 </resources>
