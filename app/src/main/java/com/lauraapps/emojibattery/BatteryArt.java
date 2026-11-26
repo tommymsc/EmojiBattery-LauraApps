@@ -105,6 +105,7 @@ public final class BatteryArt {
         z.quadTo(x-rad*.15f,y-rad*.15f,x,y-rad);z.close();c.drawPath(z,p(color));
     }
     public static Bitmap draw(Context context,int w,int h,int theme,int level,boolean charging){
+        context=AppLanguage.wrap(context);
         theme=ThemeCatalog.clamp(theme);
         w=Math.max(200,Math.min(750,w));h=Math.max(125,Math.min(550,h));
         Bitmap bitmap=Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);

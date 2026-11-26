@@ -178,4 +178,11 @@
 <string name="nature_blossom">Flor de Cerezo</string>
 <string name="nature_snow">Copo de Nieve</string>
 <string name="gallery_more">Ver más (%1$d/%2$d)</string>
+<string name="language_button">Idioma</string>
+<string name="language_system">Idioma del teléfono</string>
+<string name="real_battery_action">Mostrar mi batería real</string>
+<string name="battery_guide">1. Elige una mascota. 2. Toca Mostrar mi batería real. 3. Toca Agregar a pantalla de inicio y confirma. Si ya tienes un widget, toca Aplicar a mis widgets. Android controla la actualización en segundo plano.</string>
+<string name="dream_guide">En los ajustes de Android selecciona Salvapantallas Emoji Battery, elige cuándo iniciarlo (durante la carga o en una base) y pulsa Iniciar ahora si aparece. Conecta el cargador y deja que la pantalla se apague por inactividad. Algunos teléfonos no admiten salvapantallas.</string>
+<string name="dream_preview">Vista previa del salvapantallas</string>
+<string name="dream_preview_notice">Esta vista previa no activa el salvapantallas del sistema Android.</string>
 </resources>

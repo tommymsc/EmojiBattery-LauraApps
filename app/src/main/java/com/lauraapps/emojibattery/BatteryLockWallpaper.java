@@ -15,7 +15,7 @@ public final class BatteryLockWallpaper {
     private BatteryLockWallpaper(){}
     public static void apply(Context context,int theme) throws IOException {
         WallpaperManager wm=WallpaperManager.getInstance(context);
-        if(android.os.Build.VERSION.SDK_INT>=27 && !wm.isWallpaperSupported())throw new IOException("Wallpaper not supported");
+        if(!wm.isWallpaperSupported()||!wm.isSetWallpaperAllowed())throw new IOException("Wallpaper not supported or disallowed");
         final int w=720,h=1280;
         Bitmap image=Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
         try{
@@ -39,7 +39,8 @@ public final class BatteryLockWallpaper {
             caption.setTextSize(34);
             caption.setTextAlign(Paint.Align.CENTER);
             canvas.drawText(context.getString(R.string.wallpaper_caption),360,890,caption);
-            wm.setBitmap(image,null,false,WallpaperManager.FLAG_LOCK);
+            int result=wm.setBitmap(image,null,false,WallpaperManager.FLAG_LOCK);
+            if(result==0)throw new IOException("Wallpaper update failed");
         }finally{image.recycle();}
     }
 }

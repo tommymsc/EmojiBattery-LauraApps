@@ -38,6 +38,7 @@ public final class BatteryDreamService extends DreamService {
         @Override public void onReceive(Context context, Intent intent){render();}
     };
 
+    @Override protected void attachBaseContext(Context base){super.attachBaseContext(AppLanguage.wrap(base));}
     @Override public void onAttachedToWindow(){
         super.onAttachedToWindow();
         setInteractive(false);

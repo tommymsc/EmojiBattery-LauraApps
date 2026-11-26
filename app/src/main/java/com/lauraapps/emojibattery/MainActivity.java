@@ -47,7 +47,8 @@ public final class MainActivity extends Activity {
     private View galleryAnchor;
     private ObjectAnimator pulse;
     private boolean listening=false;
-    private final ExecutorService renderWorker=Executors.newSingleThreadExecutor();
+    private final java.util.concurrent.ThreadPoolExecutor renderWorker=new java.util.concurrent.ThreadPoolExecutor(1,1,0L,java.util.concurrent.TimeUnit.MILLISECONDS,new java.util.concurrent.LinkedBlockingQueue<>());
+    private final ExecutorService wallpaperWorker=Executors.newSingleThreadExecutor();
     private final ExecutorService previewWorker=Executors.newSingleThreadExecutor();
     private final Handler uiHandler=new Handler(Looper.getMainLooper());
     private volatile int galleryGeneration=0;
@@ -55,6 +56,7 @@ public final class MainActivity extends Activity {
     private final BroadcastReceiver live=new BroadcastReceiver(){
         @Override public void onReceive(Context context,Intent intent){updatePreview();}
     };
+    @Override protected void attachBaseContext(Context base){super.attachBaseContext(AppLanguage.wrap(base));}
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
         selection=ThemeCatalog.load(this);
@@ -79,6 +81,7 @@ public final class MainActivity extends Activity {
         galleryGeneration++;
         previewGeneration++;
         renderWorker.shutdownNow();
+        wallpaperWorker.shutdown();
         previewWorker.shutdownNow();
         uiHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
@@ -131,6 +134,7 @@ public final class MainActivity extends Activity {
         scroll.setVerticalScrollBarEnabled(true);
         scroll.setSmoothScrollingEnabled(true);
         galleryGeneration++;
+        renderWorker.getQueue().clear();
         scroll.setBackground(gradient(new int[]{0xFF101B57,0xFF392274,0xFF161B52},0,0));
         root=col();
         root.setPadding(dp(16),dp(19),dp(16),dp(45));
@@ -166,8 +170,9 @@ public final class MainActivity extends Activity {
         root.addView(top,lp(-1,38,0));
         TextView brand=text("✦  LAURAAPPS    /    DIY STUDIO",12,0xFFB5DEFF,true);
         top.addView(brand,new LinearLayout.LayoutParams(0,-1,1));
-        TextView lang=text("ES  •  EN",12,0xFFFFE394,true);
-        top.addView(lang);
+        TextView lang=text("🌐 "+getString(R.string.language_button),12,0xFFFFE394,true);
+        lang.setPadding(dp(8),0,dp(8),0);lang.setMinHeight(dp(48));lang.setFocusable(true);
+        top.addView(lang);lang.setOnClickListener(v->chooseLanguage());
         TextView star=text("✦  ✧  ✨",26,0xFFFFD86E,true);
         star.setGravity(Gravity.CENTER);
         root.addView(star,lp(-1,46,7));
@@ -186,6 +191,16 @@ public final class MainActivity extends Activity {
         steps.setGravity(Gravity.CENTER);
         root.addView(steps,lp(-1,35,9));
     }
+    private void chooseLanguage(){
+        String current=AppLanguage.selected(this);
+        String[] tags={"system","es","en"};
+        String[] labels={getString(R.string.language_system),"Español","English"};
+        int selected="es".equals(current)?1:"en".equals(current)?2:0;
+        new AlertDialog.Builder(this).setTitle(R.string.language_button).setSingleChoiceItems(labels,selected,(dialog,which)->{
+            AppLanguage.save(this,tags[which]);dialog.dismiss();
+            BatteryWidgetProvider.refreshAsync(this);recreate();
+        }).setNegativeButton(android.R.string.cancel,null).show();
+    }
     private void drawHero(){
         LinearLayout panel=col();
         panel.setPadding(dp(10),dp(10),dp(10),dp(12));
@@ -202,6 +217,10 @@ public final class MainActivity extends Activity {
         heroStatus=text("",13,0xFFFFF2FF,true);
         heroStatus.setGravity(Gravity.CENTER);
         panel.addView(heroStatus,lp(-1,-2,0));
+        TextView real=action(getString(R.string.real_battery_action),false,0);
+        real.setOnClickListener(v->{previewValue=-1;updatePreview();});
+        panel.addView(real,lp(-1,48,8));
+        panel.addView(text(getString(R.string.battery_guide),12,WHITE,false),lp(-1,-2,8));
         TextView add=action(getString(R.string.button_add),true,0);
         add.setOnClickListener(v->pin());
         panel.addView(add,lp(-1,55,12));
@@ -254,17 +273,25 @@ public final class MainActivity extends Activity {
         TextView explain=text(getString(R.string.screen_tools_desc),12,MUTED,false);
         panel.addView(explain,lp(-1,-2,8));
         TextView dream=action(getString(R.string.open_dream_settings),false,0);
-        dream.setOnClickListener(v->openDreamSettings());
+        dream.setOnClickListener(v->new AlertDialog.Builder(this).setTitle(R.string.dream_name).setMessage(R.string.dream_guide).setPositiveButton(R.string.open_dream_settings,(dialog,which)->openDreamSettings()).setNegativeButton(android.R.string.cancel,null).show());
         panel.addView(dream,lp(-1,50,14));
+        TextView demo=action(getString(R.string.dream_preview),false,0);
+        demo.setOnClickListener(v->previewDream());panel.addView(demo,lp(-1,50,9));
         TextView lock=action(getString(R.string.set_lock_wallpaper),false,0);
         lock.setOnClickListener(v->confirmLockWallpaper());
         panel.addView(lock,lp(-1,50,9));
         TextView info=text(getString(R.string.lock_static_notice),11,0xFFE4D7FF,false);
         panel.addView(info,lp(-1,-2,11));
     }
+    private void previewDream(){
+        BatteryState state=BatteryState.read(this);
+        ImageView image=new ImageView(this);image.setAdjustViewBounds(true);image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        image.setImageBitmap(BatteryArt.draw(this,720,446,ThemeCatalog.resolve(this,selection,state.percent,state.charging),state.percent,state.charging));
+        new AlertDialog.Builder(this).setTitle(R.string.dream_preview).setView(image).setMessage(R.string.dream_preview_notice).setPositiveButton(android.R.string.ok,null).show();
+    }
     private void openDreamSettings(){
         try{
-            startActivity(new Intent("android.settings.DREAM_SETTINGS"));
+            startActivity(new Intent(Settings.ACTION_DREAM_SETTINGS));
         }catch(Exception ex){
             new AlertDialog.Builder(this)
                 .setTitle(R.string.dream_name)
@@ -280,7 +307,7 @@ public final class MainActivity extends Activity {
                 try{
                     BatteryState state=BatteryState.read(this);
                     final int theme=ThemeCatalog.resolve(this,selection,state.percent,state.charging);
-                    renderWorker.execute(()->{
+                    wallpaperWorker.execute(()->{
                         try{
                             BatteryLockWallpaper.apply(getApplicationContext(),theme);
                             uiHandler.post(()->{if(!isDestroyed()&&!isFinishing())Toast.makeText(this,R.string.wallpaper_applied,Toast.LENGTH_LONG).show();});

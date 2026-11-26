@@ -179,4 +179,11 @@
 <string name="nature_blossom">Cherry Blossom</string>
 <string name="nature_snow">Crystal Snowflake</string>
 <string name="gallery_more">Show more (%1$d/%2$d)</string>
+<string name="language_button">Language</string>
+<string name="language_system">Device language</string>
+<string name="real_battery_action">Show my real battery</string>
+<string name="battery_guide">1. Choose a mascot. 2. Tap Show my real battery. 3. Tap Add to home screen and confirm. If a widget already exists, tap Use on my widgets. Android controls background refresh.</string>
+<string name="dream_guide">In Android settings, select Emoji Battery screensaver, choose when to start (charging or docked), and use Start now if available. Keep the phone connected and allow the screen to time out. Some phones do not support system screensavers.</string>
+<string name="dream_preview">Preview screensaver</string>
+<string name="dream_preview_notice">This preview does not activate the Android system screensaver.</string>
 </resources>
