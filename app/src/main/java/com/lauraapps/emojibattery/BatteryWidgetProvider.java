@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 public class BatteryWidgetProvider extends AppWidgetProvider {
   private static final ExecutorService worker=Executors.newSingleThreadExecutor();
   public static void refreshAsync(Context c){Context app=c.getApplicationContext();worker.execute(()->refresh(app));}
-  @Override public void onUpdate(Context c,AppWidgetManager am,int[] ids){refreshAsync(c);}
+  @Override public void onUpdate(Context c,AppWidgetManager am,int[] ids){if(ids.length>0)c.getSharedPreferences("widget_pin",0).edit().remove("requested_at").apply();refreshAsync(c);}
   @Override public void onDeleted(Context c,int[] ids){
     SharedPreferences.Editor e=c.getSharedPreferences("widget_themes",0).edit();
     for(int id:ids)e.remove("theme_"+id);

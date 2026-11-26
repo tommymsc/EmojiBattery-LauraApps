@@ -18,7 +18,7 @@ assert '.BatteryDreamService' in manifest
 assert 'MANAGE_EXTERNAL_STORAGE' not in manifest and 'SYSTEM_ALERT_WINDOW' not in manifest
 gradle=(root/'app/build.gradle').read_text()
 assert re.search(r'targetSdk\s+36',gradle)
-assert re.search(r'versionCode\s+14',gradle)
+assert re.search(r'versionCode\s+15',gradle)
 source=(app/'java/com/lauraapps/emojibattery/BatteryArt.java').read_text()
 assert 'ThemeCatalog.species(t)' in source
 catalog=(app/'java/com/lauraapps/emojibattery/ThemeCatalog.java').read_text()
@@ -96,3 +96,6 @@ assert 'R.string.filter_emotions' in activity and 'R.string.filter_nature' in ac
 assert 'galleryLimit=16' in activity and 'R.string.gallery_more' in activity
 assert len(re.findall(r'"[a-z_]+"', re.search(r'NEW_MASCOTS=\{([^}]+)\}',catalog).group(1)))==70
 assert len(re.search(r'NEW_DEFAULTS=\{([^}]+)\}',catalog).group(1).split(','))==70
+
+assert 'if(widgetCount()>0)' in activity and 'PIN_COOLDOWN_MS' in activity
+assert 'widget_duplicate_notice' in sets[0] and 'widget_update_existing' in sets[0]

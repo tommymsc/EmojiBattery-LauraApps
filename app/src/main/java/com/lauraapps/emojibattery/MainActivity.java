@@ -38,6 +38,8 @@ public final class MainActivity extends Activity {
     private int selection=0,filter=0,previewValue=-1;
     private int galleryLimit=16;
     private boolean editing=false;
+    private TextView widgetAction,widgetCountNotice;
+    private static final long PIN_COOLDOWN_MS=60000L;
     private LinearLayout modePanel,levelControls;
     private final android.util.LruCache<String,android.graphics.Bitmap> thumbnails=new android.util.LruCache<String,android.graphics.Bitmap>(8*1024*1024){@Override protected int sizeOf(String k,android.graphics.Bitmap v){return v.getAllocationByteCount();}};
     private final android.util.LruCache<String,android.graphics.Bitmap> previews=new android.util.LruCache<String,android.graphics.Bitmap>(5*1024*1024){@Override protected int sizeOf(String k,android.graphics.Bitmap v){return v.getAllocationByteCount();}};
@@ -74,6 +76,7 @@ public final class MainActivity extends Activity {
             listening=true;
         }
         updatePreview();
+        updateWidgetAction();
         BatteryWidgetProvider.refreshAsync(this);
         if(pulse!=null && !pulse.isStarted()) pulse.start();
     }
@@ -152,6 +155,7 @@ public final class MainActivity extends Activity {
             });
             scroll.requestApplyInsets();
         }
+        widgetAction=null;widgetCountNotice=null;
         heroArt=null;requestedPreview="";previewGeneration++;previewWorker.getQueue().clear();
         drawHeader();
         if(editing){
@@ -252,9 +256,12 @@ public final class MainActivity extends Activity {
         real.setOnClickListener(v->{previewValue=-1;refreshLevels();updatePreview();});
         panel.addView(real,lp(-1,48,8));
         TextView helpGuide=text(getString(R.string.battery_guide_short),12,WHITE,false);panel.addView(helpGuide,lp(-1,-2,5));helpGuide.setOnClickListener(v->new AlertDialog.Builder(this).setMessage(R.string.battery_guide).setPositiveButton(android.R.string.ok,null).show());
-        TextView add=action(getString(R.string.button_add),true,0);
-        add.setOnClickListener(v->pin());
-        panel.addView(add,lp(-1,55,12));
+        widgetAction=action(getString(R.string.button_add),true,0);
+        widgetAction.setOnClickListener(v->pin());
+        panel.addView(widgetAction,lp(-1,55,12));
+        widgetCountNotice=text("",12,WHITE,false);
+        panel.addView(widgetCountNotice,lp(-1,-2,5));
+        updateWidgetAction();
         TextView help=text(getString(R.string.widget_help),11,0xFFE5DBFF,false);
         help.setGravity(Gravity.CENTER);
         panel.addView(help,lp(-1,-2,9));
@@ -577,20 +584,41 @@ public final class MainActivity extends Activity {
              :getString(R.string.preview_level);
         heroStatus.setText(label+"   •   "+(pct<0?"--%":pct+"%"));
     }
-    private void applyExisting(){
-        AppWidgetManager manager=AppWidgetManager.getInstance(this);
-        if(manager.getAppWidgetIds(new ComponentName(this,BatteryWidgetProvider.class)).length==0){pin();return;}
-        BatteryWidgetProvider.applyToAll(this);
-        Toast.makeText(this,R.string.text_apply_success,Toast.LENGTH_SHORT).show();
+    private int widgetCount(){
+        return AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this,BatteryWidgetProvider.class)).length;
     }
+    private void updateWidgetAction(){
+        int count=widgetCount();
+        if(count>0)getSharedPreferences("widget_pin",0).edit().remove("requested_at").apply();
+        if(widgetAction!=null)widgetAction.setText(getString(count>0?R.string.widget_update_existing:R.string.button_add)+"    ›");
+        if(widgetCountNotice!=null){
+            widgetCountNotice.setVisibility(count>1?View.VISIBLE:View.GONE);
+            widgetCountNotice.setText(getString(R.string.widget_duplicate_notice));
+        }
+    }
+    private void applyExisting(){pin();}
     private void pin(){
         AppWidgetManager am=AppWidgetManager.getInstance(this);
         ComponentName provider=new ComponentName(this,BatteryWidgetProvider.class);
+        if(widgetCount()>0){
+            BatteryWidgetProvider.applyToAll(this);
+            updateWidgetAction();
+            Toast.makeText(this,widgetCount()>1?R.string.widget_duplicate_notice:R.string.text_apply_success,Toast.LENGTH_LONG).show();
+            return;
+        }
+        android.content.SharedPreferences prefs=getSharedPreferences("widget_pin",0);
+        long now=System.currentTimeMillis(),previous=prefs.getLong("requested_at",0);
+        if(previous>0&&now>=previous&&now-previous<PIN_COOLDOWN_MS){
+            Toast.makeText(this,R.string.widget_pin_pending,Toast.LENGTH_LONG).show();return;
+        }
         if(am.isRequestPinAppWidgetSupported()){
-            if(am.requestPinAppWidget(provider,null,null)){
-                Toast.makeText(this,R.string.pin_requested,Toast.LENGTH_LONG).show();
-                return;
-            }
+            prefs.edit().putLong("requested_at",now).apply();
+            try{
+                if(am.requestPinAppWidget(provider,null,null)){
+                    Toast.makeText(this,R.string.pin_requested,Toast.LENGTH_LONG).show();return;
+                }
+            }catch(RuntimeException ignored){}
+            prefs.edit().remove("requested_at").apply();
         }
         Toast.makeText(this,R.string.manual_pin,Toast.LENGTH_LONG).show();
     }

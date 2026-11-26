@@ -189,4 +189,7 @@
 <string name="back_gallery">Back to gallery</string>
 <string name="edit_selected">Edit selected mascot</string>
 <string name="battery_guide_short">Widget setup: tap here for help.</string>
+<string name="widget_update_existing">Update existing widget</string>
+<string name="widget_duplicate_notice">More than one widget is installed. To keep only one, long-press the extra widget on your home screen and select Remove. Android controls removal.</string>
+<string name="widget_pin_pending">A widget request is already pending. Confirm it on your home screen. If canceled, retry in one minute.</string>
 </resources>
