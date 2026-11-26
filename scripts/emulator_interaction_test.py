@@ -61,6 +61,45 @@ tap("battery_preview_15")
 assert locate("battery_preview_15"), "Preview controls disappeared"
 tap("battery_preview_100")
 tap("battery_preview_-1")
+# Return to live battery and verify actual Android broadcasts, not just simulated buttons.
+try:
+    adb("shell","dumpsys","battery","unplug")
+    adb("shell","dumpsys","battery","set","status","3")
+    for level in (82, 19, 7, 63):
+        adb("shell","dumpsys","battery","set","level",str(level))
+        time.sleep(1)
+        status=seek("battery_status","up")
+        assert str(level)+"%" in status[0], "Live battery mismatch: "+status[0]
+    adb("shell","dumpsys","battery","set","ac","1")
+    adb("shell","dumpsys","battery","set","status","2")
+    time.sleep(1)
+    assert "Charging" in seek("battery_status","up")[0], "Charging state not updated"
+finally:
+    adb("shell","dumpsys","battery","reset")
+# Capture selected theme then switch language while the editor is open.
+seek("battery_preview_15","down")
+selected=[n.get("content-desc","") for n in hierarchy().iter("node") if n.get("content-desc","").startswith("selected_mascot_")]
+# The selected title may be just above the visible preview controls.
+if not selected:
+    adb("shell","input","swipe",str(width//2),str(int(height*.3)),str(width//2),str(int(height*.65)),"350")
+    time.sleep(.5)
+    selected=[n.get("content-desc","") for n in hierarchy().iter("node") if n.get("content-desc","").startswith("selected_mascot_")]
+assert selected, "Selected mascot title missing"
+tap("language_selector","up")
+def pick_language(label):
+    for n in hierarchy().iter("node"):
+        if n.get("text")==label:
+            x1,y1,x2,y2=map(int,re.findall(r"\d+",n.get("bounds","")))
+            adb("shell","input","tap",str((x1+x2)//2),str((y1+y2)//2))
+            time.sleep(2)
+            return
+    raise AssertionError("Language missing: "+label)
+pick_language("Español")
+assert "Volver" in seek("back_to_gallery","up")[0], "Language change left editor"
+assert seek(selected[0],"down"), "Selected mascot changed"
+tap("language_selector","up")
+pick_language("English")
+assert "Back to gallery" in seek("back_to_gallery","up")[0]
 tap("back_to_gallery","up")
 assert seek("edit_selected_mascot","up"), "Gallery did not reopen"
 assert adb("shell","pidof","com.lauraapps.emojibattery").strip(), "App stopped"

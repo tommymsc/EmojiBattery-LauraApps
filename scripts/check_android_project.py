@@ -18,7 +18,7 @@ assert '.BatteryDreamService' in manifest
 assert 'MANAGE_EXTERNAL_STORAGE' not in manifest and 'SYSTEM_ALERT_WINDOW' not in manifest
 gradle=(root/'app/build.gradle').read_text()
 assert re.search(r'targetSdk\s+36',gradle)
-assert re.search(r'versionCode\s+15',gradle)
+assert re.search(r'versionCode\s+16',gradle)
 source=(app/'java/com/lauraapps/emojibattery/BatteryArt.java').read_text()
 assert 'ThemeCatalog.species(t)' in source
 catalog=(app/'java/com/lauraapps/emojibattery/ThemeCatalog.java').read_text()

@@ -12,7 +12,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 public class BatteryWidgetProvider extends AppWidgetProvider {
   private static final ExecutorService worker=Executors.newSingleThreadExecutor();
-  public static void refreshAsync(Context c){Context app=c.getApplicationContext();worker.execute(()->refresh(app));}
+  private static boolean monitoring=false;
+  private static final java.util.concurrent.atomic.AtomicBoolean pending=new java.util.concurrent.atomic.AtomicBoolean(false);
+  private static final android.content.BroadcastReceiver batteryMonitor=new android.content.BroadcastReceiver(){@Override public void onReceive(Context c,Intent i){refreshAsync(c);}};
+  private static synchronized void syncMonitor(Context app){
+    boolean hasWidgets=AppWidgetManager.getInstance(app).getAppWidgetIds(new ComponentName(app,BatteryWidgetProvider.class)).length>0;
+    if(hasWidgets&&!monitoring){monitoring=true;app.registerReceiver(batteryMonitor,new android.content.IntentFilter(Intent.ACTION_BATTERY_CHANGED));}
+    else if(!hasWidgets&&monitoring){monitoring=false;app.unregisterReceiver(batteryMonitor);}
+  }
+  public static void refreshAsync(Context c){Context app=c.getApplicationContext();syncMonitor(app);if(pending.compareAndSet(false,true))worker.execute(()->{pending.set(false);refresh(app);});}
+  @Override public void onDisabled(Context c){syncMonitor(c.getApplicationContext());super.onDisabled(c);}
   @Override public void onUpdate(Context c,AppWidgetManager am,int[] ids){if(ids.length>0)c.getSharedPreferences("widget_pin",0).edit().remove("requested_at").apply();refreshAsync(c);}
   @Override public void onDeleted(Context c,int[] ids){
     SharedPreferences.Editor e=c.getSharedPreferences("widget_themes",0).edit();

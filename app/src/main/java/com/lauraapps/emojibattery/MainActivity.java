@@ -67,7 +67,12 @@ public final class MainActivity extends Activity {
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
         selection=ThemeCatalog.load(this);
-        build();
+        if(state!=null){editing=state.getBoolean("editing");filter=state.getInt("filter",0);galleryLimit=state.getInt("galleryLimit",16);previewValue=state.getInt("previewValue",-1);selection=ThemeCatalog.clamp(state.getInt("selection",selection));}
+        build();syncBackNavigation();
+        if(state!=null){int y=state.getInt("scrollY",0);scroll.post(()->scroll.scrollTo(0,y));}
+    }
+    @Override protected void onSaveInstanceState(Bundle out){
+        out.putBoolean("editing",editing);out.putInt("filter",filter);out.putInt("galleryLimit",galleryLimit);out.putInt("previewValue",previewValue);out.putInt("selection",selection);out.putInt("scrollY",scroll==null?0:scroll.getScrollY());super.onSaveInstanceState(out);
     }
     @Override protected void onResume(){
         super.onResume();
@@ -206,7 +211,7 @@ public final class MainActivity extends Activity {
         TextView brand=text("✦  LAURAAPPS    /    DIY STUDIO",12,0xFFB5DEFF,true);
         top.addView(brand,new LinearLayout.LayoutParams(0,-1,1));
         TextView lang=text("🌐 "+getString(R.string.language_button),12,0xFFFFE394,true);
-        lang.setPadding(dp(8),0,dp(8),0);lang.setMinHeight(dp(48));lang.setFocusable(true);
+        lang.setPadding(dp(8),0,dp(8),0);lang.setMinHeight(dp(48));lang.setFocusable(true);lang.setContentDescription("language_selector");
         top.addView(lang);lang.setOnClickListener(v->chooseLanguage());
         TextView star=text("✦  ✧  ✨",26,0xFFFFD86E,true);
         star.setGravity(Gravity.CENTER);
@@ -251,6 +256,7 @@ public final class MainActivity extends Activity {
         panel.addView(heroArt,lp(-1,154,1));
         heroStatus=text("",13,0xFFFFF2FF,true);
         heroStatus.setGravity(Gravity.CENTER);
+        heroStatus.setContentDescription("battery_status");
         panel.addView(heroStatus,lp(-1,-2,0));
         TextView real=action(getString(R.string.real_battery_action),false,0);
         real.setOnClickListener(v->{previewValue=-1;refreshLevels();updatePreview();});
@@ -488,6 +494,7 @@ public final class MainActivity extends Activity {
         root.addView(section,lp(-1,-2,24));
         int ni=ThemeCatalog.newIndex(selection);
         selectionLabel=text(getString(ni>=0?newNames[ni]:names[selection%ThemeCatalog.SPECIES]),19,WHITE,true);
+        selectionLabel.setContentDescription("selected_mascot_"+selection);
         section.addView(selectionLabel);
         section.addView(text(getString(R.string.palette_title),16,WHITE,true),lp(-1,-2,12));
         final TextView[] swatches=new TextView[ThemeCatalog.PALETTES];
@@ -582,7 +589,7 @@ public final class MainActivity extends Activity {
         String label=previewValue==-1?getString(R.string.battery_real_label)
              :previewValue==-2?getString(R.string.charging_label)
              :getString(R.string.preview_level);
-        heroStatus.setText(label+"   •   "+(pct<0?"--%":pct+"%"));
+        heroStatus.setText(label+"   •   "+(pct<0?"--%":pct+"%")+(previewValue==-1&&charging?" · "+getString(R.string.charging):""));
     }
     private int widgetCount(){
         return AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this,BatteryWidgetProvider.class)).length;
