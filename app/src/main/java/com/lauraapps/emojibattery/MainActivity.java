@@ -38,6 +38,11 @@ public final class MainActivity extends Activity {
     private int selection=0,filter=0,previewValue=-1;
     private int galleryLimit=16;
     private boolean editing=false;
+    private int galleryScrollY=0;
+    private String searchText="";
+    private TextView galleryCount;
+    private final Handler searchHandler=new Handler(Looper.getMainLooper());
+    private final Runnable searchRefresh=()->{if(!editing&&gallery!=null){galleryLimit=16;renderGallery();}};
     private TextView widgetAction,widgetCountNotice;
     private static final long PIN_COOLDOWN_MS=60000L;
     private LinearLayout modePanel,levelControls;
@@ -67,12 +72,12 @@ public final class MainActivity extends Activity {
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
         selection=ThemeCatalog.load(this);
-        if(state!=null){editing=state.getBoolean("editing");filter=state.getInt("filter",0);galleryLimit=state.getInt("galleryLimit",16);previewValue=state.getInt("previewValue",-1);selection=ThemeCatalog.clamp(state.getInt("selection",selection));}
+        if(state!=null){galleryScrollY=state.getInt("galleryScrollY",0);searchText=state.getString("searchText","");editing=state.getBoolean("editing");filter=state.getInt("filter",0);galleryLimit=state.getInt("galleryLimit",16);previewValue=state.getInt("previewValue",-1);selection=ThemeCatalog.clamp(state.getInt("selection",selection));}
         build();syncBackNavigation();
         if(state!=null){int y=state.getInt("scrollY",0);scroll.post(()->scroll.scrollTo(0,y));}
     }
     @Override protected void onSaveInstanceState(Bundle out){
-        out.putBoolean("editing",editing);out.putInt("filter",filter);out.putInt("galleryLimit",galleryLimit);out.putInt("previewValue",previewValue);out.putInt("selection",selection);out.putInt("scrollY",scroll==null?0:scroll.getScrollY());super.onSaveInstanceState(out);
+        out.putInt("galleryScrollY",galleryScrollY);out.putString("searchText",searchText);out.putBoolean("editing",editing);out.putInt("filter",filter);out.putInt("galleryLimit",galleryLimit);out.putInt("previewValue",previewValue);out.putInt("selection",selection);out.putInt("scrollY",scroll==null?0:scroll.getScrollY());super.onSaveInstanceState(out);
     }
     @Override protected void onResume(){
         super.onResume();
@@ -91,6 +96,7 @@ public final class MainActivity extends Activity {
         super.onPause();
     }
     @Override protected void onDestroy(){
+        searchHandler.removeCallbacksAndMessages(null);
         galleryGeneration++;
         previewGeneration++;
         renderWorker.shutdownNow();
@@ -179,8 +185,8 @@ public final class MainActivity extends Activity {
             pulse.start();
         }
     }
-    private void showEditor(){editing=true;previewValue=-1;build();syncBackNavigation();}
-    private void showGallery(){editing=false;build();syncBackNavigation();}
+    private void showEditor(){galleryScrollY=scroll.getScrollY();searchHandler.removeCallbacks(searchRefresh);editing=true;previewValue=-1;build();syncBackNavigation();}
+    private void showGallery(){editing=false;build();syncBackNavigation();scroll.post(()->scroll.scrollTo(0,galleryScrollY));}
     private Object backCallback;
     private void syncBackNavigation(){
         if(Build.VERSION.SDK_INT>=33)syncModernBack();
@@ -270,7 +276,7 @@ public final class MainActivity extends Activity {
         updateWidgetAction();
         TextView help=text(getString(R.string.widget_help),11,0xFFE5DBFF,false);
         help.setGravity(Gravity.CENTER);
-        panel.addView(help,lp(-1,-2,9));
+        panel.addView(help,lp(-1,-2,6));
     }
     private void drawMenu(){
         LinearLayout area=col();
@@ -400,6 +406,15 @@ public final class MainActivity extends Activity {
         addFilter(getString(R.string.filter_space),10);
         addFilter(getString(R.string.filter_emotions),11);
         addFilter(getString(R.string.filter_nature),12);
+        android.widget.EditText search=new android.widget.EditText(this);
+        search.setSingleLine(true);search.setTextColor(WHITE);search.setHintTextColor(MUTED);search.setTextSize(14);search.setPadding(dp(14),0,dp(14),0);
+        search.setBackground(solid(0xFF30276C,14));search.setHint(R.string.search_mascots);search.setText(searchText);
+        search.setInputType(android.text.InputType.TYPE_CLASS_TEXT);search.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH);
+        search.setOnEditorActionListener((v,action,event)->{((android.view.inputmethod.InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search.getWindowToken(),0);search.clearFocus();return true;});
+        root.setFocusableInTouchMode(true);root.requestFocus();
+        root.addView(search,lp(-1,48,8));
+        search.addTextChangedListener(new android.text.TextWatcher(){public void beforeTextChanged(CharSequence s,int start,int count,int after){}public void onTextChanged(CharSequence s,int start,int before,int count){searchText=s.toString();searchHandler.removeCallbacks(searchRefresh);searchHandler.postDelayed(searchRefresh,180);}public void afterTextChanged(android.text.Editable e){}});
+        galleryCount=text("",12,MUTED,false);root.addView(galleryCount,lp(-1,-2,5));
         gallery=col();
         root.addView(gallery,lp(-1,-2,8));
         renderGallery();
@@ -424,8 +439,18 @@ public final class MainActivity extends Activity {
         galleryGeneration++;renderWorker.getQueue().clear();gallery.removeAllViews();
         final int start=filter==12?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT+ThemeCatalog.AQUATIC_COUNT+ThemeCatalog.SPACE_COUNT+ThemeCatalog.EMOTION_COUNT:filter==11?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT+ThemeCatalog.AQUATIC_COUNT+ThemeCatalog.SPACE_COUNT:filter==10?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT+ThemeCatalog.AQUATIC_COUNT:filter==9?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT:filter==8?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT:filter==7?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT:filter==6?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT:filter==5?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT:filter==4?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT:filter==3?ThemeCatalog.COUNT:filter==2?12:0;
         final int count=filter==0?ThemeCatalog.COUNT+ThemeCatalog.NEW_COUNT:filter==3?ThemeCatalog.KITTEN_COUNT:filter==4?ThemeCatalog.DOG_COUNT:filter==5?ThemeCatalog.BEAR_COUNT:filter==6?ThemeCatalog.FRUIT_COUNT:filter==7?ThemeCatalog.FANTASY_COUNT:filter==8?ThemeCatalog.FOOD_COUNT:filter==9?ThemeCatalog.AQUATIC_COUNT:filter==10?ThemeCatalog.SPACE_COUNT:filter==11?ThemeCatalog.EMOTION_COUNT:filter==12?ThemeCatalog.NATURE_COUNT:12;
-        final int visibleCount=Math.min(count,galleryLimit);
-        BatteryState battery=BatteryState.read(this);
+        java.util.ArrayList<Integer> matches=new java.util.ArrayList<>();
+        String query=normalizeSearch(searchText);
+        for(int i=start;i<start+count;i++){
+            String name=getString(i<ThemeCatalog.COUNT?names[i]:newNames[i-ThemeCatalog.COUNT]);
+            if(query.isEmpty()||normalizeSearch(name).contains(query))matches.add(i);
+        }
+        int totalMatches=matches.size();
+        final int visibleCount=Math.min(totalMatches,galleryLimit);
+        if(galleryCount!=null)galleryCount.setText(getString(R.string.gallery_result_count,visibleCount,totalMatches));
+        if(totalMatches==0){gallery.addView(text(getString(R.string.search_empty),14,WHITE,false),lp(-1,-2,12));return;}
+        // Gallery artwork is a stable sample, not a live battery display.
+        final int sampleLevel=70;
         for(int line=0;line<(visibleCount+1)/2;line++){
             LinearLayout horizontal=row();
             gallery.addView(horizontal,lp(-1,156,10));
@@ -433,7 +458,7 @@ public final class MainActivity extends Activity {
                 if(line*2+col>=visibleCount){
                     View empty=new View(this);horizontal.addView(empty,new LinearLayout.LayoutParams(0,-1,1));break;
                 }
-                final int catalogIndex=start+line*2+col;
+                final int catalogIndex=matches.get(line*2+col);
                 final int index=catalogIndex<ThemeCatalog.COUNT?catalogIndex:ThemeCatalog.defaultNewTheme(catalogIndex-ThemeCatalog.COUNT);
                 final boolean chosen=ThemeCatalog.gallerySelected(index,selection);
                 final int shownTheme=chosen?selection:index;
@@ -447,8 +472,8 @@ public final class MainActivity extends Activity {
                 ImageView image=new ImageView(this);
                 image.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 final int generation=galleryGeneration;
-                final int theme=shownTheme, level=battery.percent;
-                final boolean charging=battery.charging;
+                final int theme=shownTheme, level=sampleLevel;
+                final boolean charging=false;
                 final String thumbKey=theme+":"+level+":"+charging;
                 android.graphics.Bitmap hit=thumbnails.get(thumbKey);
                 if(hit!=null)image.setImageBitmap(hit);
@@ -470,17 +495,18 @@ public final class MainActivity extends Activity {
                     selection=shownTheme;
                     ThemeCatalog.save(this,selection);
                     ThemeCatalog.setAuto(this,false);
-                    BatteryWidgetProvider.refreshAsync(this);
+                    BatteryWidgetProvider.applyToAll(this);
                     showEditor();
                 });
             }
         }
-        if(visibleCount<count){
-            TextView more=action(getString(R.string.gallery_more,visibleCount,count),false,0);
+        if(visibleCount<totalMatches){
+            TextView more=action(getString(R.string.gallery_more,visibleCount,totalMatches),false,0);
             more.setOnClickListener(v->{galleryLimit+=16;renderGallery();});
             gallery.addView(more,lp(-1,52,12));
         }
     }
+    private String normalizeSearch(String value){return java.text.Normalizer.normalize(value.trim().toLowerCase(java.util.Locale.ROOT),java.text.Normalizer.Form.NFD).replaceAll("\\p{M}+","");}
     private void refreshChoice(){
         int y=scroll.getScrollY();
         build();
@@ -513,14 +539,15 @@ public final class MainActivity extends Activity {
                 swatch.setOnClickListener(v->{
                     selection=ThemeCatalog.withPalette(selection,palette);ThemeCatalog.save(this,selection);
                     for(int k=0;k<swatches.length;k++)if(swatches[k]!=null)swatches[k].setText(getString(paletteNames[k])+(k==palette?" ✓":""));
-                    BatteryWidgetProvider.refreshAsync(this);updatePreview();
+                    selectionLabel.setContentDescription("selected_mascot_"+selection);
+                    BatteryWidgetProvider.applyToAll(this);updatePreview();
                 });
             }
         }
         TextView instruction=text(getString(R.string.preview_levels),13,MUTED,false);
         section.addView(instruction,lp(-1,-2,6));
         LinearLayout switches=row();levelControls=switches;
-        section.addView(switches,lp(-1,39,10));
+        section.addView(switches,lp(-1,48,8));
         level(switches,getString(R.string.preview_real),-1);
         level(switches,"15%",15);level(switches,"40%",40);
         level(switches,"70%",70);level(switches,"100%",100);
@@ -537,10 +564,10 @@ public final class MainActivity extends Activity {
         TextView chip=text(caption,11,previewValue==percent?WHITE:0xFFE1D8FF,true);
         chip.setGravity(Gravity.CENTER);
         chip.setBackground(previewValue==percent?gradient(new int[]{0xFF06B6EF,0xFF9165EF},13,0xFFA2E6FF):solid(0xFF352A73,13));
-        LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(0,dp(38),1);
+        LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(0,dp(48),1);
         p.rightMargin=dp(3);
         items.addView(chip,p);
-        chip.setContentDescription("battery_preview_"+percent);chip.setTag(percent);chip.setOnClickListener(v->{previewValue=percent;refreshLevels();updatePreview();});
+        chip.setSelected(previewValue==percent);chip.setFocusable(true);chip.setContentDescription("battery_preview_"+percent);chip.setTag(percent);chip.setOnClickListener(v->{previewValue=percent;refreshLevels();updatePreview();});
     }
     private void refreshLevels(){if(levelControls==null)return;for(int i=0;i<levelControls.getChildCount();i++){TextView chip=(TextView)levelControls.getChildAt(i);boolean active=((Integer)chip.getTag())==previewValue;chip.setSelected(active);chip.setTextColor(active?WHITE:0xFFE1D8FF);chip.setBackground(active?gradient(new int[]{0xFF06B6EF,0xFF9165EF},13,0xFFA2E6FF):solid(0xFF352A73,13));}}
     private void drawFooter(){

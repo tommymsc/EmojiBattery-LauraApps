@@ -14,7 +14,8 @@ public class BatteryWidgetProvider extends AppWidgetProvider {
   private static final ExecutorService worker=Executors.newSingleThreadExecutor();
   private static boolean monitoring=false;
   private static final java.util.concurrent.atomic.AtomicBoolean pending=new java.util.concurrent.atomic.AtomicBoolean(false);
-  private static final android.content.BroadcastReceiver batteryMonitor=new android.content.BroadcastReceiver(){@Override public void onReceive(Context c,Intent i){refreshAsync(c);}};
+  private static int lastPercent=-2;private static boolean lastCharging;
+  private static final android.content.BroadcastReceiver batteryMonitor=new android.content.BroadcastReceiver(){@Override public void onReceive(Context c,Intent i){BatteryState state=BatteryState.read(c);if(state.percent!=lastPercent||state.charging!=lastCharging){lastPercent=state.percent;lastCharging=state.charging;refreshAsync(c);}}};
   private static synchronized void syncMonitor(Context app){
     boolean hasWidgets=AppWidgetManager.getInstance(app).getAppWidgetIds(new ComponentName(app,BatteryWidgetProvider.class)).length>0;
     if(hasWidgets&&!monitoring){monitoring=true;app.registerReceiver(batteryMonitor,new android.content.IntentFilter(Intent.ACTION_BATTERY_CHANGED));}

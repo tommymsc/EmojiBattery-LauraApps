@@ -191,4 +191,7 @@
 <string name="widget_update_existing">Actualizar widget instalado</string>
 <string name="widget_duplicate_notice">Hay más de un widget instalado. Para conservar solo uno, mantén pulsado el widget adicional en el inicio y selecciona Quitar. Android controla su eliminación.</string>
 <string name="widget_pin_pending">Ya hay una solicitud de widget pendiente. Confírmala en el inicio. Si la cancelaste, vuelve a intentar en un minuto.</string>
+<string name="search_mascots">Buscar en esta colección</string>
+<string name="gallery_result_count">Mostrando %1$d de %2$d diseños</string>
+<string name="search_empty">No hay personajes que coincidan. Prueba otra búsqueda o categoría.</string>
 </resources>

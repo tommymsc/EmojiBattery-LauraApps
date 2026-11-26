@@ -28,6 +28,8 @@ public final class BatteryDreamService extends DreamService {
     private boolean listening;
     private int lastTheme=-1,lastPercent=-2;
     private boolean lastCharging;
+    private final java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
+    private int generation;
     private final Runnable refresh=new Runnable(){
         @Override public void run(){
             render();
@@ -93,13 +95,15 @@ public final class BatteryDreamService extends DreamService {
         BatteryState state=BatteryState.read(this);
         int theme=ThemeCatalog.resolve(this,ThemeCatalog.load(this),state.percent,state.charging);
         if(theme==lastTheme && state.percent==lastPercent && state.charging==lastCharging && art.getDrawable()!=null)return;
-        art.setImageBitmap(BatteryArt.draw(this,720,446,theme,state.percent,state.charging));
+        final int ticket=++generation;
+        worker.execute(()->{android.graphics.Bitmap bmp=BatteryArt.draw(getApplicationContext(),720,446,theme,state.percent,state.charging);handler.post(()->{if(ticket==generation&&art!=null)art.setImageBitmap(bmp);else bmp.recycle();});});
         lastTheme=theme;lastPercent=state.percent;lastCharging=state.charging;
         status.setText(state.percent<0?getString(R.string.unknown):
             (state.charging?getString(R.string.charging):getString(R.string.battery_level))
                 +"  •  "+state.percent+"%");
     }
     private void stopUpdates(){
+        generation++;lastTheme=-1;
         handler.removeCallbacks(refresh);
         if(floatAnimation!=null){floatAnimation.cancel();floatAnimation=null;}
         if(listening){
@@ -108,5 +112,6 @@ public final class BatteryDreamService extends DreamService {
         }
     }
     @Override public void onDreamingStopped(){stopUpdates();super.onDreamingStopped();}
-    @Override public void onDetachedFromWindow(){stopUpdates();super.onDetachedFromWindow();}
+    @Override public void onDetachedFromWindow(){stopUpdates();art=null;super.onDetachedFromWindow();}
+    @Override public void onDestroy(){stopUpdates();worker.shutdownNow();super.onDestroy();}
 }

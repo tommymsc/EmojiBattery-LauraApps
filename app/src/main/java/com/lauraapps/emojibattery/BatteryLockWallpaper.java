@@ -14,6 +14,7 @@ import java.io.IOException;
 public final class BatteryLockWallpaper {
     private BatteryLockWallpaper(){}
     public static void apply(Context context,int theme) throws IOException {
+        context=AppLanguage.wrap(context);
         WallpaperManager wm=WallpaperManager.getInstance(context);
         if(!wm.isWallpaperSupported()||!wm.isSetWallpaperAllowed())throw new IOException("Wallpaper not supported or disallowed");
         final int w=720,h=1280;
