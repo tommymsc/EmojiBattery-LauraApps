@@ -268,5 +268,75 @@
     "git_sha": "167dcbc73c31fa13a80d261dd097acb44bc74d78",
     "width": 512,
     "height": 512
+  },
+  {
+    "id": "fruit_avocado",
+    "index": 27,
+    "theme_id": 1189,
+    "default_palette": 2,
+    "bytes": 38630,
+    "git_sha": "de69658b6f571b544d5eb7f8919c076f9582904c",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "fruit_grapes",
+    "index": 28,
+    "theme_id": 1196,
+    "default_palette": 1,
+    "bytes": 46546,
+    "git_sha": "e69f1b735c82d16e73e8704bf7807591102e3b0c",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "fruit_orange",
+    "index": 29,
+    "theme_id": 1203,
+    "default_palette": 3,
+    "bytes": 44306,
+    "git_sha": "e214fb1b42377391e5fab881bccc9fc7d94dddfc",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "fruit_peach",
+    "index": 30,
+    "theme_id": 1210,
+    "default_palette": 3,
+    "bytes": 51446,
+    "git_sha": "15e8d3208589b245a55b039b092cd192e4a767c4",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "fruit_pineapple",
+    "index": 31,
+    "theme_id": 1217,
+    "default_palette": 3,
+    "bytes": 46804,
+    "git_sha": "c211823ab0f8b2e157ccf012b9f91a689c30494a",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "fruit_strawberry",
+    "index": 32,
+    "theme_id": 1224,
+    "default_palette": 0,
+    "bytes": 50572,
+    "git_sha": "4b08b9a93d60b7030319ae76444ffb2b0184934c",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "fruit_watermelon",
+    "index": 33,
+    "theme_id": 1231,
+    "default_palette": 0,
+    "bytes": 46358,
+    "git_sha": "5892c818ff1d4f0d2589ca378eef42ad971d0dfe",
+    "width": 512,
+    "height": 512
   }
 ]

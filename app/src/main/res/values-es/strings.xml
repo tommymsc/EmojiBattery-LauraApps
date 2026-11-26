@@ -127,4 +127,12 @@
 <string name="koala_leaf">Koala Eucalipto</string>
 <string name="bear_honey">Osito Miel</string>
 <string name="panda_red">Panda Rojo Explorador</string>
+<string name="filter_fruits">Frutas</string>
+<string name="fruit_avocado">Aguacate Adorable</string>
+<string name="fruit_grapes">Uvas Brillantes</string>
+<string name="fruit_orange">Naranja Soleada</string>
+<string name="fruit_peach">Durazno Flor</string>
+<string name="fruit_pineapple">Piña Tropical</string>
+<string name="fruit_strawberry">Fresa Flor</string>
+<string name="fruit_watermelon">Sandía con Moño</string>
 </resources>

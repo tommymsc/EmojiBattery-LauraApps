@@ -34,7 +34,7 @@ import android.widget.Toast;
 public final class MainActivity extends Activity {
     private final int WHITE=0xFFFFFFFF, MUTED=0xFFC5C7EE, LILAC=0xFFBFA9FF;
     private final int[] names={R.string.mascot_0,R.string.mascot_1,R.string.mascot_2,R.string.mascot_3,R.string.mascot_4,R.string.mascot_5,R.string.mascot_6,R.string.mascot_7,R.string.mascot_8,R.string.mascot_9,R.string.mascot_10,R.string.mascot_11,R.string.mascot_12,R.string.mascot_13,R.string.mascot_14,R.string.mascot_15,R.string.mascot_16,R.string.mascot_17,R.string.mascot_18,R.string.mascot_19,R.string.mascot_20,R.string.mascot_21,R.string.mascot_22,R.string.mascot_23};
-    private final int[] newNames={R.string.cat_strawberry,R.string.cat_cotton_candy,R.string.cat_princess,R.string.cat_astronaut,R.string.cat_sleepy,R.string.cat_rainbow,R.string.cat_chocolate,R.string.cat_strawberry_original,R.string.cat_strawberry_wave,R.string.cat_cotton_wave,R.string.cat_sleepy_star,R.string.cat_astronaut_star,R.string.cat_rainbow_cloud,R.string.cat_princess_wave,R.string.dog_astronaut,R.string.dog_chocolate,R.string.dog_cotton_candy,R.string.dog_princess,R.string.dog_rainbow,R.string.dog_sleepy_moon,R.string.dog_strawberry,R.string.bear_polar,R.string.bear_teddy,R.string.panda_rainbow,R.string.koala_leaf,R.string.bear_honey,R.string.panda_red};
+    private final int[] newNames={R.string.cat_strawberry,R.string.cat_cotton_candy,R.string.cat_princess,R.string.cat_astronaut,R.string.cat_sleepy,R.string.cat_rainbow,R.string.cat_chocolate,R.string.cat_strawberry_original,R.string.cat_strawberry_wave,R.string.cat_cotton_wave,R.string.cat_sleepy_star,R.string.cat_astronaut_star,R.string.cat_rainbow_cloud,R.string.cat_princess_wave,R.string.dog_astronaut,R.string.dog_chocolate,R.string.dog_cotton_candy,R.string.dog_princess,R.string.dog_rainbow,R.string.dog_sleepy_moon,R.string.dog_strawberry,R.string.bear_polar,R.string.bear_teddy,R.string.panda_rainbow,R.string.koala_leaf,R.string.bear_honey,R.string.panda_red,R.string.fruit_avocado,R.string.fruit_grapes,R.string.fruit_orange,R.string.fruit_peach,R.string.fruit_pineapple,R.string.fruit_strawberry,R.string.fruit_watermelon};
     private int selection=0,filter=0,previewValue=-1;
     private View customAnchor;
     private final int[] paletteNames={R.string.palette_0,R.string.palette_1,R.string.palette_2,R.string.palette_3,R.string.palette_4,R.string.palette_5,R.string.palette_6};
@@ -311,6 +311,7 @@ public final class MainActivity extends Activity {
         addFilter(getString(R.string.filter_cats),3);
         addFilter(getString(R.string.filter_dogs),4);
         addFilter(getString(R.string.filter_bears),5);
+        addFilter(getString(R.string.filter_fruits),6);
         gallery=col();
         root.addView(gallery,lp(-1,-2,8));
         renderGallery();
@@ -327,8 +328,8 @@ public final class MainActivity extends Activity {
     }
     private void renderGallery(){
         gallery.removeAllViews();
-        final int start=filter==5?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT:filter==4?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT:filter==3?ThemeCatalog.COUNT:filter==2?12:0;
-        final int count=filter==0?ThemeCatalog.COUNT+ThemeCatalog.NEW_COUNT:filter==3?ThemeCatalog.KITTEN_COUNT:filter==4?ThemeCatalog.DOG_COUNT:filter==5?ThemeCatalog.BEAR_COUNT:12;
+        final int start=filter==6?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT:filter==5?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT:filter==4?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT:filter==3?ThemeCatalog.COUNT:filter==2?12:0;
+        final int count=filter==0?ThemeCatalog.COUNT+ThemeCatalog.NEW_COUNT:filter==3?ThemeCatalog.KITTEN_COUNT:filter==4?ThemeCatalog.DOG_COUNT:filter==5?ThemeCatalog.BEAR_COUNT:filter==6?ThemeCatalog.FRUIT_COUNT:12;
         BatteryState battery=BatteryState.read(this);
         for(int line=0;line<(count+1)/2;line++){
             LinearLayout horizontal=row();

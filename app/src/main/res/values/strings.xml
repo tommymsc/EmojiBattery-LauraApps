@@ -128,4 +128,12 @@
 <string name="koala_leaf">Eucalyptus Koala</string>
 <string name="bear_honey">Honey Bear</string>
 <string name="panda_red">Explorer Red Panda</string>
+<string name="filter_fruits">Fruits</string>
+<string name="fruit_avocado">Avocado Cutie</string>
+<string name="fruit_grapes">Grape Bunch</string>
+<string name="fruit_orange">Sunny Orange</string>
+<string name="fruit_peach">Peach Blossom</string>
+<string name="fruit_pineapple">Tropical Pineapple</string>
+<string name="fruit_strawberry">Strawberry Blossom</string>
+<string name="fruit_watermelon">Watermelon Bow</string>
 </resources>

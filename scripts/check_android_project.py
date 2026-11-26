@@ -57,7 +57,7 @@ print('PASS: original glossy mascot atlas verified, 12 characters / 24 themes')
 # Verify all individually packaged mascots against their stable catalog.
 import json
 manifest=json.loads((root/'mascot-manifest.json').read_text())
-assert len(manifest)==27
+assert len(manifest)==34
 assert [m['index'] for m in manifest]==list(range(len(manifest)))
 assert len({m['id'] for m in manifest})==len(manifest)
 for m in manifest:
@@ -71,7 +71,7 @@ for m in manifest:
     assert int.from_bytes(raw[24:27],'little')+1==512
     assert int.from_bytes(raw[27:30],'little')+1==512
     assert '"'+m['id']+'"' in catalog
-print('PASS: all 27 individual transparent WebP mascots, stable IDs and bilingual names')
+print('PASS: all 34 individual transparent WebP mascots, stable IDs and bilingual names')
 
 assert 'KITTEN_COUNT=14' in catalog and 'DOG_COUNT=7' in catalog
 assert 'R.string.filter_dogs' in activity
@@ -79,3 +79,5 @@ assert len(list((app/'assets'/'mascots').glob('*.webp')))==len(manifest)
 assert all('R.string.'+('cat_'+m['id'] if m['index']<14 else m['id']) in activity for m in manifest)
 
 assert 'BEAR_COUNT=6' in catalog and 'R.string.filter_bears' in activity
+
+assert 'FRUIT_COUNT=7' in catalog and 'R.string.filter_fruits' in activity
