@@ -338,5 +338,65 @@
     "git_sha": "5892c818ff1d4f0d2589ca378eef42ad971d0dfe",
     "width": 512,
     "height": 512
+  },
+  {
+    "id": "fantasy_ghost",
+    "index": 34,
+    "theme_id": 1238,
+    "default_palette": 1,
+    "bytes": 52156,
+    "git_sha": "b83cc672bf53706c10186f17fd3d68cc2342bb89",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "fantasy_unicorn",
+    "index": 35,
+    "theme_id": 1245,
+    "default_palette": 5,
+    "bytes": 67084,
+    "git_sha": "216e84c8ae9ac2f99f0482c9e7c970f8a38ab66d",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "fantasy_wizard",
+    "index": 36,
+    "theme_id": 1252,
+    "default_palette": 4,
+    "bytes": 73476,
+    "git_sha": "d3eef5d287226ef3d23b0159915b88284587e8d1",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "fantasy_dragon",
+    "index": 37,
+    "theme_id": 1259,
+    "default_palette": 2,
+    "bytes": 75096,
+    "git_sha": "756a17401fddf66f515cd8d12f0fddd63bfcc696",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "fantasy_phoenix",
+    "index": 38,
+    "theme_id": 1266,
+    "default_palette": 3,
+    "bytes": 80692,
+    "git_sha": "6749281085a722bfcd460b45e6022104d26d911d",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "fantasy_fairy",
+    "index": 39,
+    "theme_id": 1273,
+    "default_palette": 5,
+    "bytes": 103776,
+    "git_sha": "8ad3cd0b111f37be1c7c1779a1254a454e73d09d",
+    "width": 512,
+    "height": 512
   }
 ]

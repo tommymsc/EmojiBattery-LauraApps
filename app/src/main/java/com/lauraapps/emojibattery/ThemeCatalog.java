@@ -5,13 +5,14 @@ public final class ThemeCatalog {
   public static final int SPECIES=12,COUNT=24,PALETTES=7,TOTAL=SPECIES*PALETTES;
   // Existing saved IDs 0..83 remain unchanged. New art IDs are append-only.
   public static final int NEW_BASE=1000;
-  public static final String[] NEW_MASCOTS={"strawberry","cotton_candy","princess","astronaut","sleepy","rainbow","chocolate","strawberry_original","strawberry_wave","cotton_wave","sleepy_star","astronaut_star","rainbow_cloud","princess_wave","dog_astronaut","dog_chocolate","dog_cotton_candy","dog_princess","dog_rainbow","dog_sleepy_moon","dog_strawberry","bear_polar","bear_teddy","panda_rainbow","koala_leaf","bear_honey","panda_red","fruit_avocado","fruit_grapes","fruit_orange","fruit_peach","fruit_pineapple","fruit_strawberry","fruit_watermelon"};
+  public static final String[] NEW_MASCOTS={"strawberry","cotton_candy","princess","astronaut","sleepy","rainbow","chocolate","strawberry_original","strawberry_wave","cotton_wave","sleepy_star","astronaut_star","rainbow_cloud","princess_wave","dog_astronaut","dog_chocolate","dog_cotton_candy","dog_princess","dog_rainbow","dog_sleepy_moon","dog_strawberry","bear_polar","bear_teddy","panda_rainbow","koala_leaf","bear_honey","panda_red","fruit_avocado","fruit_grapes","fruit_orange","fruit_peach","fruit_pineapple","fruit_strawberry","fruit_watermelon","fantasy_ghost","fantasy_unicorn","fantasy_wizard","fantasy_dragon","fantasy_phoenix","fantasy_fairy"};
   public static final int NEW_COUNT=NEW_MASCOTS.length;
   public static final int KITTEN_COUNT=14;
   public static final int DOG_COUNT=7;
   public static final int BEAR_COUNT=6;
   public static final int FRUIT_COUNT=7;
-  private static final int[] NEW_DEFAULTS={0,5,1,4,1,5,3,0,0,5,1,4,5,0,4,3,5,0,5,1,0,4,4,5,2,3,3,2,1,3,3,3,0,0};
+  public static final int FANTASY_COUNT=6;
+  private static final int[] NEW_DEFAULTS={0,5,1,4,1,5,3,0,0,5,1,4,5,0,4,3,5,0,5,1,0,4,4,5,2,3,3,2,1,3,3,3,0,0,1,5,4,2,3,5};
   public static int newIndex(int theme){return theme>=NEW_BASE && theme<NEW_BASE+NEW_COUNT*PALETTES?(theme-NEW_BASE)/PALETTES:-1;}
   public static int newTheme(int index,int palette){return NEW_BASE+Math.max(0,Math.min(NEW_COUNT-1,index))*PALETTES+Math.max(0,Math.min(PALETTES-1,palette));}
   public static int defaultNewTheme(int index){return newTheme(index,NEW_DEFAULTS[index]);}

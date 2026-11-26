@@ -5,7 +5,7 @@ LauraApps native Android. Target SDK 36, minimum SDK 26. Two languages: English 
 ## Features
 - New optional adaptive mascot mode: different original character for low / medium / high battery and while charging. Users can switch back to a fixed favorite. The gallery changes the mode to fixed when a mascot is selected. Battery levels refresh under Android's normal widget timing, not continuously.
 
-- Twelve original atlas mascots plus thirty-four individually packaged transparent WebP artworks (14 kittens, 7 puppies, 6 bears/friends and 7 fruits, 512×512). Seven palettes yield 322 character/color combinations. The new artworks keep fixed facial expressions while battery level, status and colors update.
+- Twelve original atlas mascots plus forty individually packaged transparent WebP artworks (14 kittens, 7 puppies, 6 bears/friends, 7 fruits and 6 fantasy characters, 512×512). Seven palettes yield 364 character/color combinations. The new artworks keep fixed facial expressions while battery level, status and colors update.
 - Battery percentage and charging status from Android APIs. Battery colors adapt to level and previews remain distinctly labeled.
 - Home-screen widget with automatic Android scheduled refresh, battery charging events and immediate refresh while app is visible. Widgets are not continuous animations.
 - Optional Android screensaver via DreamService; user must select it in Android Settings and Android decides when it runs. While active, it updates the displayed battery periodically and animates gently without acquiring wake locks.
@@ -27,7 +27,7 @@ GitHub Actions runs unit tests, resource parity, HD atlas hash checks, lint and 
 - Review target audience, content rating, store listing screenshots, legal ownership of assets, privacy contact and developer/trader profile in Play Console. Review in physical Android 8–16 devices and App Bundle Explorer before submitting.
 
 ## Mascot expansion
-- `app/src/main/assets/mascots/`: 34 individual WebP artworks. `mascot-manifest.json` records permanent IDs, sizes and Git hashes.
-- The Kittens, Puppies, Bears & friends and Fruits galleries support every individual artwork, with seven palettes. Preview, widgets, screensaver and static wallpaper share BatteryArt rendering.
+- `app/src/main/assets/mascots/`: 40 individual WebP artworks. `mascot-manifest.json` records permanent IDs, sizes and Git hashes.
+- The Kittens, Puppies, Bears & friends, Fruits and Fantasy galleries support every individual artwork, with seven palettes. Preview, widgets, screensaver and static wallpaper share BatteryArt rendering.
 - Existing IDs 0–83 are preserved. New IDs start at 1000; append future mascots to the catalog without reordering existing entries. Each new mascot reserves seven consecutive palette IDs.
 - All art is packaged locally; the decoded-image cache is bounded to 5 MiB. No network permissions were added.

@@ -135,4 +135,11 @@
 <string name="fruit_pineapple">Piña Tropical</string>
 <string name="fruit_strawberry">Fresa Flor</string>
 <string name="fruit_watermelon">Sandía con Moño</string>
+<string name="filter_fantasy">Fantasía</string>
+<string name="fantasy_ghost">Fantasmita Mágico</string>
+<string name="fantasy_unicorn">Unicornio Mágico</string>
+<string name="fantasy_wizard">Mago Estelar</string>
+<string name="fantasy_dragon">Dragón Bebé</string>
+<string name="fantasy_phoenix">Fénix Dorado</string>
+<string name="fantasy_fairy">Hada Brillante</string>
 </resources>

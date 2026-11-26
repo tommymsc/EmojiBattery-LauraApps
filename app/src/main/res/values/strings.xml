@@ -136,4 +136,11 @@
 <string name="fruit_pineapple">Tropical Pineapple</string>
 <string name="fruit_strawberry">Strawberry Blossom</string>
 <string name="fruit_watermelon">Watermelon Bow</string>
+<string name="filter_fantasy">Fantasy</string>
+<string name="fantasy_ghost">Magic Ghost</string>
+<string name="fantasy_unicorn">Magic Unicorn</string>
+<string name="fantasy_wizard">Star Wizard</string>
+<string name="fantasy_dragon">Baby Dragon</string>
+<string name="fantasy_phoenix">Golden Phoenix</string>
+<string name="fantasy_fairy">Sparkle Fairy</string>
 </resources>
