@@ -42,7 +42,8 @@ public final class MainActivity extends Activity {
     private String searchText="";
     private TextView galleryCount;
     private final Handler searchHandler=new Handler(Looper.getMainLooper());
-    private final Runnable searchRefresh=()->{if(!editing&&gallery!=null){galleryLimit=16;renderGallery();}};
+    private final Runnable searchRefresh=this::refreshSearchResults;
+    private void refreshSearchResults(){if(!editing&&gallery!=null){galleryLimit=16;renderGallery();}}
     private TextView widgetAction,widgetCountNotice;
     private static final long PIN_COOLDOWN_MS=60000L;
     private LinearLayout modePanel,levelControls;
