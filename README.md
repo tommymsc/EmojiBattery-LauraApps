@@ -1,11 +1,11 @@
-# Emoji Battery: DIY Widgets — v1.6.2
+# Emoji Battery: DIY Widgets — v1.8.0 — mascot expansion
 
 LauraApps native Android. Target SDK 36, minimum SDK 26. Two languages: English and Spanish. No background network access, tracking or unnecessary permissions.
 
 ## Features
 - New optional adaptive mascot mode: different original character for low / medium / high battery and while charging. Users can switch back to a fixed favorite. The gallery changes the mode to fixed when a mascot is selected. Battery levels refresh under Android's normal widget timing, not continuously.
 
-- Twelve originally generated glossy mascot characters, 24 design variants, 1024×768 pixel atlas checked into source.
+- Twelve original atlas mascots plus fourteen individually packaged transparent WebP kitten artworks (512×512). Seven palettes yield 182 character/color combinations. The new artworks keep fixed facial expressions while battery level, status and colors update.
 - Battery percentage and charging status from Android APIs. Battery colors adapt to level and previews remain distinctly labeled.
 - Home-screen widget with automatic Android scheduled refresh, battery charging events and immediate refresh while app is visible. Widgets are not continuous animations.
 - Optional Android screensaver via DreamService; user must select it in Android Settings and Android decides when it runs. While active, it updates the displayed battery periodically and animates gently without acquiring wake locks.
@@ -25,3 +25,9 @@ GitHub Actions runs unit tests, resource parity, HD atlas hash checks, lint and 
 - Build checks reject unexpected permissions and native `.so` libraries so that 16 KB device compatibility cannot silently regress. If native libraries are intentionally added in the future, update tests and verify 16 KB support.
 - Do not claim live/animated battery information on the system lock screen; only the home-screen widget and active Android screensaver update. Lock-screen wallpaper is static.
 - Review target audience, content rating, store listing screenshots, legal ownership of assets, privacy contact and developer/trader profile in Play Console. Review in physical Android 8–16 devices and App Bundle Explorer before submitting.
+
+## Mascot expansion
+- `app/src/main/assets/mascots/`: 14 individual WebP artworks. `mascot-manifest.json` records permanent IDs, sizes and Git hashes.
+- The Kittens gallery supports every individual artwork, with seven palettes. Preview, widgets, screensaver and static wallpaper share BatteryArt rendering.
+- Existing IDs 0–83 are preserved. New IDs start at 1000; append future mascots to the catalog without reordering existing entries. Each new mascot reserves seven consecutive palette IDs.
+- All art is packaged locally; the decoded-image cache is bounded to 5 MiB. No network permissions were added.

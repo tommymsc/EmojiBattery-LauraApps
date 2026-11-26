@@ -37,7 +37,7 @@
 <string name="mascot_21">Midnight Panda</string>
 <string name="mascot_22">Rainbow Unicorn</string>
 <string name="mascot_23">Galaxy Astronaut</string>
-<string name="collection_all">All 24</string><string name="collection_original">Originals</string><string name="collection_pastel">Pastel</string>
+<string name="collection_all">All</string><string name="collection_original">Originals</string><string name="collection_pastel">Pastel</string>
 <string name="apply_existing">Apply this design to my existing widgets</string>
 <string name="applied_existing">Installed widgets updated.</string><string name="gallery_title">Discover your battery buddies</string>
 <string name="gallery_subtitle">Pick a character, make it yours</string>
@@ -51,7 +51,7 @@
 <string name="button_add">Add to home screen</string>
 <string name="button_apply">Use on my widgets</string>
 <string name="share_design">Share</string>
-<string name="filter_all">All 24</string>
+<string name="filter_all">All</string>
 <string name="filter_signature">Original</string>
 <string name="filter_pastel">Pastel</string>
 <string name="preview_level">Preview only</string>
@@ -81,7 +81,7 @@
 <string name="mode_heading">Choose how your buddy changes</string>
 <string name="mode_fixed">Favorite mascot</string>
 <string name="mode_auto">Automatic with battery</string>
-<string name="mode_fixed_desc">Keep your chosen mascot; its face and colors react to battery level.</string>
+<string name="mode_fixed_desc">Keep your chosen mascot; the battery colors and level react in real time while the app is open.</string>
 <string name="mode_auto_desc">Changes mascots when battery levels shift. Widgets refresh on the schedule controlled by Android and on power events.</string>
 <string name="mode_now_active">Active mode</string>
 <string name="palette_title">Choose a color collection</string>
@@ -98,4 +98,19 @@
 <string name="art_low">LOW POWER</string>
 <string name="art_full">FULL</string>
 <string name="art_live">LIVE LEVEL</string>
+<string name="filter_cats">Kittens</string>
+<string name="cat_strawberry">Strawberry Kitten</string>
+<string name="cat_cotton_candy">Cotton Candy Kitten</string>
+<string name="cat_princess">Royal Princess Kitten</string>
+<string name="cat_astronaut">Pink Astronaut Kitten</string>
+<string name="cat_sleepy">Sleepy Kitten</string>
+<string name="cat_rainbow">Rainbow Kitten</string>
+<string name="cat_chocolate">Chocolate Kitten</string>
+<string name="cat_strawberry_original">Berry Bow Kitten</string>
+<string name="cat_strawberry_wave">Strawberry Wink</string>
+<string name="cat_cotton_wave">Cotton Candy Wink</string>
+<string name="cat_sleepy_star">Star Pajamas Kitten</string>
+<string name="cat_astronaut_star">Galaxy Explorer Kitten</string>
+<string name="cat_rainbow_cloud">Rainbow Cloud Kitten</string>
+<string name="cat_princess_wave">Princess Wink</string>
 </resources>

@@ -29,4 +29,20 @@ public class BatteryMathTest {
   assertEquals(3,BatteryMath.automaticTheme(-1,false,3));
   assertEquals(23,BatteryMath.automaticTheme(-1,false,40));
  }
+ @Test public void newMascotIdsRemainStable(){
+  assertEquals(84,ThemeCatalog.TOTAL);
+  for(int old=0;old<84;old++)assertEquals(old,ThemeCatalog.clamp(old));
+  assertEquals(1000,ThemeCatalog.newTheme(0,0));
+  for(int i=0;i<ThemeCatalog.NEW_COUNT;i++){
+   for(int p=0;p<ThemeCatalog.PALETTES;p++){
+    int id=ThemeCatalog.newTheme(i,p);
+    assertEquals(id,ThemeCatalog.clamp(id));
+    assertEquals(i,ThemeCatalog.newIndex(id));
+    assertEquals(p,ThemeCatalog.palette(id));
+    assertEquals(ThemeCatalog.newTheme(i,6),ThemeCatalog.withPalette(id,6));
+    assertEquals("mascots/"+ThemeCatalog.NEW_MASCOTS[i]+".webp",ThemeCatalog.assetName(id));
+    assertTrue(ThemeCatalog.gallerySelected(ThemeCatalog.defaultNewTheme(i),id));
+   }
+  }
+ }
 }

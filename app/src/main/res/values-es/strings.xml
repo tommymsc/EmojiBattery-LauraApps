@@ -50,7 +50,7 @@
 <string name="button_add">Agregar a pantalla de inicio</string>
 <string name="button_apply">Aplicar a mis widgets</string>
 <string name="share_design">Compartir</string>
-<string name="filter_all">Todos 24</string>
+<string name="filter_all">Todos</string>
 <string name="filter_signature">Originales</string>
 <string name="filter_pastel">Pastel</string>
 <string name="preview_level">Solo vista previa</string>
@@ -80,7 +80,7 @@
 <string name="mode_heading">Cómo cambia tu mascota</string>
 <string name="mode_fixed">Mascota favorita</string>
 <string name="mode_auto">Automática según la batería</string>
-<string name="mode_fixed_desc">Conserva tu mascota; su expresión y colores cambian según la batería.</string>
+<string name="mode_fixed_desc">Conserva tu mascota; el nivel y los colores reaccionan a la batería mientras la app está abierta.</string>
 <string name="mode_auto_desc">Cambia de mascota según la batería. Los widgets se actualizan en intervalos programados por Android y eventos de carga.</string>
 <string name="mode_now_active">Modo activo</string>
 <string name="palette_title">Elige una colección de colores</string>
@@ -97,4 +97,19 @@
 <string name="art_low">BAJA</string>
 <string name="art_full">LLENA</string>
 <string name="art_live">NIVEL REAL</string>
+<string name="filter_cats">Gatitos</string>
+<string name="cat_strawberry">Gatita Fresa</string>
+<string name="cat_cotton_candy">Gatita Algodón de Azúcar</string>
+<string name="cat_princess">Gatita Princesa</string>
+<string name="cat_astronaut">Gatita Astronauta</string>
+<string name="cat_sleepy">Gatito Dormilón</string>
+<string name="cat_rainbow">Gatito Arcoíris</string>
+<string name="cat_chocolate">Gatito Chocolate</string>
+<string name="cat_strawberry_original">Gatito Moño de Fresa</string>
+<string name="cat_strawberry_wave">Gatito Guiño de Fresa</string>
+<string name="cat_cotton_wave">Gatito Guiño de Algodón</string>
+<string name="cat_sleepy_star">Gatito Pijama Estelar</string>
+<string name="cat_astronaut_star">Gatito Explorador Galáctico</string>
+<string name="cat_rainbow_cloud">Gatito Nube Arcoíris</string>
+<string name="cat_princess_wave">Gatita Princesa Guiño</string>
 </resources>

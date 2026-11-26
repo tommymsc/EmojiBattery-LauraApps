@@ -53,3 +53,22 @@ assert hashlib.sha256(asset).hexdigest()=='8c6687d0cf03d80405f12cb7e99cee5cebd61
 assert asset.startswith(b'RIFF') and b'WEBP' in asset[:16]
 assert b'mascot_atlas_hd.part' in (app/'java/com/lauraapps/emojibattery/BatteryArt.java').read_bytes()
 print('PASS: original glossy mascot atlas verified, 12 characters / 24 themes')
+
+# Verify all individually packaged mascots against their stable catalog.
+import json
+manifest=json.loads((root/'mascot-manifest.json').read_text())
+assert len(manifest)==14
+assert [m['index'] for m in manifest]==list(range(len(manifest)))
+assert len({m['id'] for m in manifest})==len(manifest)
+for m in manifest:
+    assert m['theme_id']==1000+m['index']*7
+    assert 'cat_'+m['id'] in sets[0]
+    raw=(app/'assets'/'mascots'/(m['id']+'.webp')).read_bytes()
+    assert len(raw)==m['bytes']
+    assert hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()==m['git_sha']
+    assert raw[:4]==b'RIFF' and raw[8:12]==b'WEBP' and raw[12:16]==b'VP8X'
+    assert raw[20]&0x10,'Expected transparency flag'
+    assert int.from_bytes(raw[24:27],'little')+1==512
+    assert int.from_bytes(raw[27:30],'little')+1==512
+    assert '"'+m['id']+'"' in catalog
+print('PASS: all 14 individual transparent WebP mascots, stable IDs and bilingual names')

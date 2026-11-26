@@ -18,6 +18,23 @@ import java.io.InputStream;
 
 public final class BatteryArt {
     private BatteryArt(){}
+    // A bounded decoded-art cache: 512px RGBA art costs about 1 MiB each.
+    private static final android.util.LruCache<String,Bitmap> customCache=new android.util.LruCache<String,Bitmap>(5*1024*1024){
+        @Override protected int sizeOf(String key,Bitmap value){return value.getAllocationByteCount();}
+    };
+    private static Bitmap customMascot(Context context,int theme){
+        String name=ThemeCatalog.assetName(theme);
+        if(name==null)return null;
+        Bitmap cached=customCache.get(name);
+        if(cached!=null)return cached;
+        try(InputStream stream=context.getAssets().open(name)){
+            BitmapFactory.Options opts=new BitmapFactory.Options();
+            opts.inPreferredConfig=Bitmap.Config.ARGB_8888;
+            Bitmap bitmap=BitmapFactory.decodeStream(stream,null,opts);
+            if(bitmap!=null)customCache.put(name,bitmap);
+            return bitmap;
+        }catch(java.io.IOException ignored){return null;}
+    }
     private static volatile Bitmap atlas;
     private static boolean atlasAttempted=false;
     private static synchronized Bitmap atlas(Context c){
@@ -37,9 +54,7 @@ public final class BatteryArt {
         }catch(Exception ignored){atlas=null;}
         return atlas;
     }
-    private static void illustrated(Context context,Canvas c,Bitmap sheet,int theme,int level,boolean charging){
-        int kind=ThemeCatalog.species(theme);
-        int col=kind%4,row=kind/4,w=sheet.getWidth()/4,h=sheet.getHeight()/3;
+    private static void illustrated(Context context,Canvas c,Bitmap sheet,Bitmap custom,int theme,int level,boolean charging){
         int gl=charging?0xFF5BE5FD:level<=20?0xFFFF5D91:level<=45?0xFFFFB353:level<80?0xFF559FFF:0xFF55EBA2;
         Paint back=p(0xFF101448);
         back.setShader(new LinearGradient(0,0,420,260,new int[]{0xFF10163E,ThemeCatalog.background(theme),ThemeCatalog.accent(theme)},null,Shader.TileMode.CLAMP));
@@ -53,8 +68,16 @@ public final class BatteryArt {
         c.drawRoundRect(new RectF(16,13,257,250),22,22,glow);
         Paint sprite=p(Color.WHITE);
         sprite.setFilterBitmap(true);
-        Rect src=new Rect(col*w,row*h,(col+1)*w,(row+1)*h);
-        c.drawBitmap(sheet,src,new RectF(16,12,259,253),sprite);
+        if(custom!=null){
+            float scale=Math.min(239f/custom.getWidth(),239f/custom.getHeight());
+            float width=custom.getWidth()*scale,height=custom.getHeight()*scale;
+            c.drawBitmap(custom,null,new RectF(137f-width/2,131f-height/2,137f+width/2,131f+height/2),sprite);
+        }else{
+            int kind=ThemeCatalog.species(theme);
+            int col=kind%4,row=kind/4,w=sheet.getWidth()/4,h=sheet.getHeight()/3;
+            Rect src=new Rect(col*w,row*h,(col+1)*w,(row+1)*h);
+            c.drawBitmap(sheet,src,new RectF(16,12,259,253),sprite);
+        }
         Paint label=p(0xFFE2DAFF);label.setTextSize(15);label.setTypeface(Typeface.DEFAULT_BOLD);
         label.setTextAlign(Paint.Align.CENTER);
         c.drawText(context.getString(R.string.art_battery),337,90,label);
@@ -89,9 +112,10 @@ public final class BatteryArt {
         c.drawColor(Color.TRANSPARENT);
         c.save();
         c.scale(w/420f,h/260f);
-        Bitmap art=atlas(context);
-        if(art!=null)illustrated(context,c,art,theme,level,charging);
-        else paint(c,theme%ThemeCatalog.COUNT,level,charging);
+        Bitmap custom=customMascot(context,theme);
+        Bitmap art=custom==null?atlas(context):null;
+        if(custom!=null||art!=null)illustrated(context,c,art,custom,theme,level,charging);
+        else paint(c,ThemeCatalog.newIndex(theme)>=0?6:theme%ThemeCatalog.COUNT,level,charging);
         c.restore();
         return bitmap;
     }

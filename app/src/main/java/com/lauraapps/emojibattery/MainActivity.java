@@ -34,6 +34,7 @@ import android.widget.Toast;
 public final class MainActivity extends Activity {
     private final int WHITE=0xFFFFFFFF, MUTED=0xFFC5C7EE, LILAC=0xFFBFA9FF;
     private final int[] names={R.string.mascot_0,R.string.mascot_1,R.string.mascot_2,R.string.mascot_3,R.string.mascot_4,R.string.mascot_5,R.string.mascot_6,R.string.mascot_7,R.string.mascot_8,R.string.mascot_9,R.string.mascot_10,R.string.mascot_11,R.string.mascot_12,R.string.mascot_13,R.string.mascot_14,R.string.mascot_15,R.string.mascot_16,R.string.mascot_17,R.string.mascot_18,R.string.mascot_19,R.string.mascot_20,R.string.mascot_21,R.string.mascot_22,R.string.mascot_23};
+    private final int[] newNames={R.string.cat_strawberry,R.string.cat_cotton_candy,R.string.cat_princess,R.string.cat_astronaut,R.string.cat_sleepy,R.string.cat_rainbow,R.string.cat_chocolate,R.string.cat_strawberry_original,R.string.cat_strawberry_wave,R.string.cat_cotton_wave,R.string.cat_sleepy_star,R.string.cat_astronaut_star,R.string.cat_rainbow_cloud,R.string.cat_princess_wave};
     private int selection=0,filter=0,previewValue=-1;
     private View customAnchor;
     private final int[] paletteNames={R.string.palette_0,R.string.palette_1,R.string.palette_2,R.string.palette_3,R.string.palette_4,R.string.palette_5,R.string.palette_6};
@@ -307,6 +308,7 @@ public final class MainActivity extends Activity {
         addFilter(getString(R.string.filter_all),0);
         addFilter(getString(R.string.filter_signature),1);
         addFilter(getString(R.string.filter_pastel),2);
+        addFilter(getString(R.string.filter_cats),3);
         gallery=col();
         root.addView(gallery,lp(-1,-2,8));
         renderGallery();
@@ -323,25 +325,31 @@ public final class MainActivity extends Activity {
     }
     private void renderGallery(){
         gallery.removeAllViews();
-        final int start=filter==2?12:0;
-        final int count=filter==0?24:12;
+        final int start=filter==3?ThemeCatalog.COUNT:filter==2?12:0;
+        final int count=filter==0?ThemeCatalog.COUNT+ThemeCatalog.NEW_COUNT:filter==3?ThemeCatalog.NEW_COUNT:12;
         BatteryState battery=BatteryState.read(this);
-        for(int line=0;line<count/2;line++){
+        for(int line=0;line<(count+1)/2;line++){
             LinearLayout horizontal=row();
             gallery.addView(horizontal,lp(-1,156,10));
             for(int col=0;col<2;col++){
-                int index=start+line*2+col;
+                if(line*2+col>=count){
+                    View empty=new View(this);horizontal.addView(empty,new LinearLayout.LayoutParams(0,-1,1));break;
+                }
+                final int catalogIndex=start+line*2+col;
+                final int index=catalogIndex<ThemeCatalog.COUNT?catalogIndex:ThemeCatalog.defaultNewTheme(catalogIndex-ThemeCatalog.COUNT);
+                final boolean chosen=ThemeCatalog.gallerySelected(index,selection);
+                final int shownTheme=chosen?selection:index;
                 LinearLayout item=col();
                 item.setPadding(dp(5),dp(6),dp(5),dp(9));
-                item.setBackground(gradient(new int[]{0xFF222A79,0xFF39226E},17,index==selection?0xFF6CEFFF:0xFF7558CB));
-                item.setElevation(index==selection?dp(5):0);
+                item.setBackground(gradient(new int[]{0xFF222A79,0xFF39226E},17,chosen?0xFF6CEFFF:0xFF7558CB));
+                item.setElevation(chosen?dp(5):0);
                 LinearLayout.LayoutParams part=new LinearLayout.LayoutParams(0,-1,1);
                 if(col==1)part.leftMargin=dp(9);
                 horizontal.addView(item,part);
                 ImageView image=new ImageView(this);
                 image.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 final int generation=galleryGeneration;
-                final int theme=index, level=battery.percent;
+                final int theme=shownTheme, level=battery.percent;
                 final boolean charging=battery.charging;
                 renderWorker.execute(()->{
                     if(Thread.currentThread().isInterrupted() || generation!=galleryGeneration)return;
@@ -355,12 +363,12 @@ public final class MainActivity extends Activity {
                     });
                 });
                 item.addView(image,lp(-1,111,0));
-                TextView label=text(getString(names[index])+(selection==index?"  ✓":""),11,WHITE,true);
-                label.setSingleLine(true);label.setGravity(Gravity.CENTER);
-                item.addView(label,lp(-1,27,0));
+                TextView label=text(getString(catalogIndex<ThemeCatalog.COUNT?names[catalogIndex]:newNames[catalogIndex-ThemeCatalog.COUNT])+(chosen?"  ✓":""),11,WHITE,true);
+                label.setMaxLines(2);label.setEllipsize(android.text.TextUtils.TruncateAt.END);label.setGravity(Gravity.CENTER);
+                item.addView(label,lp(-1,32,0));
                 item.setOnClickListener(v->{
-                    selection=index;
-                    ThemeCatalog.save(this,index);
+                    selection=shownTheme;
+                    ThemeCatalog.save(this,selection);
                     ThemeCatalog.setAuto(this,false);
                     BatteryWidgetProvider.refreshAsync(this);
                     refreshChoice();
@@ -388,7 +396,7 @@ public final class MainActivity extends Activity {
             section.addView(colors,lp(-1,54,7));
             for(int i=start;i<Math.min(start+3,ThemeCatalog.PALETTES);i++){
                 final int palette=i;
-                final int theme=palette*ThemeCatalog.SPECIES+selection%ThemeCatalog.SPECIES;
+                final int theme=ThemeCatalog.withPalette(selection,palette);
                 TextView swatch=text(getString(paletteNames[i])+(ThemeCatalog.palette(selection)==i?" ✓":""),12,WHITE,true);
                 swatch.setGravity(Gravity.CENTER);
                 swatch.setBackground(solid(ThemeCatalog.background(theme),14));
