@@ -50,8 +50,17 @@ def tap(key,direction="down"):
 
 adb("shell","am","force-stop","com.lauraapps.emojibattery")
 adb("shell","am","start","-W","-n","com.lauraapps.emojibattery/.MainActivity","--ez","qa_skip_ads","true")
-time.sleep(3)
-tap("edit_selected_mascot")
+# Wait for the initial gallery without swiping away from its top controls.
+for attempt in range(15):
+    if locate("edit_selected_mascot"):
+        break
+    time.sleep(2)
+else:
+    print(adb("shell","dumpsys","activity","activities"))
+    print(ET.tostring(hierarchy(),encoding="unicode"))
+    print(adb("logcat","-d","-t","300"))
+    raise AssertionError("Initial gallery did not become ready")
+tap("edit_selected_mascot","up")
 assert locate("back_to_gallery"), "Editor did not open"
 tap("automatic_battery_mode")
 assert "✓" in seek("automatic_battery_mode")[0], "Automatic mode did not activate"
