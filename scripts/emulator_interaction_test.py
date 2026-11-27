@@ -49,7 +49,7 @@ def tap(key,direction="down"):
     time.sleep(1)
 
 adb("shell","am","force-stop","com.lauraapps.emojibattery")
-adb("shell","am","start","-W","-n","com.lauraapps.emojibattery/.MainActivity")
+adb("shell","am","start","-W","-n","com.lauraapps.emojibattery/.MainActivity","--ez","qa_skip_ads","true")
 time.sleep(3)
 tap("edit_selected_mascot")
 assert locate("back_to_gallery"), "Editor did not open"

@@ -9,7 +9,7 @@
 <string name="add_widget">Add widget to home screen</string><string name="widget_help">Long-press your home screen and choose Widgets if automatic pinning is unavailable.</string>
 <string name="pin_requested">Check your home screen to add the widget.</string><string name="manual_pin">Long-press your home screen, select Widgets, and find Emoji Battery.</string>
 <string name="charging">Charging</string><string name="battery_level">Battery level</string><string name="unknown">Battery unavailable</string><string name="style_saved">Mascot selected. Tap Add widget.</string>
-<string name="privacy_title">Private by design</string><string name="privacy_info">Battery information stays on your phone. No accounts, ads or unnecessary permissions.</string>
+<string name="privacy_title">Private by design</string><string name="privacy_info">Battery data and designs are processed on your device. Google AdMob helps fund the app.</string>
 <string name="share">Share app</string><string name="share_message">Meet your battery buddies! Emoji Battery: DIY Widgets</string>
 <string name="preview_levels">Try different battery levels</string><string name="preview_hint">Preview only: your real widget always shows your device battery.</string>
 <string name="preview_real">REAL</string><string name="preview_charging">CHARGING</string><string name="preview_percentage">Preview: %1$d%%</string>
@@ -77,7 +77,7 @@
 <string name="wallpaper_caption">Your battery buddy</string>
 <string name="privacy_read">Read privacy policy</string>
 <string name="privacy_full_title">Emoji Battery — Privacy Policy</string>
-<string name="privacy_full_body">Developer: LauraApps.\n\nEmoji Battery reads your device battery level and charging state using Android system APIs. This information is processed only on your device to display widgets, previews, and the optional Android screensaver.\n\nYour selected design is stored locally in app preferences. If you choose to apply a lock-screen wallpaper, the app creates a static image locally and asks for your confirmation before replacing the existing wallpaper.\n\nThis version does not require an account, access the internet, use advertising or analytics SDKs, or transmit personal information to a server. There is no sale or sharing of user data. Local preferences can be removed by clearing app data or uninstalling the app.\n\nThe Android system controls screensaver availability and widget refresh timing. Emoji Battery does not bypass the device lock screen.\n\nPrivacy contact: lauraarias206@gmail.com\nLast updated: November 18, 2026.</string>
+<string name="privacy_full_body">LauraApps. Battery information and design preferences are processed locally. Google AdMob may collect and share device identifiers, IP address, approximate location, ad interactions and diagnostics for advertising, measurement and fraud prevention. The SDK uses encrypted connections. Ad privacy preferences are available in the app when required. Local preferences can be removed by clearing app data or uninstalling. See https://policies.google.com/privacy and contact lauraarias206@gmail.com.</string>
 <string name="mode_heading">Choose how your buddy changes</string>
 <string name="mode_fixed">Favorite mascot</string>
 <string name="mode_auto">Automatic with battery</string>
@@ -195,4 +195,7 @@
 <string name="search_mascots">Search this collection</string>
 <string name="gallery_result_count">Showing %1$d of %2$d designs</string>
 <string name="search_empty">No matching characters. Try another search or category.</string>
+<string name="ads_label">Advertisement</string>
+<string name="ads_privacy_options">Ad privacy preferences</string>
+<string name="ads_privacy_unavailable">Privacy options are not currently available.</string>
 </resources>

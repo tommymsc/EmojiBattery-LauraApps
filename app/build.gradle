@@ -6,8 +6,8 @@ android {
     applicationId 'com.lauraapps.emojibattery'
     minSdk 26
     targetSdk 36
-    versionCode 17
-    versionName '1.9.5'
+    versionCode 18
+    versionName '1.9.6'
   }
   compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
   lint { abortOnError true }
@@ -20,8 +20,19 @@ android {
       keyPassword System.getenv('SIGN_KEYPASS')
     }}
   }
+  buildFeatures { buildConfig true }
   buildTypes {
+    debug {
+      manifestPlaceholders=[ADMOB_APP_ID:'ca-app-pub-3940256099942544~3347511713']
+      buildConfigField 'String','BANNER_ID','"ca-app-pub-3940256099942544/6300978111"'
+      buildConfigField 'String','INTERSTITIAL_ID','"ca-app-pub-3940256099942544/1033173712"'
+      buildConfigField 'String','NATIVE_ID','"ca-app-pub-3940256099942544/2247696110"'
+    }
     release {
+      manifestPlaceholders=[ADMOB_APP_ID:'ca-app-pub-2506564165861733~2430066561']
+      buildConfigField 'String','BANNER_ID','"ca-app-pub-2506564165861733/7823148991"'
+      buildConfigField 'String','INTERSTITIAL_ID','"ca-app-pub-2506564165861733/6510067325"'
+      buildConfigField 'String','NATIVE_ID','"ca-app-pub-2506564165861733/9598110145"'
       if(signingConfigs.findByName('upload')!=null)signingConfig signingConfigs.upload
       minifyEnabled true
       shrinkResources true
@@ -29,4 +40,8 @@ android {
     }
   }
 }
-dependencies { testImplementation 'junit:junit:4.13.2' }
+dependencies {
+  implementation 'com.google.android.gms:play-services-ads:25.4.0'
+  implementation 'com.google.android.ump:user-messaging-platform:4.0.0'
+  testImplementation 'junit:junit:4.13.2'
+}

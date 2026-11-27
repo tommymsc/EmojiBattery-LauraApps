@@ -38,6 +38,8 @@ public final class MainActivity extends Activity {
     private int selection=0,filter=0,previewValue=-1;
     private int galleryLimit=16;
     private boolean editing=false;
+    private AdsController ads;
+    private FrameLayout bannerSlot,nativeSlot;
     private int galleryScrollY=0;
     private String searchText="";
     private TextView galleryCount;
@@ -74,14 +76,17 @@ public final class MainActivity extends Activity {
         super.onCreate(state);
         selection=ThemeCatalog.load(this);
         if(state!=null){galleryScrollY=state.getInt("galleryScrollY",0);searchText=state.getString("searchText","");editing=state.getBoolean("editing");filter=state.getInt("filter",0);galleryLimit=state.getInt("galleryLimit",16);previewValue=state.getInt("previewValue",-1);selection=ThemeCatalog.clamp(state.getInt("selection",selection));}
-        build();syncBackNavigation();
+        ads=new AdsController(this,()->{},state==null?0:state.getInt("adVisits"),getSharedPreferences("ads",0).getLong("lastFullscreen",0L));
+        build();syncBackNavigation();ads.begin();
         if(state!=null){int y=state.getInt("scrollY",0);scroll.post(()->scroll.scrollTo(0,y));}
     }
     @Override protected void onSaveInstanceState(Bundle out){
+        if(ads!=null)out.putInt("adVisits",ads.count());
         out.putInt("galleryScrollY",galleryScrollY);out.putString("searchText",searchText);out.putBoolean("editing",editing);out.putInt("filter",filter);out.putInt("galleryLimit",galleryLimit);out.putInt("previewValue",previewValue);out.putInt("selection",selection);out.putInt("scrollY",scroll==null?0:scroll.getScrollY());super.onSaveInstanceState(out);
     }
     @Override protected void onResume(){
         super.onResume();
+        if(ads!=null)ads.resume();
         if(!listening){
             registerReceiver(live,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
             listening=true;
@@ -94,9 +99,11 @@ public final class MainActivity extends Activity {
     @Override protected void onPause(){
         if(pulse!=null)pulse.cancel();
         if(listening){unregisterReceiver(live);listening=false;}
+        if(ads!=null){ads.pause();getSharedPreferences("ads",0).edit().putLong("lastFullscreen",ads.last()).apply();}
         super.onPause();
     }
     @Override protected void onDestroy(){
+        if(ads!=null)ads.destroy();
         searchHandler.removeCallbacksAndMessages(null);
         galleryGeneration++;
         previewGeneration++;
@@ -158,14 +165,19 @@ public final class MainActivity extends Activity {
         root=col();
         root.setPadding(dp(16),dp(19),dp(16),dp(45));
         scroll.addView(root);
-        setContentView(scroll);
+        LinearLayout screen=col();screen.setBackgroundColor(0xFF161B52);
+        screen.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
+        bannerSlot=null;nativeSlot=null;
+        if(editing){bannerSlot=new FrameLayout(this);bannerSlot.setVisibility(View.GONE);screen.addView(bannerSlot,new LinearLayout.LayoutParams(-1,-2));}
+        setContentView(screen);
         if(Build.VERSION.SDK_INT>=35){
-            scroll.setOnApplyWindowInsetsListener((v,i)->{
+            screen.setOnApplyWindowInsetsListener((v,i)->{
                 android.graphics.Insets e=i.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
-                root.setPadding(dp(16)+e.left,dp(14)+e.top,dp(16)+e.right,dp(40)+e.bottom);
+                screen.setPadding(e.left,e.top,e.right,e.bottom);
+                root.setPadding(dp(16),dp(14),dp(16),dp(40));
                 return i;
             });
-            scroll.requestApplyInsets();
+            screen.requestApplyInsets();
         }
         widgetAction=null;widgetCountNotice=null;
         heroArt=null;requestedPreview="";previewGeneration++;previewWorker.getQueue().clear();
@@ -177,6 +189,7 @@ public final class MainActivity extends Activity {
             TextView edit=action(getString(R.string.edit_selected),true,0);root.addView(edit,lp(-1,48,8));edit.setContentDescription("edit_selected_mascot");edit.setOnClickListener(v->showEditor());
             drawGallery();drawFooter();
         }
+        if(ads!=null)ads.hosts(bannerSlot,nativeSlot);
         scroll.post(()->scroll.scrollTo(0,0));
         updatePreview();
         if(heroArt!=null){
@@ -433,11 +446,11 @@ public final class MainActivity extends Activity {
         label.setSelected(filter==index);
         LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-2,dp(44));
         p.rightMargin=dp(6);filters.addView(label,p);
-        label.setOnClickListener(v->{if(filter==index)return;filter=index;galleryLimit=16;refreshFilters();renderGallery();});
+        label.setOnClickListener(v->{if(filter==index)return;Runnable change=()->{filter=index;galleryLimit=16;refreshFilters();renderGallery();};if(ads!=null&&index!=0)ads.category(change);else change.run();});
     }
     private void refreshFilters(){for(int i=0;i<filters.getChildCount();i++){TextView v=(TextView)filters.getChildAt(i);boolean selected=i==filter;v.setSelected(selected);v.setTextColor(selected?WHITE:0xFFE5DFFF);v.setBackground(selected?gradient(new int[]{0xFF06BEFE,0xFF8555FF},17,0xFFA2E6FF):gradient(new int[]{0xFF293B80,0xFF423475},17,0xFF655BB6));}}
     private void renderGallery(){
-        galleryGeneration++;renderWorker.getQueue().clear();gallery.removeAllViews();
+        galleryGeneration++;renderWorker.getQueue().clear();gallery.removeAllViews();nativeSlot=null;
         final int start=filter==12?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT+ThemeCatalog.AQUATIC_COUNT+ThemeCatalog.SPACE_COUNT+ThemeCatalog.EMOTION_COUNT:filter==11?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT+ThemeCatalog.AQUATIC_COUNT+ThemeCatalog.SPACE_COUNT:filter==10?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT+ThemeCatalog.AQUATIC_COUNT:filter==9?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT:filter==8?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT:filter==7?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT:filter==6?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT:filter==5?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT:filter==4?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT:filter==3?ThemeCatalog.COUNT:filter==2?12:0;
         final int count=filter==0?ThemeCatalog.COUNT+ThemeCatalog.NEW_COUNT:filter==3?ThemeCatalog.KITTEN_COUNT:filter==4?ThemeCatalog.DOG_COUNT:filter==5?ThemeCatalog.BEAR_COUNT:filter==6?ThemeCatalog.FRUIT_COUNT:filter==7?ThemeCatalog.FANTASY_COUNT:filter==8?ThemeCatalog.FOOD_COUNT:filter==9?ThemeCatalog.AQUATIC_COUNT:filter==10?ThemeCatalog.SPACE_COUNT:filter==11?ThemeCatalog.EMOTION_COUNT:filter==12?ThemeCatalog.NATURE_COUNT:12;
         java.util.ArrayList<Integer> matches=new java.util.ArrayList<>();
@@ -449,11 +462,12 @@ public final class MainActivity extends Activity {
         int totalMatches=matches.size();
         final int visibleCount=Math.min(totalMatches,galleryLimit);
         if(galleryCount!=null)galleryCount.setText(getString(R.string.gallery_result_count,visibleCount,totalMatches));
-        if(totalMatches==0){gallery.addView(text(getString(R.string.search_empty),14,WHITE,false),lp(-1,-2,12));return;}
+        if(totalMatches==0){gallery.addView(text(getString(R.string.search_empty),14,WHITE,false),lp(-1,-2,12));if(ads!=null)ads.hosts(bannerSlot,null);return;}
         // Gallery artwork is a stable sample, not a live battery display.
         final int sampleLevel=70;
         for(int line=0;line<(visibleCount+1)/2;line++){
             LinearLayout horizontal=row();
+            if(line==2){nativeSlot=new FrameLayout(this);nativeSlot.setVisibility(View.GONE);gallery.addView(nativeSlot,lp(-1,-2,8));}
             gallery.addView(horizontal,lp(-1,156,10));
             for(int col=0;col<2;col++){
                 if(line*2+col>=visibleCount){
@@ -501,6 +515,7 @@ public final class MainActivity extends Activity {
                 });
             }
         }
+        if(ads!=null)ads.hosts(bannerSlot,nativeSlot);
         if(visibleCount<totalMatches){
             TextView more=action(getString(R.string.gallery_more,visibleCount,totalMatches),false,0);
             more.setOnClickListener(v->{galleryLimit+=16;renderGallery();});
@@ -585,6 +600,7 @@ public final class MainActivity extends Activity {
             .setPositiveButton(android.R.string.ok,null)
             .show());
         card.addView(privacy,lp(-1,50,12));
+        TextView options=action(getString(R.string.ads_privacy_options),false,0);options.setOnClickListener(v->{if(ads!=null)ads.privacy();});card.addView(options,lp(-1,50,8));
         TextView share=text("♡  "+getString(R.string.share_design)+"   ↗",15,0xFFFFC4EB,true);
         share.setGravity(Gravity.CENTER);
         root.addView(share,lp(-1,52,8));

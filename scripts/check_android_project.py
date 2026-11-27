@@ -11,14 +11,14 @@ for loc in ('res/values/strings.xml','res/values-es/strings.xml'):
 assert sets[0]==sets[1],f'Unequal English and Spanish translations: {sets[0]^sets[1]}'
 assert all('mascot_'+str(i) in sets[0] for i in range(24))
 manifest=(app/'AndroidManifest.xml').read_text()
-assert manifest.count('<uses-permission')==1
+assert 'com.google.android.gms.permission.AD_ID' in manifest
 assert 'android.permission.SET_WALLPAPER' in manifest
 assert 'android.permission.BIND_DREAM_SERVICE' in manifest
 assert '.BatteryDreamService' in manifest
 assert 'MANAGE_EXTERNAL_STORAGE' not in manifest and 'SYSTEM_ALERT_WINDOW' not in manifest
 gradle=(root/'app/build.gradle').read_text()
 assert re.search(r'targetSdk\s+36',gradle)
-assert re.search(r'versionCode\s+17',gradle)
+assert re.search(r'versionCode\s+18',gradle)
 source=(app/'java/com/lauraapps/emojibattery/BatteryArt.java').read_text()
 assert 'ThemeCatalog.species(t)' in source
 catalog=(app/'java/com/lauraapps/emojibattery/ThemeCatalog.java').read_text()
@@ -26,8 +26,8 @@ assert 'COUNT=24' in catalog and 'SPECIES=12' in catalog
 assert 'auto_mode' in catalog and 'automaticTheme' in catalog
 assert 'mode_heading' in sets[0] and 'mode_fixed' in sets[0] and 'mode_auto' in sets[0]
 # Protect the minimal-permissions design and the in-app privacy notice.
-assert 'android.permission.INTERNET' not in manifest
-for forbidden in ('READ_CONTACTS','ACCESS_FINE_LOCATION','QUERY_ALL_PACKAGES',
+assert 'android.permission.INTERNET' in manifest
+for forbidden in ('READ_CONTACTS','QUERY_ALL_PACKAGES',
                   'REQUEST_INSTALL_PACKAGES','POST_NOTIFICATIONS','READ_MEDIA_IMAGES',
                   'BIND_ACCESSIBILITY_SERVICE','FOREGROUND_SERVICE',
                   'USE_FULL_SCREEN_INTENT','SCHEDULE_EXACT_ALARM'):
@@ -101,3 +101,7 @@ assert 'if(widgetCount()>0)' in activity and 'PIN_COOLDOWN_MS' in activity
 assert 'widget_duplicate_notice' in sets[0] and 'widget_update_existing' in sets[0]
 
 assert 'galleryScrollY' in activity and 'normalizeSearch' in activity and 'R.string.search_mascots' in activity
+
+assert 'tools:node="remove"' in (app/'AndroidManifest.xml').read_text()
+assert 'AdsController' in activity and 'ads.category(change)' in activity
+assert 'play-services-ads:25.4.0' in gradle and 'user-messaging-platform:4.0.0' in gradle

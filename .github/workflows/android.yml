@@ -33,7 +33,7 @@ jobs:
         run: gradle --no-daemon :app:bundleRelease
       - uses: actions/upload-artifact@v4
         with:
-          name: EmojiBattery-v1.9.5-UNSIGNED-AAB-NOT-FOR-PLAY
+          name: EmojiBattery-v1.9.6-UNSIGNED-AAB-NOT-FOR-PLAY
           path: app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
       - name: Build installable debug APK
@@ -51,17 +51,17 @@ jobs:
           PERMISSIONS=$("${ANDROID_HOME}/build-tools/35.0.0/aapt" dump permissions "$APK")
           echo "$PERMISSIONS"
           echo "$PERMISSIONS" | grep -q "android.permission.SET_WALLPAPER"
-          if echo "$PERMISSIONS" | grep -E 'android.permission.(INTERNET|READ_CONTACTS|QUERY_ALL_PACKAGES|SYSTEM_ALERT_WINDOW|MANAGE_EXTERNAL_STORAGE)'; then
+          if echo "$PERMISSIONS" | grep -E 'android.permission.(READ_CONTACTS|ACCESS_FINE_LOCATION|ACCESS_COARSE_LOCATION|QUERY_ALL_PACKAGES|SYSTEM_ALERT_WINDOW|MANAGE_EXTERNAL_STORAGE)'; then
             echo "::error::Unexpected packaged permission"
             exit 1
           fi
       - name: Verify APK signature and version
         run: |
           "${ANDROID_HOME}/build-tools/35.0.0/apksigner" verify --verbose app/build/outputs/apk/debug/app-debug.apk
-          "${ANDROID_HOME}/build-tools/35.0.0/aapt" dump badging app/build/outputs/apk/debug/app-debug.apk | grep -E "package: name='com.lauraapps.emojibattery' versionCode='17'"
+          "${ANDROID_HOME}/build-tools/35.0.0/aapt" dump badging app/build/outputs/apk/debug/app-debug.apk | grep -E "package: name='com.lauraapps.emojibattery' versionCode='18'"
       - uses: actions/upload-artifact@v4
         with:
-          name: EmojiBattery-v1.9.5-HD-LOCKSCREEN-APK
+          name: EmojiBattery-v1.9.6-HD-LOCKSCREEN-APK
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30

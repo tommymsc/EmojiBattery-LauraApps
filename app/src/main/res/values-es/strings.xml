@@ -8,7 +8,7 @@
 <string name="add_widget">Agregar widget al inicio</string><string name="widget_help">Mantén pulsada la pantalla de inicio y selecciona Widgets si no puedes agregarlo automáticamente.</string>
 <string name="pin_requested">Revisa tu pantalla de inicio para agregar el widget.</string><string name="manual_pin">Mantén pulsado el inicio, elige Widgets y busca Emoji Battery.</string>
 <string name="charging">Cargando</string><string name="battery_level">Nivel de batería</string><string name="unknown">Batería no disponible</string><string name="style_saved">Mascota elegida. Toca Agregar widget.</string>
-<string name="privacy_title">Privacidad desde el diseño</string><string name="privacy_info">Los datos de batería permanecen en tu teléfono. Sin cuentas, anuncios ni permisos innecesarios.</string>
+<string name="privacy_title">Privacidad desde el diseño</string><string name="privacy_info">El nivel de batería y los diseños se procesan en el teléfono. Usamos Google AdMob para financiar la app.</string>
 <string name="share">Compartir app</string><string name="share_message">¡Conoce a tus mascotas de batería! Emoji Battery: DIY Widgets</string>
 <string name="preview_levels">Prueba distintos niveles de batería</string><string name="preview_hint">Solo vista previa: el widget real siempre muestra la batería de tu dispositivo.</string>
 <string name="preview_real">REAL</string><string name="preview_charging">CARGANDO</string><string name="preview_percentage">Vista previa: %1$d%%</string>
@@ -76,7 +76,7 @@
 <string name="wallpaper_caption">Tu mascota de batería</string>
 <string name="privacy_read">Leer política de privacidad</string>
 <string name="privacy_full_title">Emoji Battery — Política de privacidad</string>
-<string name="privacy_full_body">Desarrollador: LauraApps.\n\nEmoji Battery consulta el nivel y estado de carga de la batería mediante las API oficiales de Android. Los datos se procesan exclusivamente en el dispositivo para mostrar widgets, vistas previas y el salvapantallas opcional.\n\nEl diseño elegido se guarda localmente en las preferencias de la app. Si decides aplicar un fondo de pantalla de bloqueo, se genera una imagen fija en el dispositivo y se solicita tu confirmación antes de reemplazar el fondo actual.\n\nEsta versión no requiere cuentas, no accede a Internet, no utiliza SDK de anuncios ni analítica y no transmite datos personales a servidores. No se venden ni comparten datos del usuario. Las preferencias locales se pueden eliminar borrando los datos de la app o desinstalándola.\n\nAndroid controla cuándo está disponible el salvapantallas y cuándo se actualizan los widgets. Emoji Battery no elude la pantalla de bloqueo del dispositivo.\n\nContacto de privacidad: lauraarias206@gmail.com\nActualización: 18 de noviembre de 2026.</string>
+<string name="privacy_full_body">LauraApps. Los datos de batería y preferencias se procesan localmente. Google AdMob puede recopilar y compartir identificadores del dispositivo, dirección IP, ubicación aproximada, interacción con anuncios y diagnósticos para publicidad, medición y prevención de fraude. El SDK usa conexiones cifradas. Las preferencias publicitarias se gestionan desde la app cuando están disponibles. Las preferencias locales se eliminan al borrar los datos o desinstalar. Consulta https://policies.google.com/privacy y contacta a lauraarias206@gmail.com.</string>
 <string name="mode_heading">Cómo cambia tu mascota</string>
 <string name="mode_fixed">Mascota favorita</string>
 <string name="mode_auto">Automática según la batería</string>
@@ -194,4 +194,7 @@
 <string name="search_mascots">Buscar en esta colección</string>
 <string name="gallery_result_count">Mostrando %1$d de %2$d diseños</string>
 <string name="search_empty">No hay personajes que coincidan. Prueba otra búsqueda o categoría.</string>
+<string name="ads_label">Publicidad</string>
+<string name="ads_privacy_options">Preferencias de privacidad publicitaria</string>
+<string name="ads_privacy_unavailable">Las opciones de privacidad no están disponibles en este momento.</string>
 </resources>
