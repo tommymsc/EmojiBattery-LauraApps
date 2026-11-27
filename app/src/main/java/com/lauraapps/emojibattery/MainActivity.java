@@ -446,7 +446,7 @@ public final class MainActivity extends Activity {
         label.setSelected(filter==index);
         LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-2,dp(44));
         p.rightMargin=dp(6);filters.addView(label,p);
-        label.setOnClickListener(v->{if(filter==index)return;Runnable change=()->{filter=index;galleryLimit=16;refreshFilters();renderGallery();};if(ads!=null&&index!=0)ads.category(change);else change.run();});
+        label.setOnClickListener(v->{if(filter==index)return;Runnable change=()->{filter=index;galleryLimit=16;refreshFilters();renderGallery();};if(ads!=null)ads.category(change);else change.run();});
     }
     private void refreshFilters(){for(int i=0;i<filters.getChildCount();i++){TextView v=(TextView)filters.getChildAt(i);boolean selected=i==filter;v.setSelected(selected);v.setTextColor(selected?WHITE:0xFFE5DFFF);v.setBackground(selected?gradient(new int[]{0xFF06BEFE,0xFF8555FF},17,0xFFA2E6FF):gradient(new int[]{0xFF293B80,0xFF423475},17,0xFF655BB6));}}
     private void renderGallery(){
@@ -467,7 +467,7 @@ public final class MainActivity extends Activity {
         final int sampleLevel=70;
         for(int line=0;line<(visibleCount+1)/2;line++){
             LinearLayout horizontal=row();
-            if(line==2){nativeSlot=new FrameLayout(this);nativeSlot.setVisibility(View.GONE);gallery.addView(nativeSlot,lp(-1,-2,8));}
+            if(line==1||(line==0&&visibleCount<=2)){nativeSlot=new FrameLayout(this);nativeSlot.setVisibility(View.GONE);gallery.addView(nativeSlot,lp(-1,-2,8));}
             gallery.addView(horizontal,lp(-1,156,10));
             for(int col=0;col<2;col++){
                 if(line*2+col>=visibleCount){

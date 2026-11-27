@@ -85,7 +85,7 @@ final class AdsController {
         if(!usable())return;
         if(bannerHost!=null)loadBanner();
         if(nativeHost!=null)loadNative();
-        if(gate.shouldPreload(now()))loadInterstitial();
+        loadInterstitial();
     }
     private void loadBanner(){
         FrameLayout host=bannerHost;
@@ -138,7 +138,7 @@ final class AdsController {
           })
           .withAdListener(new AdListener(){
               @Override public void onAdImpression(){log("native impression");}
-              @Override public void onAdFailedToLoad(LoadAdError e){nativeLoading=false;nativeRetry=now()+60000;log("native load failed "+e.getCode());}
+              @Override public void onAdFailedToLoad(LoadAdError e){nativeLoading=false;nativeRetry=now()+60000;log("native load failed "+e.getCode()+" "+e.getMessage());handler.postDelayed(()->{if(usable()&&nativeHost!=null)loadNative();},60000);}
           }).build().loadAd(new AdRequest.Builder().build());
     }
     private TextView text(String value,int sp,int color){
@@ -146,7 +146,7 @@ final class AdsController {
     }
     private void attachNative(){
         if(!usable()||nativeHost==null||nativeAd==null)return;
-        if(nativeHost.getChildCount()>0)return;
+        if(nativeHost.getChildCount()>0){nativeHost.setVisibility(View.VISIBLE);return;}
         NativeAdView view=new NativeAdView(activity);
         LinearLayout box=new LinearLayout(activity);box.setOrientation(LinearLayout.VERTICAL);box.setPadding(dp(12),dp(10),dp(12),dp(12));box.setBackgroundColor(0xffe9e5ff);
         view.addView(box,new FrameLayout.LayoutParams(-1,-2));
@@ -174,7 +174,7 @@ final class AdsController {
                 @Override public void onAdFailedToShowFullScreenContent(AdError e){log("interstitial show failed "+e.getCode());finishInterstitial();}
             });
             try{ad.show(activity);}catch(RuntimeException ex){finishInterstitial();}
-        }else{navigate.run();if(gate.shouldPreload(now()))loadInterstitial();}
+        }else{navigate.run();loadInterstitial();}
     }
     private void finishInterstitial(){
         showing=false;Runnable next=pendingNavigation;pendingNavigation=null;
@@ -182,11 +182,11 @@ final class AdsController {
         if(alive())loadVisible();
     }
     private void loadInterstitial(){
-        if(!usable()||!gate.shouldPreload(now())||interstitial!=null||interstitialLoading||now()<interstitialRetry)return;
+        if(!usable()||interstitial!=null||interstitialLoading||now()<interstitialRetry)return;
         interstitialLoading=true;log("interstitial request");
         InterstitialAd.load(activity,BuildConfig.INTERSTITIAL_ID,new AdRequest.Builder().build(),new InterstitialAdLoadCallback(){
             @Override public void onAdLoaded(InterstitialAd ad){interstitialLoading=false;if(!allowed())return;interstitial=ad;interstitialAt=now();log("interstitial loaded");}
-            @Override public void onAdFailedToLoad(LoadAdError error){interstitialLoading=false;interstitialRetry=now()+60000;log("interstitial load failed "+error.getCode());}
+            @Override public void onAdFailedToLoad(LoadAdError error){interstitialLoading=false;interstitialRetry=now()+60000;log("interstitial load failed "+error.getCode());handler.postDelayed(()->{if(usable())loadInterstitial();},60000);}
         });
     }
 }
