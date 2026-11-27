@@ -44,12 +44,12 @@ final class AdsController {
         if(BuildConfig.DEBUG && activity.getIntent().getBooleanExtra("qa_skip_ads",false))return;
         UserMessagingPlatform.getConsentInformation(activity).requestConsentInfoUpdate(activity,new ConsentRequestParameters.Builder().build(),
           ()->{if(alive())UserMessagingPlatform.loadAndShowConsentFormIfRequired(activity,e->consentComplete());},
-          e->consentComplete());
+          e->{log("consent update failed "+e.getErrorCode()+" "+e.getMessage());consentComplete();});
     }
     private void consentComplete(){
         if(!alive())return;
         consentReady=true;
-        if(!allowed()){clearAds();return;}
+        if(!allowed()){log("ads unavailable: consent cannot request ads");clearAds();return;}
         if(!initialized&&!initializing){
             initializing=true;
             MobileAds.initialize(activity,status->handler.post(()->{
@@ -78,7 +78,7 @@ final class AdsController {
     }
     void hosts(FrameLayout b,FrameLayout n){
         if(bannerHost!=b&&banner!=null)detach(banner);
-        if(nativeHost!=n&&nativeHost!=null)nativeHost.removeAllViews();
+        if(nativeHost!=n&&nativeHost!=null){nativeHost.removeAllViews();nativeHost.setVisibility(View.GONE);}
         bannerHost=b;nativeHost=n;loadVisible();
     }
     private void loadVisible(){
@@ -134,7 +134,7 @@ final class AdsController {
               nativeLoading=false;
               if(!allowed()){ad.destroy();return;}
               if(nativeAd!=null)nativeAd.destroy();
-              nativeAd=ad;nativeAt=now();attachNative();log("native loaded");
+              nativeAd=ad;nativeAt=now();nativeRetry=0;log("native loaded");handler.post(()->attachNative());
           })
           .withAdListener(new AdListener(){
               @Override public void onAdImpression(){log("native impression");}
@@ -146,6 +146,11 @@ final class AdsController {
     }
     private void attachNative(){
         if(!usable()||nativeHost==null||nativeAd==null)return;
+        final FrameLayout host=nativeHost;
+        if(!host.isAttachedToWindow()){host.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener(){
+            @Override public void onViewAttachedToWindow(View v){v.removeOnAttachStateChangeListener(this);if(host==nativeHost)host.post(()->attachNative());}
+            @Override public void onViewDetachedFromWindow(View v){}
+        });return;}
         if(nativeHost.getChildCount()>0){nativeHost.setVisibility(View.VISIBLE);return;}
         NativeAdView view=new NativeAdView(activity);
         LinearLayout box=new LinearLayout(activity);box.setOrientation(LinearLayout.VERTICAL);box.setPadding(dp(12),dp(10),dp(12),dp(12));box.setBackgroundColor(0xffe9e5ff);
@@ -159,7 +164,7 @@ final class AdsController {
         if(nativeAd.getAdvertiser()!=null){TextView t=text(nativeAd.getAdvertiser(),12,0xff494264);box.addView(t);view.setAdvertiserView(t);}
         if(nativeAd.getBody()!=null){TextView body=text(nativeAd.getBody(),14,0xff30294d);box.addView(body);view.setBodyView(body);}
         if(nativeAd.getCallToAction()!=null){Button cta=new Button(activity);cta.setText(nativeAd.getCallToAction());box.addView(cta);view.setCallToActionView(cta);}
-        view.setNativeAd(nativeAd);nativeHost.addView(view,new FrameLayout.LayoutParams(-1,-2));nativeHost.setVisibility(View.VISIBLE);
+        nativeHost.addView(view,new FrameLayout.LayoutParams(-1,-2));nativeHost.setVisibility(View.VISIBLE);view.setNativeAd(nativeAd);nativeHost.requestLayout();view.requestLayout();log("native attached to gallery");
     }
     void category(Runnable navigate){
         if(showing)return;

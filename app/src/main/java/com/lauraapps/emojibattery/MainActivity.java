@@ -428,6 +428,7 @@ public final class MainActivity extends Activity {
         root.setFocusableInTouchMode(true);root.requestFocus();
         root.addView(search,lp(-1,48,8));
         search.addTextChangedListener(new android.text.TextWatcher(){public void beforeTextChanged(CharSequence s,int start,int count,int after){}public void onTextChanged(CharSequence s,int start,int before,int count){searchText=s.toString();searchHandler.removeCallbacks(searchRefresh);searchHandler.postDelayed(searchRefresh,180);}public void afterTextChanged(android.text.Editable e){}});
+        nativeSlot=new FrameLayout(this);nativeSlot.setVisibility(View.GONE);root.addView(nativeSlot,lp(-1,-2,10));
         galleryCount=text("",12,MUTED,false);root.addView(galleryCount,lp(-1,-2,5));
         gallery=col();
         root.addView(gallery,lp(-1,-2,8));
@@ -450,7 +451,7 @@ public final class MainActivity extends Activity {
     }
     private void refreshFilters(){for(int i=0;i<filters.getChildCount();i++){TextView v=(TextView)filters.getChildAt(i);boolean selected=i==filter;v.setSelected(selected);v.setTextColor(selected?WHITE:0xFFE5DFFF);v.setBackground(selected?gradient(new int[]{0xFF06BEFE,0xFF8555FF},17,0xFFA2E6FF):gradient(new int[]{0xFF293B80,0xFF423475},17,0xFF655BB6));}}
     private void renderGallery(){
-        galleryGeneration++;renderWorker.getQueue().clear();gallery.removeAllViews();nativeSlot=null;
+        galleryGeneration++;renderWorker.getQueue().clear();gallery.removeAllViews();
         final int start=filter==12?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT+ThemeCatalog.AQUATIC_COUNT+ThemeCatalog.SPACE_COUNT+ThemeCatalog.EMOTION_COUNT:filter==11?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT+ThemeCatalog.AQUATIC_COUNT+ThemeCatalog.SPACE_COUNT:filter==10?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT+ThemeCatalog.AQUATIC_COUNT:filter==9?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT+ThemeCatalog.FOOD_COUNT:filter==8?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT+ThemeCatalog.FANTASY_COUNT:filter==7?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT+ThemeCatalog.FRUIT_COUNT:filter==6?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT+ThemeCatalog.BEAR_COUNT:filter==5?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT+ThemeCatalog.DOG_COUNT:filter==4?ThemeCatalog.COUNT+ThemeCatalog.KITTEN_COUNT:filter==3?ThemeCatalog.COUNT:filter==2?12:0;
         final int count=filter==0?ThemeCatalog.COUNT+ThemeCatalog.NEW_COUNT:filter==3?ThemeCatalog.KITTEN_COUNT:filter==4?ThemeCatalog.DOG_COUNT:filter==5?ThemeCatalog.BEAR_COUNT:filter==6?ThemeCatalog.FRUIT_COUNT:filter==7?ThemeCatalog.FANTASY_COUNT:filter==8?ThemeCatalog.FOOD_COUNT:filter==9?ThemeCatalog.AQUATIC_COUNT:filter==10?ThemeCatalog.SPACE_COUNT:filter==11?ThemeCatalog.EMOTION_COUNT:filter==12?ThemeCatalog.NATURE_COUNT:12;
         java.util.ArrayList<Integer> matches=new java.util.ArrayList<>();
@@ -467,7 +468,6 @@ public final class MainActivity extends Activity {
         final int sampleLevel=70;
         for(int line=0;line<(visibleCount+1)/2;line++){
             LinearLayout horizontal=row();
-            if(line==1||(line==0&&visibleCount<=2)){nativeSlot=new FrameLayout(this);nativeSlot.setVisibility(View.GONE);gallery.addView(nativeSlot,lp(-1,-2,8));}
             gallery.addView(horizontal,lp(-1,156,10));
             for(int col=0;col<2;col++){
                 if(line*2+col>=visibleCount){
