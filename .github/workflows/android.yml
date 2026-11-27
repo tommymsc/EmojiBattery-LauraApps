@@ -23,6 +23,11 @@ jobs:
         run: |
           yes | "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
           "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;35.0.0"
+      - name: Read application version
+        id: version
+        run: |
+          echo "code=$(awk '$1=="versionCode" {print $2; exit}' app/build.gradle)" >> "$GITHUB_OUTPUT"
+          echo "name=$(awk '$1=="versionName" {print $2; exit}' app/build.gradle | tr -d "'")" >> "$GITHUB_OUTPUT"
       - name: Resource and privacy checks
         run: python3 scripts/check_android_project.py
       - name: Unit tests
@@ -33,7 +38,7 @@ jobs:
         run: gradle --no-daemon :app:bundleRelease
       - uses: actions/upload-artifact@v4
         with:
-          name: EmojiBattery-v1.9.6-UNSIGNED-AAB-NOT-FOR-PLAY
+          name: EmojiBattery-v${{ steps.version.outputs.name }}-UNSIGNED-AAB-NOT-FOR-PLAY
           path: app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
       - name: Build installable debug APK
@@ -58,10 +63,10 @@ jobs:
       - name: Verify APK signature and version
         run: |
           "${ANDROID_HOME}/build-tools/35.0.0/apksigner" verify --verbose app/build/outputs/apk/debug/app-debug.apk
-          "${ANDROID_HOME}/build-tools/35.0.0/aapt" dump badging app/build/outputs/apk/debug/app-debug.apk | grep -E "package: name='com.lauraapps.emojibattery' versionCode='18'"
+          "${ANDROID_HOME}/build-tools/35.0.0/aapt" dump badging app/build/outputs/apk/debug/app-debug.apk | grep -E "package: name='com.lauraapps.emojibattery' versionCode='${{ steps.version.outputs.code }}'"
       - uses: actions/upload-artifact@v4
         with:
-          name: EmojiBattery-v1.9.6-HD-LOCKSCREEN-APK
+          name: EmojiBattery-v${{ steps.version.outputs.name }}-HD-LOCKSCREEN-APK
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
