@@ -21,7 +21,19 @@ def hierarchy():
 sizes = re.findall(r"(\d+)x(\d+)", adb("shell", "wm", "size"))
 width, height = map(int, sizes[-1])
 def locate(key):
-    for n in hierarchy().iter("node"):
+    tree=hierarchy()
+    # Recover only from a known external launcher ANR; never dismiss an app ANR.
+    if any(n.get("text")=="Pixel Launcher isn't responding" for n in tree.iter("node")):
+        for n in tree.iter("node"):
+            if n.get("resource-id")=="android:id/aerr_close":
+                x1,y1,x2,y2=map(int,re.findall(r"-?\d+",n.get("bounds","")))
+                adb("shell","input","tap",str((x1+x2)//2),str((y1+y2)//2))
+                print("Recovered from external Pixel Launcher ANR",flush=True)
+                time.sleep(2)
+                adb("shell","am","start","-W","-n","com.lauraapps.emojibattery/.MainActivity","--ez","qa_skip_ads","true")
+                tree=hierarchy()
+                break
+    for n in tree.iter("node"):
         if n.get("content-desc") != key:
             continue
         coords = re.findall(r"-?\d+", n.get("bounds", ""))
