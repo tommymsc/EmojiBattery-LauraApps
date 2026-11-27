@@ -76,13 +76,21 @@ try:
     adb("shell","dumpsys","battery","set","status","3")
     for level in (82, 19, 7, 63):
         adb("shell","dumpsys","battery","set","level",str(level))
-        time.sleep(1)
         status=seek("battery_status","up")
-        assert str(level)+"%" in status[0], "Live battery mismatch: "+status[0]
+        for attempt in range(10):
+            if str(level)+"%" in status[0]:
+                break
+            time.sleep(2)
+            status=seek("battery_status","up")
+        assert str(level)+"%" in status[0], f"Live battery mismatch: expected {level}%, got {status[0]}"
     adb("shell","dumpsys","battery","set","ac","1")
     adb("shell","dumpsys","battery","set","status","2")
-    time.sleep(1)
-    assert "Charging" in seek("battery_status","up")[0], "Charging state not updated"
+    for attempt in range(10):
+        if "Charging" in seek("battery_status","up")[0]:
+            break
+        time.sleep(2)
+    else:
+        raise AssertionError("Charging state not updated")
 finally:
     adb("shell","dumpsys","battery","reset")
 # Capture selected theme then switch language while the editor is open.

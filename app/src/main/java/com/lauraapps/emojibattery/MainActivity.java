@@ -68,8 +68,9 @@ public final class MainActivity extends Activity {
     private final Handler uiHandler=new Handler(Looper.getMainLooper());
     private volatile int galleryGeneration=0;
     private volatile int previewGeneration=0;
+    private BatteryState liveBattery;
     private final BroadcastReceiver live=new BroadcastReceiver(){
-        @Override public void onReceive(Context context,Intent intent){if(previewValue==-1)updatePreview();BatteryWidgetProvider.refreshAsync(context);}
+        @Override public void onReceive(Context context,Intent intent){liveBattery=BatteryState.fromIntent(intent);if(previewValue==-1)updatePreview();BatteryWidgetProvider.refreshAsync(context);}
     };
     @Override protected void attachBaseContext(Context base){super.attachBaseContext(AppLanguage.wrap(base));}
     @Override public void onCreate(Bundle state){
@@ -88,7 +89,7 @@ public final class MainActivity extends Activity {
         super.onResume();
         if(ads!=null)ads.resume();
         if(!listening){
-            registerReceiver(live,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            liveBattery=BatteryState.fromIntent(registerReceiver(live,new IntentFilter(Intent.ACTION_BATTERY_CHANGED)));
             listening=true;
         }
         updatePreview();
@@ -611,7 +612,7 @@ public final class MainActivity extends Activity {
     }
     private void updatePreview(){
         if(heroArt==null)return;
-        BatteryState actual=BatteryState.read(this);
+        BatteryState actual=liveBattery!=null?liveBattery:BatteryState.read(this);
         int pct=previewValue==-1?actual.percent:previewValue==-2?85:previewValue;
         boolean charging=previewValue==-2||(previewValue==-1&&actual.charging);
         final int theme=ThemeCatalog.resolve(this,selection,pct,charging);

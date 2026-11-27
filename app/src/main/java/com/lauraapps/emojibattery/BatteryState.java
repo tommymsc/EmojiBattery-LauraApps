@@ -8,6 +8,9 @@ public final class BatteryState {
   private BatteryState(int p,boolean c){percent=p;charging=c;}
   public static BatteryState read(Context c) {
     Intent battery=c.registerReceiver(null,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+    return fromIntent(battery);
+  }
+  static BatteryState fromIntent(Intent battery) {
     if(battery==null)return new BatteryState(-1,false);
     int level=battery.getIntExtra(BatteryManager.EXTRA_LEVEL,-1);
     int scale=battery.getIntExtra(BatteryManager.EXTRA_SCALE,-1);
