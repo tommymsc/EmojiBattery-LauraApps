@@ -26,6 +26,7 @@ final class AdsController {
     private int bannerWidth;
     private AdView banner;
     private NativeAd nativeAd;
+    private AdLoader nativeLoader;
     private InterstitialAd interstitial;
     private FrameLayout bannerHost,nativeHost;
     private Runnable pendingNavigation;
@@ -129,17 +130,18 @@ final class AdsController {
         if(nativeAd!=null){attachNative();return;}
         if(nativeLoading||now()<nativeRetry)return;
         nativeLoading=true;log("native request");
-        new AdLoader.Builder(activity,BuildConfig.NATIVE_ID)
+        nativeLoader=new AdLoader.Builder(activity,BuildConfig.NATIVE_ID)
           .forNativeAd(ad->{
               nativeLoading=false;
               if(!allowed()){ad.destroy();return;}
               if(nativeAd!=null)nativeAd.destroy();
-              nativeAd=ad;nativeAt=now();nativeRetry=0;log("native loaded");handler.post(()->attachNative());
+              nativeAd=ad;nativeAt=now();nativeRetry=0;log("native loaded response="+ad.getResponseInfo());handler.post(()->attachNative());
           })
           .withAdListener(new AdListener(){
               @Override public void onAdImpression(){log("native impression");}
-              @Override public void onAdFailedToLoad(LoadAdError e){nativeLoading=false;nativeRetry=now()+60000;log("native load failed "+e.getCode()+" "+e.getMessage());handler.postDelayed(()->{if(usable()&&nativeHost!=null)loadNative();},60000);}
-          }).build().loadAd(new AdRequest.Builder().build());
+              @Override public void onAdFailedToLoad(LoadAdError e){nativeLoading=false;nativeRetry=now()+60000;log("native load failed "+e);handler.postDelayed(()->{if(usable()&&nativeHost!=null)loadNative();},60000);}
+          }).build();
+        nativeLoader.loadAd(new AdRequest.Builder().build());
     }
     private TextView text(String value,int sp,int color){
         TextView t=new TextView(activity);t.setText(value);t.setTextSize(sp);t.setTextColor(color);return t;
@@ -152,19 +154,27 @@ final class AdsController {
             @Override public void onViewDetachedFromWindow(View v){}
         });return;}
         if(nativeHost.getChildCount()>0){nativeHost.setVisibility(View.VISIBLE);return;}
-        NativeAdView view=new NativeAdView(activity);
-        LinearLayout box=new LinearLayout(activity);box.setOrientation(LinearLayout.VERTICAL);box.setPadding(dp(12),dp(10),dp(12),dp(12));box.setBackgroundColor(0xffe9e5ff);
-        view.addView(box,new FrameLayout.LayoutParams(-1,-2));
-        TextView attribution=text(activity.getString(R.string.ads_label),12,0xff443b68);attribution.setPadding(0,0,dp(32),dp(6));box.addView(attribution);
-        AdChoicesView choices=new AdChoicesView(activity);
-        FrameLayout.LayoutParams choiceParams=new FrameLayout.LayoutParams(-2,-2,android.view.Gravity.TOP|android.view.Gravity.END);view.addView(choices,choiceParams);view.setAdChoicesView(choices);
-        TextView headline=text(nativeAd.getHeadline(),17,0xff201b40);headline.setTypeface(null,Typeface.BOLD);box.addView(headline);view.setHeadlineView(headline);
-        if(nativeAd.getMediaContent()!=null){MediaView media=new MediaView(activity);box.addView(media,new LinearLayout.LayoutParams(-1,dp(150)));media.setMediaContent(nativeAd.getMediaContent());view.setMediaView(media);}
-        if(nativeAd.getIcon()!=null){ImageView icon=new ImageView(activity);icon.setImageDrawable(nativeAd.getIcon().getDrawable());box.addView(icon,new LinearLayout.LayoutParams(dp(48),dp(48)));view.setIconView(icon);}
-        if(nativeAd.getAdvertiser()!=null){TextView t=text(nativeAd.getAdvertiser(),12,0xff494264);box.addView(t);view.setAdvertiserView(t);}
-        if(nativeAd.getBody()!=null){TextView body=text(nativeAd.getBody(),14,0xff30294d);box.addView(body);view.setBodyView(body);}
-        if(nativeAd.getCallToAction()!=null){Button cta=new Button(activity);cta.setText(nativeAd.getCallToAction());box.addView(cta);view.setCallToActionView(cta);}
-        nativeHost.addView(view,new FrameLayout.LayoutParams(-1,-2));nativeHost.setVisibility(View.VISIBLE);view.setNativeAd(nativeAd);nativeHost.requestLayout();view.requestLayout();log("native attached to gallery");
+        NativeAdView view=(NativeAdView)activity.getLayoutInflater().inflate(R.layout.native_ad_gallery,host,false);
+        TextView headline=view.findViewById(R.id.native_headline);
+        headline.setText(nativeAd.getHeadline());view.setHeadlineView(headline);
+        MediaView media=view.findViewById(R.id.native_media);
+        view.setMediaView(media);
+        media.setVisibility(nativeAd.getMediaContent()==null?View.GONE:View.VISIBLE);
+        if(nativeAd.getMediaContent()!=null)media.setMediaContent(nativeAd.getMediaContent());
+        ImageView icon=view.findViewById(R.id.native_icon);
+        view.setIconView(icon);
+        icon.setVisibility(nativeAd.getIcon()==null?View.GONE:View.VISIBLE);
+        if(nativeAd.getIcon()!=null)icon.setImageDrawable(nativeAd.getIcon().getDrawable());
+        TextView body=view.findViewById(R.id.native_body);
+        view.setBodyView(body);body.setText(nativeAd.getBody());body.setVisibility(nativeAd.getBody()==null?View.GONE:View.VISIBLE);
+        Button cta=view.findViewById(R.id.native_cta);
+        view.setCallToActionView(cta);cta.setText(nativeAd.getCallToAction());cta.setVisibility(nativeAd.getCallToAction()==null?View.GONE:View.VISIBLE);
+        TextView advertiser=view.findViewById(R.id.native_advertiser);
+        view.setAdvertiserView(advertiser);advertiser.setText(nativeAd.getAdvertiser());advertiser.setVisibility(nativeAd.getAdvertiser()==null?View.GONE:View.VISIBLE);
+        view.setNativeAd(nativeAd);
+        host.removeAllViews();host.addView(view);host.setVisibility(View.VISIBLE);host.requestLayout();
+        view.post(()->log("native attached to gallery size="+view.getWidth()+"x"+view.getHeight()+" shown="+view.isShown()));
+
     }
     void category(Runnable navigate){
         if(showing)return;
