@@ -7,11 +7,8 @@ import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import com.google.android.gms.ads.*;
 import com.google.android.gms.ads.interstitial.*;
-import com.google.android.gms.ads.nativead.*;
 import com.google.android.ump.*;
 
 /** Ads are restricted to visible Activity content; never used by widgets or dreams. */
@@ -21,14 +18,12 @@ final class AdsController {
     private final CategoryAdGate gate;
     private final Runnable refreshUi;
     private boolean foreground, destroyed, initialized, initializing, consentReady, showing;
-    private boolean bannerLoading,bannerLoaded,nativeLoading,interstitialLoading;
-    private long bannerRetry,nativeRetry,interstitialRetry,nativeAt,interstitialAt;
+    private boolean bannerLoading,bannerLoaded,interstitialLoading;
+    private long bannerRetry,interstitialRetry,interstitialAt;
     private int bannerWidth;
     private AdView banner;
-    private NativeAd nativeAd;
-    private AdLoader nativeLoader;
     private InterstitialAd interstitial;
-    private FrameLayout bannerHost,nativeHost;
+    private FrameLayout bannerHost;
     private Runnable pendingNavigation;
     AdsController(Activity a,Runnable refreshUi,int count,long last){
         activity=a;this.refreshUi=refreshUi;gate=new CategoryAdGate(count,last);
@@ -72,20 +67,16 @@ final class AdsController {
     private void detach(View v){if(v!=null&&v.getParent() instanceof ViewGroup)((ViewGroup)v.getParent()).removeView(v);}
     private void clearAds(){
         if(banner!=null){detach(banner);banner.destroy();banner=null;}
-        if(nativeAd!=null){nativeAd.destroy();nativeAd=null;}
         interstitial=null;bannerLoaded=false;bannerLoading=false;
         if(bannerHost!=null){bannerHost.removeAllViews();bannerHost.setVisibility(View.GONE);}
-        if(nativeHost!=null){nativeHost.removeAllViews();nativeHost.setVisibility(View.GONE);}
     }
-    void hosts(FrameLayout b,FrameLayout n){
+    void hosts(FrameLayout b){
         if(bannerHost!=b&&banner!=null)detach(banner);
-        if(nativeHost!=n&&nativeHost!=null){nativeHost.removeAllViews();nativeHost.setVisibility(View.GONE);}
-        bannerHost=b;nativeHost=n;loadVisible();
+        bannerHost=b;loadVisible();
     }
     private void loadVisible(){
         if(!usable())return;
         if(bannerHost!=null)loadBanner();
-        if(nativeHost!=null)loadNative();
         loadInterstitial();
     }
     private void loadBanner(){
@@ -123,58 +114,6 @@ final class AdsController {
         if(!usable()||bannerHost==null||banner==null||!bannerLoaded)return;
         if(banner.getParent()!=bannerHost){detach(banner);bannerHost.removeAllViews();FrameLayout.LayoutParams p=new FrameLayout.LayoutParams(-2,-2,android.view.Gravity.CENTER);bannerHost.addView(banner,p);}
         bannerHost.setVisibility(View.VISIBLE);
-    }
-    private void loadNative(){
-        if(!usable()||nativeHost==null)return;
-        if(nativeAd!=null&&now()-nativeAt>=3600000){nativeHost.removeAllViews();nativeAd.destroy();nativeAd=null;}
-        if(nativeAd!=null){attachNative();return;}
-        if(nativeLoading||now()<nativeRetry)return;
-        nativeLoading=true;log("native request");
-        nativeLoader=new AdLoader.Builder(activity,BuildConfig.NATIVE_ID)
-          .forNativeAd(ad->{
-              nativeLoading=false;
-              if(!allowed()){ad.destroy();return;}
-              if(nativeAd!=null)nativeAd.destroy();
-              nativeAd=ad;nativeAt=now();nativeRetry=0;log("native loaded response="+ad.getResponseInfo());handler.post(()->attachNative());
-          })
-          .withAdListener(new AdListener(){
-              @Override public void onAdImpression(){log("native impression");}
-              @Override public void onAdFailedToLoad(LoadAdError e){nativeLoading=false;nativeRetry=now()+60000;log("native load failed "+e);handler.postDelayed(()->{if(usable()&&nativeHost!=null)loadNative();},60000);}
-          }).build();
-        nativeLoader.loadAd(new AdRequest.Builder().build());
-    }
-    private TextView text(String value,int sp,int color){
-        TextView t=new TextView(activity);t.setText(value);t.setTextSize(sp);t.setTextColor(color);return t;
-    }
-    private void attachNative(){
-        if(!usable()||nativeHost==null||nativeAd==null)return;
-        final FrameLayout host=nativeHost;
-        if(!host.isAttachedToWindow()){host.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener(){
-            @Override public void onViewAttachedToWindow(View v){v.removeOnAttachStateChangeListener(this);if(host==nativeHost)host.post(()->attachNative());}
-            @Override public void onViewDetachedFromWindow(View v){}
-        });return;}
-        if(nativeHost.getChildCount()>0){nativeHost.setVisibility(View.VISIBLE);return;}
-        NativeAdView view=(NativeAdView)activity.getLayoutInflater().inflate(R.layout.native_ad_gallery,host,false);
-        TextView headline=view.findViewById(R.id.native_headline);
-        headline.setText(nativeAd.getHeadline());view.setHeadlineView(headline);
-        MediaView media=view.findViewById(R.id.native_media);
-        view.setMediaView(media);
-        media.setVisibility(nativeAd.getMediaContent()==null?View.GONE:View.VISIBLE);
-        if(nativeAd.getMediaContent()!=null)media.setMediaContent(nativeAd.getMediaContent());
-        ImageView icon=view.findViewById(R.id.native_icon);
-        view.setIconView(icon);
-        icon.setVisibility(nativeAd.getIcon()==null?View.GONE:View.VISIBLE);
-        if(nativeAd.getIcon()!=null)icon.setImageDrawable(nativeAd.getIcon().getDrawable());
-        TextView body=view.findViewById(R.id.native_body);
-        view.setBodyView(body);body.setText(nativeAd.getBody());body.setVisibility(nativeAd.getBody()==null?View.GONE:View.VISIBLE);
-        Button cta=view.findViewById(R.id.native_cta);
-        view.setCallToActionView(cta);cta.setText(nativeAd.getCallToAction());cta.setVisibility(nativeAd.getCallToAction()==null?View.GONE:View.VISIBLE);
-        TextView advertiser=view.findViewById(R.id.native_advertiser);
-        view.setAdvertiserView(advertiser);advertiser.setText(nativeAd.getAdvertiser());advertiser.setVisibility(nativeAd.getAdvertiser()==null?View.GONE:View.VISIBLE);
-        view.setNativeAd(nativeAd);
-        host.removeAllViews();host.addView(view);host.setVisibility(View.VISIBLE);host.requestLayout();
-        view.post(()->log("native attached to gallery size="+view.getWidth()+"x"+view.getHeight()+" shown="+view.isShown()));
-
     }
     void category(Runnable navigate){
         if(showing)return;

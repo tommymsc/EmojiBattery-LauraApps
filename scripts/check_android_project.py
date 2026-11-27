@@ -106,3 +106,9 @@ assert 'galleryScrollY' in activity and 'normalizeSearch' in activity and 'R.str
 assert 'tools:node="remove"' in (app/'AndroidManifest.xml').read_text()
 assert 'AdsController' in activity and 'ads.category(change)' in activity
 assert 'play-services-ads:25.4.0' in gradle and 'user-messaging-platform:4.0.0' in gradle
+
+# Native ads are intentionally disabled; keep only banner and interstitial.
+ads=(app/'java/com/lauraapps/emojibattery/AdsController.java').read_text()
+assert 'NATIVE_ID' not in gradle and 'NativeAd' not in ads and 'nativeSlot' not in activity
+assert 'BANNER_ID' in gradle and 'INTERSTITIAL_ID' in gradle
+assert not (app/'res/layout/native_ad_gallery.xml').exists()

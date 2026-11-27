@@ -39,7 +39,7 @@ public final class MainActivity extends Activity {
     private int galleryLimit=16;
     private boolean editing=false;
     private AdsController ads;
-    private FrameLayout bannerSlot,nativeSlot;
+    private FrameLayout bannerSlot;
     private int galleryScrollY=0;
     private String searchText="";
     private TextView galleryCount;
@@ -167,7 +167,7 @@ public final class MainActivity extends Activity {
         scroll.addView(root);
         LinearLayout screen=col();screen.setBackgroundColor(0xFF161B52);
         screen.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
-        bannerSlot=null;nativeSlot=null;
+        bannerSlot=null;
         if(editing){bannerSlot=new FrameLayout(this);bannerSlot.setVisibility(View.GONE);screen.addView(bannerSlot,new LinearLayout.LayoutParams(-1,-2));}
         setContentView(screen);
         if(Build.VERSION.SDK_INT>=35){
@@ -189,7 +189,7 @@ public final class MainActivity extends Activity {
             TextView edit=action(getString(R.string.edit_selected),true,0);root.addView(edit,lp(-1,48,8));edit.setContentDescription("edit_selected_mascot");edit.setOnClickListener(v->showEditor());
             drawGallery();drawFooter();
         }
-        if(ads!=null)ads.hosts(bannerSlot,nativeSlot);
+        if(ads!=null)ads.hosts(bannerSlot);
         scroll.post(()->scroll.scrollTo(0,0));
         updatePreview();
         if(heroArt!=null){
@@ -428,7 +428,6 @@ public final class MainActivity extends Activity {
         root.setFocusableInTouchMode(true);root.requestFocus();
         root.addView(search,lp(-1,48,8));
         search.addTextChangedListener(new android.text.TextWatcher(){public void beforeTextChanged(CharSequence s,int start,int count,int after){}public void onTextChanged(CharSequence s,int start,int before,int count){searchText=s.toString();searchHandler.removeCallbacks(searchRefresh);searchHandler.postDelayed(searchRefresh,180);}public void afterTextChanged(android.text.Editable e){}});
-        nativeSlot=new FrameLayout(this);nativeSlot.setVisibility(View.GONE);root.addView(nativeSlot,lp(-1,-2,10));
         galleryCount=text("",12,MUTED,false);root.addView(galleryCount,lp(-1,-2,5));
         gallery=col();
         root.addView(gallery,lp(-1,-2,8));
@@ -463,7 +462,7 @@ public final class MainActivity extends Activity {
         int totalMatches=matches.size();
         final int visibleCount=Math.min(totalMatches,galleryLimit);
         if(galleryCount!=null)galleryCount.setText(getString(R.string.gallery_result_count,visibleCount,totalMatches));
-        if(totalMatches==0){gallery.addView(text(getString(R.string.search_empty),14,WHITE,false),lp(-1,-2,12));if(ads!=null)ads.hosts(bannerSlot,null);return;}
+        if(totalMatches==0){gallery.addView(text(getString(R.string.search_empty),14,WHITE,false),lp(-1,-2,12));if(ads!=null)ads.hosts(bannerSlot);return;}
         // Gallery artwork is a stable sample, not a live battery display.
         final int sampleLevel=70;
         for(int line=0;line<(visibleCount+1)/2;line++){
@@ -515,7 +514,7 @@ public final class MainActivity extends Activity {
                 });
             }
         }
-        if(ads!=null)ads.hosts(bannerSlot,nativeSlot);
+        if(ads!=null)ads.hosts(bannerSlot);
         if(visibleCount<totalMatches){
             TextView more=action(getString(R.string.gallery_more,visibleCount,totalMatches),false,0);
             more.setOnClickListener(v->{galleryLimit+=16;renderGallery();});
